@@ -4,17 +4,16 @@
 
 #include <iostream>
 
-// GLEW as static lib
-//#define GLEW_STATIC
-#include <GL/glew.h>
 
-// GLFW
-#include <GLFW/glfw3.h>
 
+#include "GTKStuff/GTKManager.h"
+#include "GTKStuff/GTKWindow.h"
+#include "includeLibs.h"
 #include "functions.h"
 
-int main()
+int main(int argc, char* argv[])
 {
+    GTKManager g(argc, argv);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -43,11 +42,15 @@ int main()
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
+    GTKWindow& w = g.createWindow(1000, 1000, "SomeTITS");
+    w.present();
+
     glViewport(0, 0, width, height);
 
     while(!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+        g.updateAPI();
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
