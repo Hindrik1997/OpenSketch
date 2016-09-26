@@ -14,7 +14,7 @@ using std::string;
 
 class GTKManager {
 private:
-    std::vector<GTKWindow> windows;
+    std::vector<GTKWindow> m_windows;
 public:
     GTKManager(int argc, char* argv[]);
     ~GTKManager();

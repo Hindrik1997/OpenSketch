@@ -5,7 +5,7 @@
 #ifndef OPEN_SKETCH_FUNCTIONS_H
 #define OPEN_SKETCH_FUNCTIONS_H
 
-#include "includeLibs.h"
+#include "../includeLibs.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 

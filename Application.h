@@ -15,12 +15,18 @@
 
 #include <iostream>
 #include "includeLibs.h"
-#include "GTKStuff/GTKManager.h"
-#include "GTKStuff/GTKWindow.h"
+#include "GTK/GTKManager.h"
+#include "GTK/GTKWindow.h"
 
+//prototypes
+class OpenGLRenderManager;
+
+
+//Args struct
 struct Args
 {
-    int argc = 0; char** argv = nullptr;
+    int m_argc = 0;
+    char** m_argv = nullptr;
 };
 
 class Application {
@@ -35,11 +41,11 @@ public:
     void operator=(const Application&&) = delete;
     ~Application();
 private:
-    void initialize();
     bool initGLFW();
     bool initGLEW();
     void initGTK();
 public:
+    void initialize();
     void run();
     void getPaintWindowSize(int& _width, int& _height);
     inline void setStartupArgs(Args _args);
@@ -48,9 +54,10 @@ private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
     GTKWindow* m_toolWindow;
+    OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
-
-
+private:
+    friend class OpenGLRenderManager;
 };
 
 inline void Application::setStartupArgs(Args _args) {
