@@ -1,3 +1,23 @@
+#[[
+    De volgende libs zijn nodig:
+
+    GLFW3
+    GLEW
+    GTK+ 2.0 en de dev libs
+
+    Zie ook: http://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project
+    Ik heb zelf GLFW3 en GLEW sources gedownload en gecompiled en geinstalled zoals hierboven aangegeven.
+
+    copy paste deze commands in de terminal voor OpenGL dev packages:
+
+    sudo apt-get install cmake xorg-dev libglu1-mesa-dev
+
+    mogelijk is ook gtk2.0 nodig.
+
+    sudo apt-get install gtk+-2.0
+
+]]
+
 cmake_minimum_required(VERSION 3.2.2)
 project(open_sketch)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")

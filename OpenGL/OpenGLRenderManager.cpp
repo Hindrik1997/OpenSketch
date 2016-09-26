@@ -3,12 +3,6 @@
 //
 
 #include "OpenGLRenderManager.h"
-#include <string>
-#include <ostream>
-#include <fstream>
-#include <streambuf>
-
-using namespace std;
 
 
 void OpenGLRenderManager::render()
@@ -19,16 +13,56 @@ void OpenGLRenderManager::render()
     //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz, deze gebruik ik niet in deze applicatie)
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glUseProgram(m_defaultShaderProgam);
+
+    for(size_t i = 0; i < m_objects.size(); ++i)
+    {
+        m_objects[i].draw();
+    }
+
+    glUseProgram(0);
+
     //Buffer swappen om te laten zien
     glfwSwapBuffers(m_Application.m_paintWindow);
 }
 
 OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_Application(_app)
 {
-    createDefaultShaders();
+    createDefaultShaderProgram();
+
+
+    addRenderObject(DrawableObject(vector<GLfloat>{
+            0.5f,  0.5f, 0.0f,  // Top Right
+            0.5f, -0.5f, 0.0f,  // Bottom Right
+            -0.5f, -0.5f, 0.0f,  // Bottom Left
+            -0.5f,  0.5f, 0.0f   // Top Left
+    }, vector<GLint>{
+            0, 1, 3,   // First Triangle
+            1, 2, 3    // Second Triangle
+    }));
 }
 
-void OpenGLRenderManager::createDefaultShaders()
+void OpenGLRenderManager::createDefaultShaderProgram()
+{
+    createCustomShaderProgam(string("vertex.glsl"),string("fragment.glsl"));
+}
+
+void OpenGLRenderManager::setNullShaderProgram()
+{
+    glUseProgram(0);
+}
+
+void OpenGLRenderManager::setDefaultShaderProgram()
+{
+    glUseProgram(m_defaultShaderProgam);
+}
+
+void OpenGLRenderManager::setCustomShaderProgram(GLuint &_shaderProgam)
+{
+    glUseProgram(_shaderProgam);
+}
+
+void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader)
 {
     const int debugBufSize = 524; //524 is groot genoeg voor error messages. gwn random groot genoeg nummer.
     GLint success;
@@ -36,8 +70,8 @@ void OpenGLRenderManager::createDefaultShaders()
 
 
     //files inlezen
-    ifstream vertex("vertex.glsl");
-    ifstream fragment("fragment.glsl");
+    ifstream vertex(_vertexShader);
+    ifstream fragment(_fragmentShader);
 
     string vSource((istreambuf_iterator<char>(vertex)), istreambuf_iterator<char>());
     string fSource((istreambuf_iterator<char>(fragment)), istreambuf_iterator<char>());
@@ -98,4 +132,8 @@ void OpenGLRenderManager::createDefaultShaders()
     glDeleteShader(fShader);
 
     //klaar!
+}
+
+void OpenGLRenderManager::addRenderObject(DrawableObject&& _obj) {
+    m_objects.push_back(move(_obj));
 }
