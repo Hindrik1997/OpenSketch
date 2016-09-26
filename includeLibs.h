@@ -13,4 +13,6 @@
 //GTK2
 #include <gtk/gtk.h>
 
+#define SAFE_PNTR_DEL(x) if(x != nullptr) delete x;
+
 #endif //OPEN_SKETCH_LIBSINCLUDE_H

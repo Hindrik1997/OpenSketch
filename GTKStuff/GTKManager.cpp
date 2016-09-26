@@ -17,10 +17,11 @@ bool GTKManager::updateAPI() {
     {
         gtk_main_iteration();
     }
+    return true;
 }
 
 GTKWindow& GTKManager::createWindow(int width, int height, string title) {
-    windows.push_back(GTKWindow(*this, width, height, title));
+    windows.push_back(std::move(GTKWindow(*this, width, height, title)));
     return windows.back();
 }
 
