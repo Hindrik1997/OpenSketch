@@ -20,7 +20,7 @@ using namespace std;
 class OpenGLRenderManager {
 private:
     Application& m_Application;
-    GLuint m_defaultShaderProgam;
+    GLuint m_defaultShaderProgram;
     vector<DrawableObject> m_objects;
 public:
     OpenGLRenderManager(Application& _app);
@@ -33,7 +33,7 @@ public:
     void addRenderObject(DrawableObject&& _obj);
     void render();
     void setDefaultShaderProgram();
-    void createCustomShaderProgam(string _vertexShader, string _fragmentShader);
+    void createCustomShaderProgam(string _vertexShader, string _fragmentShader,GLuint& _shaderID);
     void setCustomShaderProgram(GLuint& _shaderProgam);
     void setNullShaderProgram();
 private:

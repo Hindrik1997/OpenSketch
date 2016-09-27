@@ -13,7 +13,7 @@ void OpenGLRenderManager::render()
     //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz, deze gebruik ik niet in deze applicatie)
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_defaultShaderProgam);
+    glUseProgram(m_defaultShaderProgram);
 
     for(size_t i = 0; i < m_objects.size(); ++i)
     {
@@ -44,7 +44,7 @@ OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_Application(_app
 
 void OpenGLRenderManager::createDefaultShaderProgram()
 {
-    createCustomShaderProgam(string("vertex.glsl"),string("fragment.glsl"));
+    createCustomShaderProgam(string("vertex.glsl"),string("fragment.glsl"), m_defaultShaderProgram);
 }
 
 void OpenGLRenderManager::setNullShaderProgram()
@@ -54,7 +54,7 @@ void OpenGLRenderManager::setNullShaderProgram()
 
 void OpenGLRenderManager::setDefaultShaderProgram()
 {
-    glUseProgram(m_defaultShaderProgam);
+    glUseProgram(m_defaultShaderProgram);
 }
 
 void OpenGLRenderManager::setCustomShaderProgram(GLuint &_shaderProgam)
@@ -62,7 +62,7 @@ void OpenGLRenderManager::setCustomShaderProgram(GLuint &_shaderProgam)
     glUseProgram(_shaderProgam);
 }
 
-void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader)
+void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID)
 {
     const int debugBufSize = 524; //524 is groot genoeg voor error messages. gwn random groot genoeg nummer.
     GLint success;
@@ -112,17 +112,17 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
 
     //compilatie gelukt!
     //Shader program linken!
-    m_defaultShaderProgam = glCreateProgram();
-    glAttachShader(m_defaultShaderProgam, vShader);
-    glAttachShader(m_defaultShaderProgam, fShader);
-    glLinkProgram(m_defaultShaderProgam);
+    _shaderID = glCreateProgram();
+    glAttachShader(_shaderID, vShader);
+    glAttachShader(_shaderID, fShader);
+    glLinkProgram(_shaderID);
 
     //Checken of linken gelukt is!
-    glGetProgramiv(m_defaultShaderProgam, GL_LINK_STATUS, &success);
+    glGetProgramiv(_shaderID, GL_LINK_STATUS, &success);
 
     if(!success)
     {
-        glGetShaderInfoLog(m_defaultShaderProgam, debugBufSize, NULL, debugMsg);
+        glGetShaderInfoLog(_shaderID, debugBufSize, NULL, debugMsg);
         cout << debugMsg << endl;
         throw "FAILED LINKING SHADERPROGRAM";
     }
