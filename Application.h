@@ -21,7 +21,6 @@
 //prototypes
 class OpenGLRenderManager;
 
-
 //Args struct
 struct Args
 {
@@ -36,9 +35,10 @@ private:
     Application();
 public:
     Application(const Application&) = delete;
-    Application(const Application&&) = delete;
-    void operator=(const Application&) = delete;
-    void operator=(const Application&&) = delete;
+    Application& operator=(const Application&) = delete;
+
+    Application(Application&&) = delete;
+    Application& operator=(Application&&) = delete;
     ~Application();
 private:
     bool initGLFW();
@@ -50,6 +50,9 @@ public:
     void getPaintWindowSize(int& _width, int& _height);
     inline void setStartupArgs(Args _args);
     inline Args getStartupArgs();
+
+    glm::vec2 getPaintWindowCursorPos() const;
+
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;

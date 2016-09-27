@@ -21,13 +21,21 @@ private:
 public:
     DrawableObject(vector<GLfloat> _vertices, vector<GLint> _indices);
     ~DrawableObject();
+
+    //Geen copies
+    DrawableObject(const DrawableObject&) = delete;
+    DrawableObject& operator=(const DrawableObject&) = delete;
+
+    //Wel moven, immers het deleten van de copy ctor delete de move ctor impliciet, dus die zetten we expliciet op default!
+    DrawableObject(DrawableObject&&) = default;
+    DrawableObject& operator=(DrawableObject&&) = default;
 private:
 
 
 public:
     void resetObject();
     void resetObject(vector<GLfloat> _vertices, vector<GLint> _indices);
-    void draw();
+    void draw() const;
 };
 
 #endif //OPEN_SKETCH_DRAWABLEOBJECT_H

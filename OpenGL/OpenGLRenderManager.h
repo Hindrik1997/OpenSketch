@@ -10,18 +10,19 @@
 #include <ostream>
 #include <fstream>
 #include <streambuf>
+#include "../Rectangle.h"
 #include "DrawableObject.h"
-
-using namespace std;
-
 #include "../includeLibs.h"
 #include "../Application.h"
 
+using namespace std;
+
 class OpenGLRenderManager {
 private:
-    Application& m_Application;
+    Application& m_application;
     GLuint m_defaultShaderProgram;
     vector<DrawableObject> m_objects;
+    vector<Rectangle> m_rectangles;
 public:
     OpenGLRenderManager(Application& _app);
 
@@ -30,17 +31,29 @@ public:
     void operator=(const OpenGLRenderManager&) = delete;
     void operator=(const OpenGLRenderManager&&) = delete;
 public:
-    void addRenderObject(DrawableObject&& _obj);
+    void addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices);
+    void addRectangle(int _posx, int _posy, int _width, int _height);
     void render();
     void setDefaultShaderProgram();
     void createCustomShaderProgam(string _vertexShader, string _fragmentShader,GLuint& _shaderID);
     void setCustomShaderProgram(GLuint& _shaderProgam);
     void setNullShaderProgram();
+    inline const vector<Rectangle>& getRectangles() const;
+    inline const vector<DrawableObject>& getDrawables() const;
 private:
     void createDefaultShaderProgram();
 
-
 };
+
+inline const vector<Rectangle>& OpenGLRenderManager::getRectangles() const
+{
+    return m_rectangles;
+}
+
+inline const vector<DrawableObject>& OpenGLRenderManager::getDrawables() const
+{
+    return m_objects;
+}
 
 
 #endif //OPEN_SKETCH_OPENGLRENDERER_H

@@ -31,7 +31,7 @@ endif (GTK2_FOUND)
 
 link_libraries(libGLEW.a glfw3 GL GLU X11 Xxf86vm dl Xinerama Xcursor pthread Xi Xrandr)
 
-set(SOURCE_FILES main.cpp main.cpp GLFW/GLFWfunctions.cpp GLFW/GLFWfunctions.h Application.cpp Application.h GTK/gtkCallbacks.cpp GTK/gtkCallbacks.h includeLibs.h GTK/GTKManager.cpp GTK/GTKManager.h GTK/GTKWindow.cpp GTK/GTKWindow.h OpenGL/OpenGLRenderManager.cpp OpenGL/OpenGLRenderManager.h OpenGL/DrawableObject.cpp OpenGL/DrawableObject.h)
+set(SOURCE_FILES main.cpp main.cpp GLFW/GLFWfunctions.cpp GLFW/GLFWfunctions.h Application.cpp Application.h GTK/gtkCallbacks.cpp GTK/gtkCallbacks.h includeLibs.h GTK/GTKManager.cpp GTK/GTKManager.h GTK/GTKWindow.cpp GTK/GTKWindow.h OpenGL/OpenGLRenderManager.cpp OpenGL/OpenGLRenderManager.h OpenGL/DrawableObject.cpp OpenGL/DrawableObject.h Rectangle.cpp Rectangle.h)
 add_executable(open_sketch ${SOURCE_FILES})
 
 add_custom_command(TARGET open_sketch PRE_BUILD

@@ -2,6 +2,7 @@
 // Created by Hindrik Stegenga on 26-9-16.
 //
 
+#include <cmath>
 #include "OpenGLRenderManager.h"
 
 
@@ -15,31 +16,25 @@ void OpenGLRenderManager::render()
 
     glUseProgram(m_defaultShaderProgram);
 
-    for(size_t i = 0; i < m_objects.size(); ++i)
+    for(size_t i = 0; i < m_rectangles.size(); ++i)
     {
-        m_objects[i].draw();
+        GLint location = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(m_rectangles[i].getMatrix()));
+        m_rectangles[i].getDrawObject().draw();
     }
 
     glUseProgram(0);
 
     //Buffer swappen om te laten zien
-    glfwSwapBuffers(m_Application.m_paintWindow);
+    glfwSwapBuffers(m_application.m_paintWindow);
 }
 
-OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_Application(_app)
+OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app)
 {
     createDefaultShaderProgram();
 
+    addRectangle(300,300,300,300);
 
-    addRenderObject(DrawableObject(vector<GLfloat>{
-            0.5f,  0.5f, 0.0f,  // Top Right
-            0.5f, -0.5f, 0.0f,  // Bottom Right
-            -0.5f, -0.5f, 0.0f,  // Bottom Left
-            -0.5f,  0.5f, 0.0f   // Top Left
-    }, vector<GLint>{
-            0, 1, 3,   // First Triangle
-            1, 2, 3    // Second Triangle
-    }));
 }
 
 void OpenGLRenderManager::createDefaultShaderProgram()
@@ -134,6 +129,20 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
     //klaar!
 }
 
-void OpenGLRenderManager::addRenderObject(DrawableObject&& _obj) {
-    m_objects.push_back(move(_obj));
+void OpenGLRenderManager::addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices)
+{
+    size_t size = m_objects.capacity();
+    size += 2;
+    m_objects.reserve(size);
+    m_objects.emplace_back(_verts, _indices);
+}
+
+void OpenGLRenderManager::addRectangle(int _posx, int _posy, int _width, int _height)
+{
+    //m_rectangles.push_back(Rectangle(*this,_posx, _posy, _width, _height));
+    //space reserven
+    size_t size = m_rectangles.capacity();
+    size += 2;
+    m_rectangles.reserve(size);
+    m_rectangles.emplace_back(*this, _posx, _posy, _width, _height);
 }

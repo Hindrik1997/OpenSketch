@@ -1,0 +1,3 @@
+/home/hindrik/ClionProjects/OpenSketch/GLM/CMakeFiles/edit_cache.dir
+/home/hindrik/ClionProjects/OpenSketch/GLM/CMakeFiles/rebuild_cache.dir
+/home/hindrik/ClionProjects/OpenSketch/GLM/CMakeFiles/glm_dummy.dir

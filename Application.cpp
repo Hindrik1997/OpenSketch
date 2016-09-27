@@ -2,8 +2,12 @@
 // Created by Hindrik Stegenga on 24-9-16.
 //
 
+#include <iostream>
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
+
+using std::cout;
+using std::endl;
 
 Application &Application::getInstance() {
     static Application instance;
@@ -57,7 +61,7 @@ void Application::initialize() {
         throw("Initialization failed!");
 
     //Paint window maken
-    m_paintWindow = glfwCreateWindow(800, 600, "Open Sketch", nullptr, nullptr);
+    m_paintWindow = glfwCreateWindow(1280, 800, "Open Sketch", nullptr, nullptr);
     if (m_paintWindow == nullptr)
     {
         std::cout << "Window creation failed!" << std::endl;
@@ -95,6 +99,26 @@ void Application::run() {
         m_gtkManager->updateAPI();
         //Update GFLW window events.
         glfwPollEvents();
+
+        int w,h;
+        getPaintWindowSize(w,h);
+        glm::vec2 v(static_cast<int>(getPaintWindowCursorPos().x),
+                    static_cast<int>(getPaintWindowCursorPos().y));
+        if(v.x < 0)
+            v.x = 0;
+        if(v.x > w)
+            v.x = w;
+        if(v.y < 0)
+            v.y = 0;
+        if(v.y > h)
+            v.y = h;
+
+        const_cast<Rectangle&>(m_renderManager->getRectangles()[0]).setPosition(v.x,v.y);
+        //std::cout << getPaintWindowCursorPos().x << " - " << getPaintWindowCursorPos().y << endl;
+
+
+
+
         //Renderen
         m_renderManager->render();
     }
@@ -102,4 +126,11 @@ void Application::run() {
 
 void Application::getPaintWindowSize(int &_width, int &_height) {
     glfwGetFramebufferSize(m_paintWindow, &_width, &_height);
+}
+
+glm::vec2 Application::getPaintWindowCursorPos() const
+{
+    double xpos, ypos;
+    glfwGetCursorPos(m_paintWindow, &xpos, &ypos);
+    return glm::vec2(static_cast<float>(xpos), static_cast<float>(ypos));
 }
