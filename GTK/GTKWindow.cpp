@@ -43,3 +43,7 @@ void GTKWindow::hide()
 {
     gtk_widget_hide(m_pWindow);
 }
+
+GtkWidget *GTKWindow::getWidgetPointer() {
+    return m_pWindow;
+}

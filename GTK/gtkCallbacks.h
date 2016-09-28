@@ -7,8 +7,12 @@
 
 #include "../includeLibs.h"
 
-static void Hello(GtkWidget* widget, gpointer data);
+void clicked(GtkWidget* widget, gpointer data);
 
+void suppress(GtkWidget* widget, gpointer data);
 
+void selectmove(GtkWidget* widget, gpointer data);
+
+void noeditmode(GtkWidget* widget, gpointer data);
 
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

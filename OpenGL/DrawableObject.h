@@ -26,7 +26,8 @@ public:
     DrawableObject(const DrawableObject&) = delete;
     DrawableObject& operator=(const DrawableObject&) = delete;
 
-    //Wel moven, immers het deleten van de copy ctor delete de move ctor impliciet, dus die zetten we expliciet op default!
+    //Wel moven, immers het deleten van de copy ctor delete de move ctor impliciet, dus die zetten
+    //we expliciet op default!
     DrawableObject(DrawableObject&&) = default;
     DrawableObject& operator=(DrawableObject&&) = default;
 private:

@@ -29,6 +29,13 @@ struct Args
     char** m_argv = nullptr;
 };
 
+enum class EditMode : char
+{
+    Null_mode,
+    Select_and_move,
+    Select_and_edit
+};
+
 class Application {
 public:
     static Application& getInstance();
@@ -46,12 +53,16 @@ private:
     bool initGLEW();
     void initGTK();
     void processMouseAndShapes();
+    void selectMove();
+    void initToolWindow();
+    void selectEdit();
 public:
     void initialize();
     void run();
     void getPaintWindowSize(int& _width, int& _height);
     inline void setStartupArgs(Args _args);
     inline Args getStartupArgs();
+    void setEditMode(EditMode _mode);
 
     glm::vec2 getPaintWindowCursorPos() const;
 private:
@@ -60,10 +71,26 @@ private:
     GTKWindow* m_toolWindow;
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
-
-    Rectangle* m_selectedLastFrame = nullptr;
-    int m_xOffset = 0, m_yOffset = 0;
-
+    EditMode m_editMode = EditMode::Null_mode;
+    //ToolWindow pointers
+    GtkWidget* m_box;
+    GtkWidget* m_topBox;
+    GtkWidget* m_bottomBox;
+    GtkWidget* m_null_mode_button;
+    GtkWidget* m_select_and_m_move_button;
+    GtkWidget* m_move_button;
+    GtkWidget* m_acceptBttn;
+    GtkWidget* m_infoBox;
+    GtkWidget* m_leftColumn;
+    GtkWidget* m_rightColumn;
+    GtkWidget* m_posxBox;
+    GtkWidget* m_posyBox;
+    GtkWidget* m_sizexBox;
+    GtkWidget* m_sizeyBox;
+    GtkWidget* m_labelposx;
+    GtkWidget* m_labelposy;
+    GtkWidget* m_labelsizex;
+    GtkWidget* m_labelsizey;
 private:
     friend class OpenGLRenderManager;
 };

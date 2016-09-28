@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
+#include "GTK/gtkCallbacks.h"
 
 using std::cout;
 using std::endl;
@@ -35,7 +36,6 @@ bool Application::initGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
     return true;
 }
 
@@ -85,12 +85,20 @@ void Application::initialize() {
     glViewport(0, 0, width, height);
 
     //Tools window maken
-    m_toolWindow = &m_gtkManager->createWindow(200, 300, "Tools");
+    m_toolWindow = &m_gtkManager->createWindow(300, 400, "Tools");
     m_toolWindow->present();
+
+    //Doet alle toolwindow stuff
+    initToolWindow();
 
     //RenderManager initializen
     m_renderManager = new OpenGLRenderManager(*this);
 
+}
+
+void Application::setEditMode(EditMode _mode)
+{
+    m_editMode = _mode;
 }
 
 void Application::run() {
@@ -123,6 +131,120 @@ glm::vec2 Application::getPaintWindowCursorPos() const
 
 void Application::processMouseAndShapes()
 {
+    switch(m_editMode)
+    {
+        case EditMode::Null_mode:
+            return;
+        case EditMode::Select_and_move:
+            selectMove();
+            break;
+        case EditMode::Select_and_edit:
+            selectEdit();
+            break;
+    }
+}
+
+void Application::initToolWindow()
+{
+    //border with instellen zodat button niet tegen zijkant komt
+    gtk_container_set_border_width(GTK_CONTAINER(m_toolWindow->getWidgetPointer()), 10);
+
+    m_box = gtk_vbox_new(0,0);
+
+    m_topBox = gtk_vbox_new(0,0);
+    m_bottomBox = gtk_vbox_new(0,0);
+
+    //TOPBOX
+
+    m_null_mode_button = gtk_button_new_with_label("No edit mode");
+    m_select_and_m_move_button = gtk_button_new_with_label("Select and move");
+    m_move_button = gtk_button_new_with_label("Select and modify");
+
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_m_move_button);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_move_button);
+
+    //BOTTOMBOX
+
+    m_acceptBttn = gtk_button_new_with_label("Accept");
+
+    m_infoBox = gtk_hbox_new(0,0);
+
+    m_leftColumn = gtk_vbox_new(0,0);
+    m_rightColumn = gtk_vbox_new(0,0);
+
+    m_posxBox = gtk_entry_new();
+    m_posyBox = gtk_entry_new();
+
+    m_sizexBox = gtk_entry_new();
+    m_sizeyBox = gtk_entry_new();
+
+    m_labelposx = gtk_label_new("x-pos");
+    m_labelposy = gtk_label_new("y-pos");
+
+    m_labelsizex = gtk_label_new("width");
+    m_labelsizey = gtk_label_new("height");
+
+    gtk_container_add(GTK_CONTAINER(m_leftColumn), m_labelposx);
+    gtk_container_add(GTK_CONTAINER(m_leftColumn), m_posxBox);
+
+    gtk_container_add(GTK_CONTAINER(m_rightColumn), m_labelposy);
+    gtk_container_add(GTK_CONTAINER(m_rightColumn), m_posyBox);
+
+    gtk_container_add(GTK_CONTAINER(m_leftColumn), m_labelsizex);
+    gtk_container_add(GTK_CONTAINER(m_leftColumn), m_sizexBox);
+
+    gtk_container_add(GTK_CONTAINER(m_rightColumn), m_labelsizey);
+    gtk_container_add(GTK_CONTAINER(m_rightColumn), m_sizeyBox);
+
+    gtk_container_add(GTK_CONTAINER(m_infoBox), m_leftColumn);
+    gtk_container_add(GTK_CONTAINER(m_infoBox), m_rightColumn);
+
+    //END
+
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
+    gtk_container_add(GTK_CONTAINER(m_box), m_topBox);
+    gtk_container_add(GTK_CONTAINER(m_box), m_bottomBox);
+
+    gtk_container_add(GTK_CONTAINER(m_toolWindow->getWidgetPointer()), m_box);
+
+    gtk_widget_show(m_labelposx);
+    gtk_widget_show(m_labelposy);
+    gtk_widget_show(m_posxBox);
+    gtk_widget_show(m_posyBox);
+
+    gtk_widget_show(m_labelsizex);
+    gtk_widget_show(m_labelsizey);
+    gtk_widget_show(m_sizexBox);
+    gtk_widget_show(m_sizeyBox);
+
+    gtk_widget_show(m_leftColumn);
+    gtk_widget_show(m_rightColumn);
+
+    gtk_widget_show(m_acceptBttn);
+
+
+    gtk_widget_show(m_infoBox);
+
+    gtk_widget_show(m_topBox);
+    gtk_widget_show(m_bottomBox);
+    gtk_widget_show(m_select_and_m_move_button);
+    gtk_widget_show(m_move_button);
+    gtk_widget_show(m_null_mode_button);
+    gtk_widget_show(m_box);
+
+    //select mode button signal connecten
+    g_signal_connect(m_select_and_m_move_button, "clicked", G_CALLBACK(selectmove), NULL);
+
+    //no edit mode button connecten
+    g_signal_connect(m_null_mode_button, "clicked", G_CALLBACK(noeditmode), NULL);
+
+    //close button suppressen, want t paint window bepaalt t sluiten van t progamma.
+    g_signal_connect(m_toolWindow->getWidgetPointer(),"delete_event", G_CALLBACK(suppress), NULL);
+}
+
+void Application::selectMove() {
     int w,h;
     getPaintWindowSize(w,h);
     glm::vec2 v(static_cast<int>(getPaintWindowCursorPos().x),
@@ -136,15 +258,18 @@ void Application::processMouseAndShapes()
     if(v.y > h)
         v.y = h;
 
+    static Rectangle* s_selectedRectangleLastFrame = nullptr;
+    static int s_selectedRectxOffset = 0, s_selectedRectyOffset = 0;
+
     Rectangle* rect = nullptr;
-    if(m_selectedLastFrame != nullptr)
-        rect = m_renderManager->getSelectedRectanglePriority(m_selectedLastFrame);
+    if(s_selectedRectangleLastFrame != nullptr)
+        rect = m_renderManager->getSelectedRectanglePriority(s_selectedRectangleLastFrame);
     else
         rect = m_renderManager->getSelectedRectangle();
 
     if(rect != nullptr)
     {
-        if(m_selectedLastFrame == nullptr)
+        if(s_selectedRectangleLastFrame == nullptr)
         {
             //new triangle, no last triangle or not the same
             glm::vec2 offset;
@@ -152,14 +277,14 @@ void Application::processMouseAndShapes()
             {
                 offset = m_renderManager->getMouseOffsetInRectangle(*rect, static_cast<int>(v.x), static_cast<int>(v.y));
                 rect->setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
-                m_selectedLastFrame = rect;
-                m_xOffset = static_cast<int>(offset.x);
-                m_yOffset = static_cast<int>(offset.y);
+                s_selectedRectangleLastFrame = rect;
+                s_selectedRectxOffset = static_cast<int>(offset.x);
+                s_selectedRectyOffset = static_cast<int>(offset.y);
                 rect->setSelected(true);
             }
             else
             {
-                m_xOffset = 0; m_yOffset = 0; m_selectedLastFrame = nullptr;
+                s_selectedRectxOffset = 0; s_selectedRectyOffset = 0; s_selectedRectangleLastFrame = nullptr;
             }
         }
         else
@@ -167,18 +292,23 @@ void Application::processMouseAndShapes()
             //same triangle
             if(glfwGetMouseButton(m_paintWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
             {
-                rect->setPosition(static_cast<int>(v.x + m_xOffset),static_cast<int>(v.y + m_yOffset));
+                rect->setPosition(static_cast<int>(v.x + s_selectedRectxOffset),static_cast<int>(v.y + s_selectedRectyOffset));
             }
             else
             {
-                if(m_selectedLastFrame != nullptr)
-                    m_selectedLastFrame->setSelected(false);
-                m_xOffset = 0; m_yOffset = 0; m_selectedLastFrame = nullptr;
+                if(s_selectedRectangleLastFrame != nullptr)
+                    s_selectedRectangleLastFrame->setSelected(false);
+                s_selectedRectxOffset = 0; s_selectedRectyOffset = 0; s_selectedRectangleLastFrame = nullptr;
             }
         }
     } else {
-        if(m_selectedLastFrame != nullptr)
-            m_selectedLastFrame->setSelected(false);
-        m_xOffset = 0; m_yOffset = 0; m_selectedLastFrame = nullptr;
+        if(s_selectedRectangleLastFrame != nullptr)
+            s_selectedRectangleLastFrame->setSelected(false);
+        s_selectedRectxOffset = 0; s_selectedRectyOffset = 0; s_selectedRectangleLastFrame = nullptr;
     }
+}
+
+void Application::selectEdit()
+{
+
 }

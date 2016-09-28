@@ -3,7 +3,24 @@
 //
 
 #include "gtkCallbacks.h"
+#include "../Application.h"
 
-void Hello(GtkWidget *widget, gpointer data) {
-    g_print("Hello World\n");
+void clicked(GtkWidget *widget, gpointer data) {
+    //er is geklikt
+
+}
+
+void suppress(GtkWidget *widget, gpointer data)
+{
+    //doe niks
+}
+
+void selectmove(GtkWidget* widget, gpointer data)
+{
+    Application::getInstance().setEditMode(EditMode::Select_and_move);
+}
+
+void noeditmode(GtkWidget *widget, gpointer data)
+{
+    Application::getInstance().setEditMode(EditMode::Null_mode);
 }

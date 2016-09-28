@@ -29,6 +29,8 @@ public:
 
     int getID();
 
+    GtkWidget* getWidgetPointer();
+
     void present();
     void show();
     void hide();
