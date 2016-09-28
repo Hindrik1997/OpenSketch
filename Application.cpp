@@ -387,6 +387,8 @@ void Application::selectEdit()
             catch (...)
             {
                 //Niet accepten
+                s_selectedRectangle->setSelected(false);
+                s_selectedRectangle = nullptr;
                 return;
             }
 
