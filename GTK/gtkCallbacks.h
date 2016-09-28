@@ -15,4 +15,8 @@ void selectmove(GtkWidget* widget, gpointer data);
 
 void noeditmode(GtkWidget* widget, gpointer data);
 
+void selectedit(GtkWidget* widget, gpointer data);
+
+void setEdited(GtkWidget* widget, gpointer data);
+
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

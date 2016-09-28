@@ -63,7 +63,7 @@ public:
     inline void setStartupArgs(Args _args);
     inline Args getStartupArgs();
     void setEditMode(EditMode _mode);
-
+    void setShapeEdited(bool _val);
     glm::vec2 getPaintWindowCursorPos() const;
 private:
     GTKManager* m_gtkManager;
@@ -72,13 +72,14 @@ private:
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
     EditMode m_editMode = EditMode::Null_mode;
+    bool m_isEdited = false;
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;
     GtkWidget* m_bottomBox;
     GtkWidget* m_null_mode_button;
     GtkWidget* m_select_and_m_move_button;
-    GtkWidget* m_move_button;
+    GtkWidget* m_select_and_edit;
     GtkWidget* m_acceptBttn;
     GtkWidget* m_infoBox;
     GtkWidget* m_leftColumn;

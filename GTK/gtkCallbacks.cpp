@@ -24,3 +24,13 @@ void noeditmode(GtkWidget *widget, gpointer data)
 {
     Application::getInstance().setEditMode(EditMode::Null_mode);
 }
+
+void selectedit(GtkWidget *widget, gpointer data)
+{
+    Application::getInstance().setEditMode(EditMode::Select_and_edit);
+}
+
+void setEdited(GtkWidget *widget, gpointer data)
+{
+    Application::getInstance().setShapeEdited(true);
+}

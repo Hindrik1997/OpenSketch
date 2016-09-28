@@ -2,11 +2,13 @@
 // Created by Hindrik Stegenga on 24-9-16.
 //
 
+#include <string>
 #include <iostream>
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
 #include "GTK/gtkCallbacks.h"
 
+using std::string;
 using std::cout;
 using std::endl;
 
@@ -14,11 +16,9 @@ Application &Application::getInstance() {
     static Application instance;
     return instance;
 }
-
 Application::Application()
 {
 }
-
 Application::~Application() {
     //Paintwindow hoeft niet gedelete te worden. GLFW doet dit!
     //ToolWindow pointer gaat via de GTKManager class, deze beheert de windows zelf!
@@ -100,7 +100,6 @@ void Application::setEditMode(EditMode _mode)
 {
     m_editMode = _mode;
 }
-
 void Application::run() {
 
     while(!glfwWindowShouldClose(m_paintWindow))
@@ -128,12 +127,16 @@ glm::vec2 Application::getPaintWindowCursorPos() const
     glfwGetCursorPos(m_paintWindow, &xpos, &ypos);
     return glm::vec2(static_cast<float>(xpos), static_cast<float>(ypos));
 }
-
 void Application::processMouseAndShapes()
 {
     switch(m_editMode)
     {
         case EditMode::Null_mode:
+            setShapeEdited(false);
+            gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_posyBox), "selected");
+            gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
             return;
         case EditMode::Select_and_move:
             selectMove();
@@ -143,7 +146,6 @@ void Application::processMouseAndShapes()
             break;
     }
 }
-
 void Application::initToolWindow()
 {
     //border with instellen zodat button niet tegen zijkant komt
@@ -158,11 +160,11 @@ void Application::initToolWindow()
 
     m_null_mode_button = gtk_button_new_with_label("No edit mode");
     m_select_and_m_move_button = gtk_button_new_with_label("Select and move");
-    m_move_button = gtk_button_new_with_label("Select and modify");
+    m_select_and_edit = gtk_button_new_with_label("Select and modify");
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_m_move_button);
-    gtk_container_add(GTK_CONTAINER(m_topBox), m_move_button);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_edit);
 
     //BOTTOMBOX
 
@@ -230,7 +232,7 @@ void Application::initToolWindow()
     gtk_widget_show(m_topBox);
     gtk_widget_show(m_bottomBox);
     gtk_widget_show(m_select_and_m_move_button);
-    gtk_widget_show(m_move_button);
+    gtk_widget_show(m_select_and_edit);
     gtk_widget_show(m_null_mode_button);
     gtk_widget_show(m_box);
 
@@ -240,11 +242,25 @@ void Application::initToolWindow()
     //no edit mode button connecten
     g_signal_connect(m_null_mode_button, "clicked", G_CALLBACK(noeditmode), NULL);
 
+    //select edit mode button connecten
+    g_signal_connect(m_select_and_edit, "clicked", G_CALLBACK(selectedit), NULL);
+
     //close button suppressen, want t paint window bepaalt t sluiten van t progamma.
     g_signal_connect(m_toolWindow->getWidgetPointer(),"delete_event", G_CALLBACK(suppress), NULL);
-}
 
-void Application::selectMove() {
+    //accept button
+    g_signal_connect(m_acceptBttn,"clicked", G_CALLBACK(setEdited), NULL);
+}
+void Application::selectMove()
+{
+    setShapeEdited(false);
+    gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
+    gtk_entry_set_text(GTK_ENTRY(m_posyBox), "selected");
+    gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
+    gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
+
+
+
     int w,h;
     getPaintWindowSize(w,h);
     glm::vec2 v(static_cast<int>(getPaintWindowCursorPos().x),
@@ -310,5 +326,99 @@ void Application::selectMove() {
 
 void Application::selectEdit()
 {
+    int w,h;
+    getPaintWindowSize(w,h);
+    glm::vec2 v(static_cast<int>(getPaintWindowCursorPos().x),
+                static_cast<int>(getPaintWindowCursorPos().y));
+    if(v.x < 0)
+        v.x = 0;
+    if(v.x > w)
+        v.x = w;
+    if(v.y < 0)
+        v.y = 0;
+    if(v.y > h)
+        v.y = h;
 
+
+    static Rectangle* s_selectedRectangle = nullptr;
+
+    Rectangle* currentSelected = m_renderManager->getSelectedRectangle();
+
+    if(glfwGetMouseButton(m_paintWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && currentSelected != nullptr && currentSelected != s_selectedRectangle)
+    {
+        //select shape
+
+        //old deselecten
+        if(s_selectedRectangle != nullptr)
+            s_selectedRectangle->setSelected(false);
+
+        s_selectedRectangle = currentSelected;
+        s_selectedRectangle->setSelected(true);
+
+        gtk_entry_set_text(GTK_ENTRY(m_posxBox), std::to_string(static_cast<int>(s_selectedRectangle->getPosition().x)).c_str());
+        gtk_entry_set_text(GTK_ENTRY(m_posyBox), std::to_string(static_cast<int>(s_selectedRectangle->getPosition().y)).c_str());
+        gtk_entry_set_text(GTK_ENTRY(m_sizexBox), std::to_string(static_cast<int>(s_selectedRectangle->getSize().x)).c_str());
+        gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), std::to_string(static_cast<int>(s_selectedRectangle->getSize().y)).c_str());
+    }
+
+    if(s_selectedRectangle != nullptr)
+    {
+        s_selectedRectangle->setSelected(true);
+
+        if(m_isEdited)
+        {
+            //get new info from tool and set
+
+            string posx(gtk_entry_get_text(GTK_ENTRY(m_posxBox)));
+            string posy(gtk_entry_get_text(GTK_ENTRY(m_posyBox)));
+            string sizex(gtk_entry_get_text(GTK_ENTRY(m_sizexBox)));
+            string sizey(gtk_entry_get_text(GTK_ENTRY(m_sizeyBox)));
+
+            int px,py, sx,sy;
+
+            try
+            {
+                //Throwed als de conversie faalt
+                px = std::stoi(posx);
+                py = std::stoi(posy);
+                sx = std::stoi(sizex);
+                sy = std::stoi(sizey);
+            }
+            catch (...)
+            {
+                //Niet accepten
+                return;
+            }
+
+            s_selectedRectangle->setPosition(px,py);
+            s_selectedRectangle->setSize(sx,sy);
+
+            //shape stuff weer goed zetten
+            s_selectedRectangle->setSelected(false);
+            s_selectedRectangle = nullptr;
+
+            //set edit to false
+            setShapeEdited(false);
+
+            gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_posyBox), "selected");
+            gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
+        }
+    }
+    else
+    {
+        //nothing selected
+        setShapeEdited(false);
+        gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
+        gtk_entry_set_text(GTK_ENTRY(m_posyBox), "selected");
+        gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
+        gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
+    }
+
+}
+
+void Application::setShapeEdited(bool _val)
+{
+    m_isEdited = _val;
 }
