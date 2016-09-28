@@ -19,6 +19,7 @@
 #include "GTK/GTKWindow.h"
 
 //prototypes
+class Rectangle;
 class OpenGLRenderManager;
 
 //Args struct
@@ -44,6 +45,7 @@ private:
     bool initGLFW();
     bool initGLEW();
     void initGTK();
+    void processMouseAndShapes();
 public:
     void initialize();
     void run();
@@ -52,13 +54,16 @@ public:
     inline Args getStartupArgs();
 
     glm::vec2 getPaintWindowCursorPos() const;
-
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
     GTKWindow* m_toolWindow;
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
+
+    Rectangle* m_selectedLastFrame = nullptr;
+    int m_xOffset = 0, m_yOffset = 0;
+
 private:
     friend class OpenGLRenderManager;
 };

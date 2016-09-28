@@ -11,15 +11,25 @@ void OpenGLRenderManager::render()
     //Clear color state setten
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz, deze gebruik ik niet in deze applicatie)
+    //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
+    // deze gebruik ik niet in deze applicatie)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(m_defaultShaderProgram);
 
     for(size_t i = 0; i < m_rectangles.size(); ++i)
     {
-        GLint location = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(m_rectangles[i].getMatrix()));
+        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
+        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgram, "isSelected");
+
+        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgram, "width");
+        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgram, "height");
+
+        glUniform1i(isSelLocation, m_rectangles[i].getSelected());
+        glUniform1i(widthLocation, static_cast<GLint>(m_rectangles[i].getSize().x));
+        glUniform1i(heightLocation, static_cast<GLint>(m_rectangles[i].getSize().y));
+
+        glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(m_rectangles[i].getMatrix()));
         m_rectangles[i].getDrawObject().draw();
     }
 
@@ -34,6 +44,7 @@ OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app
     createDefaultShaderProgram();
 
     addRectangle(300,300,300,300);
+    addRectangle(100,100,100,100);
 
 }
 
@@ -131,18 +142,85 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
 
 void OpenGLRenderManager::addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices)
 {
+    //Vooraf space reserven. Hoeft in principe niet, maar scheelt mogelijk tijd in emplace_back.
     size_t size = m_objects.capacity();
-    size += 2;
+    size += 1;
     m_objects.reserve(size);
     m_objects.emplace_back(_verts, _indices);
 }
 
 void OpenGLRenderManager::addRectangle(int _posx, int _posy, int _width, int _height)
 {
-    //m_rectangles.push_back(Rectangle(*this,_posx, _posy, _width, _height));
-    //space reserven
+    //Vooraf space reserven. Hoeft in principe niet, maar scheelt mogelijk tijd in emplace_back.
     size_t size = m_rectangles.capacity();
-    size += 2;
+    size += 1;
     m_rectangles.reserve(size);
     m_rectangles.emplace_back(*this, _posx, _posy, _width, _height);
+}
+
+Rectangle* OpenGLRenderManager::getSelectedRectangle() {
+    int posx, posy;
+    glm::vec2 pos = m_application.getPaintWindowCursorPos();
+    posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
+
+    for(size_t i = 0; i < m_rectangles.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_rectangles[i].getPosition().x - (m_rectangles[i].getSize().x / 2));
+        xright = static_cast<int>(m_rectangles[i].getPosition().x + (m_rectangles[i].getSize().x / 2));
+        ytop = static_cast<int>(m_rectangles[i].getPosition().y - (m_rectangles[i].getSize().y / 2));
+        ybottom = static_cast<int>(m_rectangles[i].getPosition().y + (m_rectangles[i].getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+            return &m_rectangles[i];
+
+    }
+    return nullptr;
+}
+
+glm::vec2 OpenGLRenderManager::getMouseOffsetInRectangle(Rectangle& _rect,int _mousex, int _mousey) {
+    int middleX, middleY;
+    middleX = static_cast<int>(_rect.getPosition().x);
+    middleY = static_cast<int>(_rect.getPosition().y);
+
+    glm::vec2 result;
+
+    if (middleX > _mousex)
+        result.x = abs(middleX - _mousex);
+    else
+        result.x = -abs(middleX - _mousex);
+
+    if(middleY > _mousey)
+        result.y = abs(middleY - _mousey);
+    else
+        result.y = - abs(middleY - _mousey);
+    return result;
+}
+
+Rectangle *OpenGLRenderManager::getSelectedRectanglePriority(Rectangle *_rect) {
+    int posx, posy;
+    glm::vec2 pos = m_application.getPaintWindowCursorPos();
+    posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
+
+    int indexSecond = -1;
+
+    for(size_t i = 0; i < m_rectangles.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_rectangles[i].getPosition().x - (m_rectangles[i].getSize().x / 2));
+        xright = static_cast<int>(m_rectangles[i].getPosition().x + (m_rectangles[i].getSize().x / 2));
+        ytop = static_cast<int>(m_rectangles[i].getPosition().y - (m_rectangles[i].getSize().y / 2));
+        ybottom = static_cast<int>(m_rectangles[i].getPosition().y + (m_rectangles[i].getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+        {
+            if(&m_rectangles[i] == _rect)
+                return &m_rectangles[i];
+            else
+                indexSecond = static_cast<int>(i);
+        }
+    }
+    if(indexSecond != -1)
+        return &m_rectangles[indexSecond];
+    return nullptr;
 }

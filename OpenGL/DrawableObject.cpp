@@ -4,7 +4,8 @@
 
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(vector<GLfloat> _vertices, vector<GLint> _indices) : m_vertices(_vertices), m_indices(_indices)
+DrawableObject::DrawableObject(vector<GLfloat> _vertices, vector<GLint> _indices)
+        : m_vertices(_vertices), m_indices(_indices)
 {
     resetObject();
 }
@@ -52,15 +53,18 @@ void DrawableObject::resetObject()
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLint), &m_indices[0], GL_STATIC_DRAW);
 
         //vertex attributes instellen
-        glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-
-        //Geen extra vertex data
+        glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+        //positie is index 0 instellen
         glEnableVertexAttribArray(0);
+
+        //texcoord attributes instellen
+        glVertexAttribPointer(1,2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+        //positie is index 0 instellen
+        glEnableVertexAttribArray(1);
+
 
     //Unbinden van de VAO
     glBindVertexArray(0);
-
-
 }
 
 void DrawableObject::draw() const {

@@ -31,6 +31,15 @@ public:
     void operator=(const OpenGLRenderManager&) = delete;
     void operator=(const OpenGLRenderManager&&) = delete;
 public:
+    //Returns nullptr if no rectangle is selected!
+    Rectangle* getSelectedRectangle();
+
+    //Prioritizes the rectangle specified
+    Rectangle* getSelectedRectanglePriority(Rectangle* _rect);
+
+    glm::vec2 getMouseOffsetInRectangle(Rectangle& _rect, int _mousex, int _mousey);
+
+
     void addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices);
     void addRectangle(int _posx, int _posy, int _width, int _height);
     void render();
