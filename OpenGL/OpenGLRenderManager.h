@@ -21,7 +21,8 @@ using namespace std;
 class OpenGLRenderManager {
 private:
     Application& m_application;
-    GLuint m_defaultShaderProgram;
+    GLuint m_defaultShaderProgramRectangle;
+    GLuint m_defaultShaderProgramEllipse;
     vector<Rectangle> m_rectangles;
     vector<Ellipse> m_ellipses;
 public:
@@ -47,7 +48,6 @@ public:
     void addEllipse(int _posx, int _posy, int _width, int _height);
 
     void render();
-    void setDefaultShaderProgram();
     void createCustomShaderProgam(string _vertexShader, string _fragmentShader,GLuint& _shaderID);
     void setCustomShaderProgram(GLuint& _shaderProgam);
     void setNullShaderProgram();

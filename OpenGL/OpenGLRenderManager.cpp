@@ -15,15 +15,15 @@ void OpenGLRenderManager::render()
     // deze gebruik ik niet in deze applicatie)
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_defaultShaderProgram);
 
     for(size_t i = 0; i < m_rectangles.size(); ++i)
     {
-        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
-        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgram, "isSelected");
+        setCustomShaderProgram(m_defaultShaderProgramRectangle);
+        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgramRectangle, "transformMatrix");
+        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgramRectangle, "isSelected");
 
-        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgram, "width");
-        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgram, "height");
+        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgramRectangle, "width");
+        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgramRectangle, "height");
 
         glUniform1i(isSelLocation, m_rectangles[i].getSelected());
         glUniform1i(widthLocation, static_cast<GLint>(m_rectangles[i].getSize().x));
@@ -35,11 +35,12 @@ void OpenGLRenderManager::render()
 
     for(size_t i = 0; i < m_ellipses.size(); ++i)
     {
-        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
-        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgram, "isSelected");
+        setCustomShaderProgram(m_defaultShaderProgramEllipse);
+        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgramEllipse, "transformMatrix");
+        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgramEllipse, "isSelected");
 
-        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgram, "width");
-        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgram, "height");
+        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgramEllipse, "width");
+        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgramEllipse, "height");
 
         glUniform1i(isSelLocation, m_ellipses[i].getSelected());
         glUniform1i(widthLocation, static_cast<GLint>(m_ellipses[i].getSize().x));
@@ -49,7 +50,7 @@ void OpenGLRenderManager::render()
         m_ellipses[i].getDrawObject().draw();
     }
 
-    glUseProgram(0);
+    setNullShaderProgram();
 
     //Buffer swappen om te laten zien
     glfwSwapBuffers(m_application.m_paintWindow);
@@ -62,22 +63,19 @@ OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app
 
 void OpenGLRenderManager::createDefaultShaderProgram()
 {
-    createCustomShaderProgam(string("vertex.glsl"),string("fragment.glsl"), m_defaultShaderProgram);
+    createCustomShaderProgam(string("vertex_ellipse.glsl"),string("fragment_ellipse.glsl"), m_defaultShaderProgramEllipse);
+    createCustomShaderProgam(string("vertex_rectangle.glsl"), string("fragment_rectangle.glsl"), m_defaultShaderProgramRectangle);
+}
+
+void OpenGLRenderManager::setCustomShaderProgram(GLuint& _shaderProgam)
+{
+    glUseProgram(_shaderProgam);
 }
 
 void OpenGLRenderManager::setNullShaderProgram()
 {
-    glUseProgram(0);
-}
-
-void OpenGLRenderManager::setDefaultShaderProgram()
-{
-    glUseProgram(m_defaultShaderProgram);
-}
-
-void OpenGLRenderManager::setCustomShaderProgram(GLuint &_shaderProgam)
-{
-    glUseProgram(_shaderProgam);
+    GLuint t = 0;
+    setCustomShaderProgram(t);
 }
 
 void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID)

@@ -43,7 +43,7 @@ void addRect(GtkWidget *widget, gpointer data)
 
 void addEllips(GtkWidget *widget, gpointer data)
 {
-    Application::getInstance().getGLManager().addEllipse(100,100,100,100);
+    Application::getInstance().getGLManager().addEllipse(100,100,200,100);
 }
 
 void deleteShape(GtkWidget* widget, gpointer data)
