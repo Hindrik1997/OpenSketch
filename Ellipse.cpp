@@ -1,6 +1,8 @@
 //
-// Created by Hindrik Stegenga on 27-9-16.
+// Created by Hindrik Stegenga on 29-9-16.
 //
+
+#include "Ellipse.h"
 
 #include <algorithm>
 #include "Rectangle.h"
@@ -13,7 +15,7 @@ static float map(float _value, float _from1, float _to1, float _from2, float _to
     return _from2 + (_value - _from1) * (_to2 - _from2) / (_to1 - _from1);
 }
 
-Rectangle::Rectangle(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height)
+Ellipse::Ellipse(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height)
         : m_oglRenderer(_oglRenderer), m_drawable(vector<GLfloat>{
                 //  position              uv
                 0.5f,  0.5f, 0.0f,     1.0f, 1.0f,
@@ -30,10 +32,10 @@ Rectangle::Rectangle(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int
     setPosition(_posx, _posy);
 }
 
-Rectangle::~Rectangle() {
+Ellipse::~Ellipse() {
 }
 
-void Rectangle::setPosition(int _pixelsX, int _pixelsY)
+void Ellipse::setPosition(int _pixelsX, int _pixelsY)
 {
     int window_width, window_height;
     Application::getInstance().getPaintWindowSize(window_width, window_height);
@@ -54,7 +56,7 @@ void Rectangle::setPosition(int _pixelsX, int _pixelsY)
     m_position = glm::vec2(_pixelsX, _pixelsY);
 }
 
-void Rectangle::setSize(int _width, int _height)
+void Ellipse::setSize(int _width, int _height)
 {
     int window_width, window_height;
     Application::getInstance().getPaintWindowSize(window_width, window_height);
@@ -79,7 +81,7 @@ void Rectangle::setSize(int _width, int _height)
     m_size = glm::vec2(_width, _height);
 }
 
-const DrawableObject& Rectangle::getDrawObject() const
+const DrawableObject& Ellipse::getDrawObject() const
 {
     return m_drawable;
 }

@@ -30,9 +30,6 @@ public:
     //we expliciet op default!
     DrawableObject(DrawableObject&&) = default;
     DrawableObject& operator=(DrawableObject&&) = default;
-private:
-
-
 public:
     void resetObject();
     void resetObject(vector<GLfloat> _vertices, vector<GLint> _indices);

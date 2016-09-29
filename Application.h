@@ -19,7 +19,6 @@
 #include "GTK/GTKWindow.h"
 
 //prototypes
-class Rectangle;
 class OpenGLRenderManager;
 
 //Args struct
@@ -64,7 +63,9 @@ public:
     inline Args getStartupArgs();
     void setEditMode(EditMode _mode);
     void setShapeEdited(bool _val);
+    void setShapeDeleted(bool _val);
     glm::vec2 getPaintWindowCursorPos() const;
+    OpenGLRenderManager& getGLManager();
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
@@ -73,6 +74,7 @@ private:
     Args m_startupArgs;
     EditMode m_editMode = EditMode::Null_mode;
     bool m_isEdited = false;
+    bool m_isDeleted = false;
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;
@@ -80,6 +82,8 @@ private:
     GtkWidget* m_null_mode_button;
     GtkWidget* m_select_and_m_move_button;
     GtkWidget* m_select_and_edit;
+    GtkWidget* m_new_rectangle;
+    GtkWidget* m_new_ellips;
     GtkWidget* m_acceptBttn;
     GtkWidget* m_infoBox;
     GtkWidget* m_leftColumn;
@@ -92,6 +96,7 @@ private:
     GtkWidget* m_labelposy;
     GtkWidget* m_labelsizex;
     GtkWidget* m_labelsizey;
+    GtkWidget* m_delete_shape;
 private:
     friend class OpenGLRenderManager;
 };

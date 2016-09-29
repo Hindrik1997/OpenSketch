@@ -19,4 +19,10 @@ void selectedit(GtkWidget* widget, gpointer data);
 
 void setEdited(GtkWidget* widget, gpointer data);
 
+void addRect(GtkWidget* widget, gpointer data);
+
+void addEllips(GtkWidget* widget, gpointer data);
+
+void deleteShape(GtkWidget* widget, gpointer data);
+
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

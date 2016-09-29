@@ -10,6 +10,7 @@
 #include <ostream>
 #include <fstream>
 #include <streambuf>
+#include "../Ellipse.h"
 #include "../Rectangle.h"
 #include "DrawableObject.h"
 #include "../includeLibs.h"
@@ -21,8 +22,8 @@ class OpenGLRenderManager {
 private:
     Application& m_application;
     GLuint m_defaultShaderProgram;
-    vector<DrawableObject> m_objects;
     vector<Rectangle> m_rectangles;
+    vector<Ellipse> m_ellipses;
 public:
     OpenGLRenderManager(Application& _app);
 
@@ -31,24 +32,27 @@ public:
     void operator=(const OpenGLRenderManager&) = delete;
     void operator=(const OpenGLRenderManager&&) = delete;
 public:
-    //Returns nullptr if no rectangle is selected!
+    //Returns nullptr if no rectangle/ellipse is selected!
     Rectangle* getSelectedRectangle();
+    Ellipse* getSelectedEllipse();
 
-    //Prioritizes the rectangle specified
+    //Prioritizes the rectangle/ellipse specified
     Rectangle* getSelectedRectanglePriority(Rectangle* _rect);
+    Ellipse* getSelectedEllipsePriority(Ellipse* _ellipse);
 
     glm::vec2 getMouseOffsetInRectangle(Rectangle& _rect, int _mousex, int _mousey);
+    glm::vec2 getMouseOffsetInEllipse(Ellipse& _ellipse, int _mousex, int _mousey);
 
-
-    void addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices);
     void addRectangle(int _posx, int _posy, int _width, int _height);
+    void addEllipse(int _posx, int _posy, int _width, int _height);
+
     void render();
     void setDefaultShaderProgram();
     void createCustomShaderProgam(string _vertexShader, string _fragmentShader,GLuint& _shaderID);
     void setCustomShaderProgram(GLuint& _shaderProgam);
     void setNullShaderProgram();
     inline const vector<Rectangle>& getRectangles() const;
-    inline const vector<DrawableObject>& getDrawables() const;
+    inline const vector<Ellipse>& getEllipses() const;
 private:
     void createDefaultShaderProgram();
 
@@ -59,9 +63,9 @@ inline const vector<Rectangle>& OpenGLRenderManager::getRectangles() const
     return m_rectangles;
 }
 
-inline const vector<DrawableObject>& OpenGLRenderManager::getDrawables() const
+inline const vector<Ellipse>& OpenGLRenderManager::getEllipses() const
 {
-    return m_objects;
+    return m_ellipses;
 }
 
 

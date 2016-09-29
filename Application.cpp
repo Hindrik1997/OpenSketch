@@ -2,11 +2,14 @@
 // Created by Hindrik Stegenga on 24-9-16.
 //
 
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
 #include "GTK/gtkCallbacks.h"
+#include "Rectangle.h"
+#include "Ellipse.h"
 
 using std::string;
 using std::cout;
@@ -162,13 +165,20 @@ void Application::initToolWindow()
     m_select_and_m_move_button = gtk_button_new_with_label("Select and move");
     m_select_and_edit = gtk_button_new_with_label("Select and modify");
 
+    m_new_rectangle = gtk_button_new_with_label("New rectangle");
+    m_new_ellips = gtk_button_new_with_label("New ellips");
+
     gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_m_move_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_edit);
 
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_new_rectangle);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_new_ellips);
+
     //BOTTOMBOX
 
     m_acceptBttn = gtk_button_new_with_label("Accept");
+    m_delete_shape = gtk_button_new_with_label("Delete shape");
 
     m_infoBox = gtk_hbox_new(0,0);
 
@@ -206,6 +216,7 @@ void Application::initToolWindow()
 
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_delete_shape);
     gtk_container_add(GTK_CONTAINER(m_box), m_topBox);
     gtk_container_add(GTK_CONTAINER(m_box), m_bottomBox);
 
@@ -225,7 +236,7 @@ void Application::initToolWindow()
     gtk_widget_show(m_rightColumn);
 
     gtk_widget_show(m_acceptBttn);
-
+    gtk_widget_show(m_delete_shape);
 
     gtk_widget_show(m_infoBox);
 
@@ -234,6 +245,8 @@ void Application::initToolWindow()
     gtk_widget_show(m_select_and_m_move_button);
     gtk_widget_show(m_select_and_edit);
     gtk_widget_show(m_null_mode_button);
+    gtk_widget_show(m_new_rectangle);
+    gtk_widget_show(m_new_ellips);
     gtk_widget_show(m_box);
 
     //select mode button signal connecten
@@ -250,6 +263,16 @@ void Application::initToolWindow()
 
     //accept button
     g_signal_connect(m_acceptBttn,"clicked", G_CALLBACK(setEdited), NULL);
+
+    //add rectangle
+    g_signal_connect(m_new_rectangle, "clicked", G_CALLBACK(addRect), NULL);
+
+    //add ellips
+    g_signal_connect(m_new_ellips, "clicked", G_CALLBACK(addEllips), NULL);
+
+    //delete button
+    g_signal_connect(m_delete_shape, "clicked", G_CALLBACK(deleteShape), NULL);
+
 }
 void Application::selectMove()
 {
@@ -339,7 +362,6 @@ void Application::selectEdit()
     if(v.y > h)
         v.y = h;
 
-
     static Rectangle* s_selectedRectangle = nullptr;
 
     Rectangle* currentSelected = m_renderManager->getSelectedRectangle();
@@ -407,6 +429,29 @@ void Application::selectEdit()
             gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
         }
+
+        if(m_isDeleted)
+        {
+            s_selectedRectangle->setSelected(false);
+            vector<Rectangle>& vec = const_cast<vector<Rectangle>&>(m_renderManager->getRectangles());
+            for( size_t i = 0; i < vec.size(); ++i)
+            {
+                if(&vec[i] == s_selectedRectangle)
+                {
+                    vec.erase(vec.begin() + i);
+                    break;
+                }
+            }
+
+            s_selectedRectangle = nullptr;
+            setShapeEdited(false);
+            setShapeDeleted(false);
+
+            gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_posyBox), "selected");
+            gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
+        }
     }
     else
     {
@@ -423,4 +468,12 @@ void Application::selectEdit()
 void Application::setShapeEdited(bool _val)
 {
     m_isEdited = _val;
+}
+
+OpenGLRenderManager& Application::getGLManager() {
+    return *m_renderManager;
+}
+
+void Application::setShapeDeleted(bool _val) {
+    m_isDeleted = _val;
 }

@@ -33,6 +33,22 @@ void OpenGLRenderManager::render()
         m_rectangles[i].getDrawObject().draw();
     }
 
+    for(size_t i = 0; i < m_ellipses.size(); ++i)
+    {
+        GLint transformLocation = glGetUniformLocation(m_defaultShaderProgram, "transformMatrix");
+        GLint isSelLocation = glGetUniformLocation(m_defaultShaderProgram, "isSelected");
+
+        GLint widthLocation = glGetUniformLocation(m_defaultShaderProgram, "width");
+        GLint heightLocation = glGetUniformLocation(m_defaultShaderProgram, "height");
+
+        glUniform1i(isSelLocation, m_ellipses[i].getSelected());
+        glUniform1i(widthLocation, static_cast<GLint>(m_ellipses[i].getSize().x));
+        glUniform1i(heightLocation, static_cast<GLint>(m_ellipses[i].getSize().y));
+
+        glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(m_ellipses[i].getMatrix()));
+        m_ellipses[i].getDrawObject().draw();
+    }
+
     glUseProgram(0);
 
     //Buffer swappen om te laten zien
@@ -42,10 +58,6 @@ void OpenGLRenderManager::render()
 OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app)
 {
     createDefaultShaderProgram();
-
-    addRectangle(300,300,300,300);
-    addRectangle(100,100,100,100);
-
 }
 
 void OpenGLRenderManager::createDefaultShaderProgram()
@@ -140,22 +152,9 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
     //klaar!
 }
 
-void OpenGLRenderManager::addRenderObject(vector<GLfloat> _verts, vector<GLint> _indices)
-{
-    //Vooraf space reserven. Hoeft in principe niet, maar scheelt mogelijk tijd in emplace_back.
-    size_t size = m_objects.capacity();
-    size += 1;
-    m_objects.reserve(size);
-    m_objects.emplace_back(_verts, _indices);
-}
-
 void OpenGLRenderManager::addRectangle(int _posx, int _posy, int _width, int _height)
 {
-    //Vooraf space reserven. Hoeft in principe niet, maar scheelt mogelijk tijd in emplace_back.
-    size_t size = m_rectangles.capacity();
-    size += 1;
-    m_rectangles.reserve(size);
-    m_rectangles.emplace_back(*this, _posx, _posy, _width, _height);
+    m_rectangles.push_back(Rectangle(this, _posx, _posy, _width, _height));
 }
 
 Rectangle* OpenGLRenderManager::getSelectedRectangle() {
@@ -222,5 +221,78 @@ Rectangle *OpenGLRenderManager::getSelectedRectanglePriority(Rectangle *_rect) {
     }
     if(indexSecond != -1)
         return &m_rectangles[indexSecond];
+    return nullptr;
+}
+
+
+void OpenGLRenderManager::addEllipse(int _posx, int _posy, int _width, int _height)
+{
+    m_ellipses.push_back(Ellipse(this, _posx, _posy, _width, _height));
+}
+
+Ellipse* OpenGLRenderManager::getSelectedEllipse() {
+    int posx, posy;
+    glm::vec2 pos = m_application.getPaintWindowCursorPos();
+    posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
+
+    for(size_t i = 0; i < m_ellipses.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_ellipses[i].getPosition().x - (m_ellipses[i].getSize().x / 2));
+        xright = static_cast<int>(m_ellipses[i].getPosition().x + (m_ellipses[i].getSize().x / 2));
+        ytop = static_cast<int>(m_ellipses[i].getPosition().y - (m_ellipses[i].getSize().y / 2));
+        ybottom = static_cast<int>(m_ellipses[i].getPosition().y + (m_ellipses[i].getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+            return &m_ellipses[i];
+
+    }
+    return nullptr;
+}
+
+glm::vec2 OpenGLRenderManager::getMouseOffsetInEllipse(Ellipse& _ellipse,int _mousex, int _mousey) {
+    int middleX, middleY;
+    middleX = static_cast<int>(_ellipse.getPosition().x);
+    middleY = static_cast<int>(_ellipse.getPosition().y);
+
+    glm::vec2 result;
+
+    if (middleX > _mousex)
+        result.x = abs(middleX - _mousex);
+    else
+        result.x = -abs(middleX - _mousex);
+
+    if(middleY > _mousey)
+        result.y = abs(middleY - _mousey);
+    else
+        result.y = - abs(middleY - _mousey);
+    return result;
+}
+
+Ellipse *OpenGLRenderManager::getSelectedEllipsePriority(Ellipse* _ellipse) {
+    int posx, posy;
+    glm::vec2 pos = m_application.getPaintWindowCursorPos();
+    posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
+
+    int indexSecond = -1;
+
+    for(size_t i = 0; i < m_ellipses.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_ellipses[i].getPosition().x - (m_ellipses[i].getSize().x / 2));
+        xright = static_cast<int>(m_ellipses[i].getPosition().x + (m_ellipses[i].getSize().x / 2));
+        ytop = static_cast<int>(m_ellipses[i].getPosition().y - (m_ellipses[i].getSize().y / 2));
+        ybottom = static_cast<int>(m_ellipses[i].getPosition().y + (m_ellipses[i].getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+        {
+            if(&m_ellipses[i] == _ellipse)
+                return &m_ellipses[i];
+            else
+                indexSecond = static_cast<int>(i);
+        }
+    }
+    if(indexSecond != -1)
+        return &m_ellipses[indexSecond];
     return nullptr;
 }
