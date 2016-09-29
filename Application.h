@@ -35,6 +35,18 @@ enum class EditMode : char
     Select_and_edit
 };
 
+enum class shapeType : char
+{
+    NullType,
+    EllipseType,
+    RectangleType,
+};
+
+struct shapeInfo {
+    void* m_shapePointer = nullptr;
+    shapeType m_shapeT;
+};
+
 class Application {
 public:
     static Application& getInstance();
@@ -75,6 +87,7 @@ private:
     EditMode m_editMode = EditMode::Null_mode;
     bool m_isEdited = false;
     bool m_isDeleted = false;
+    shapeInfo m_selectedShape { nullptr, shapeType::NullType};
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;

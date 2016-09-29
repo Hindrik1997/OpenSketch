@@ -23,12 +23,9 @@ void main()
         discard;
     }
 
-
-    if(isSelected && (texcoord.y <= bordery || texcoord.y >= 1 - bordery || texcoord.x <= borderx || texcoord.x >= 1 - borderx))
+    if(isSelected &&  length > 0.45)
     {
         color = vec4(0.48f, 0.66f, 0.93f, 1.0f);
         return;
     }
-
-
 }
