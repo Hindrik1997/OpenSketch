@@ -4,8 +4,8 @@
 
 #include <algorithm>
 #include "Rectangle.h"
-#include "OpenGL/OpenGLRenderManager.h"
-#include "Application.h"
+#include "../OpenGL/OpenGLRenderManager.h"
+#include "../Application.h"
 
 //mappen van range x-y naar w-z
 static float map(float _value, float _from1, float _to1, float _from2, float _to2)

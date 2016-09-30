@@ -8,8 +8,8 @@
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
 #include "GTK/gtkCallbacks.h"
-#include "Rectangle.h"
-#include "Ellipse.h"
+#include "Shapes/Rectangle.h"
+#include "Shapes/Ellipse.h"
 
 using std::string;
 using std::cout;

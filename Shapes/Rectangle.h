@@ -5,7 +5,7 @@
 #ifndef OPEN_SKETCH_RECTANGLE_H
 #define OPEN_SKETCH_RECTANGLE_H
 
-#include "OpenGL/DrawableObject.h"
+#include "../OpenGL/DrawableObject.h"
 
 class OpenGLRenderManager;
 

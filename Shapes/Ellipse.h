@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_ELLIPSE_H
 
 
-#include "OpenGL/DrawableObject.h"
+#include "../OpenGL/DrawableObject.h"
 
 class OpenGLRenderManager;
 

@@ -10,8 +10,8 @@
 #include <ostream>
 #include <fstream>
 #include <streambuf>
-#include "../Ellipse.h"
-#include "../Rectangle.h"
+#include "../Shapes/Ellipse.h"
+#include "../Shapes/Rectangle.h"
 #include "DrawableObject.h"
 #include "../includeLibs.h"
 #include "../Application.h"
