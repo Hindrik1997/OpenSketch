@@ -147,7 +147,7 @@ void EditShapeState::doAction(Application *_context)
             gtk_entry_set_text(GTK_ENTRY(_context->getM_sizeyBox()), "selected");
         }
 
-        if(_context->isM_isEdited())
+        if(_context->isM_isDeleted())
         {
 
             if(_context->getM_selectedShape().m_shapeT == shapeType::RectangleType){
