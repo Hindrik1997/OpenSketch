@@ -9,7 +9,7 @@ uniform bool isSelected;
 
 void main()
 {
-    color = vec4(0.5f, 0.0f, 0.0f, 1.0f);
+    color = vec4(0.0f, 1.0f, 0.05f, 1.0f);
 
     //10 pixel border
     float bordery = 1.0f / width * 10;
