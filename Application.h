@@ -13,39 +13,18 @@
  * zodat ze niet gecalled kunnen worden.
  */
 
+#include "SupportClasses.h"
 #include <iostream>
 #include "includeLibs.h"
 #include "GTK/GTKManager.h"
 #include "GTK/GTKWindow.h"
+#include "States/State.h"
+
 
 //prototypes
 class OpenGLRenderManager;
 
-//Args struct
-struct Args
-{
-    int m_argc = 0;
-    char** m_argv = nullptr;
-};
 
-enum class EditMode : char
-{
-    Null_mode,
-    Select_and_move,
-    Select_and_edit
-};
-
-enum class shapeType : char
-{
-    NullType,
-    EllipseType,
-    RectangleType,
-};
-
-struct shapeInfo {
-    void* m_shapePointer = nullptr;
-    shapeType m_shapeT;
-};
 
 class Application {
 public:
@@ -64,16 +43,19 @@ private:
     bool initGLEW();
     void initGTK();
     void processMouseAndShapes();
-    void selectMove();
     void initToolWindow();
-    void selectEdit();
 public:
+    //State pattern stuff
+    void setState(State* _state);
+    State* getState();
+    void resetState();
+
+    //Init functions
     void initialize();
     void run();
     void getPaintWindowSize(int& _width, int& _height);
     inline void setStartupArgs(Args _args);
     inline Args getStartupArgs();
-    void setEditMode(EditMode _mode);
     void setShapeEdited(bool _val);
     void setShapeDeleted(bool _val);
     glm::vec2 getPaintWindowCursorPos() const;
@@ -84,7 +66,36 @@ private:
     GTKWindow* m_toolWindow;
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
-    EditMode m_editMode = EditMode::Null_mode;
+
+    //State stuf
+    State* m_state = nullptr;
+public:
+    GLFWwindow *getM_paintWindow() const;
+    bool isM_isEdited() const;
+    bool isM_isDeleted() const;
+    shapeInfo &getM_selectedShape();
+    GtkWidget *getM_posxBox() const;
+    GtkWidget *getM_posyBox() const;
+    GtkWidget *getM_sizexBox() const;
+    GtkWidget *getM_sizeyBox() const;
+    GtkWidget *getM_labelposx() const;
+    GtkWidget *getM_labelposy() const;
+    GtkWidget *getM_labelsizex() const;
+    GtkWidget *getM_labelsizey() const;
+    GtkWidget *getM_delete_shape() const;
+    GtkWidget *getM_box() const;
+    GtkWidget *getM_topBox() const;
+    GtkWidget *getM_bottomBox() const;
+    GtkWidget *getM_null_mode_button() const;
+    GtkWidget *getM_select_and_m_move_button() const;
+    GtkWidget *getM_select_and_edit() const;
+    GtkWidget *getM_new_rectangle() const;
+    GtkWidget *getM_new_ellips() const;
+    GtkWidget *getM_acceptBttn() const;
+    GtkWidget *getM_infoBox() const;
+    GtkWidget *getM_leftColumn() const;
+    GtkWidget *getM_rightColumn() const;
+private:
     bool m_isEdited = false;
     bool m_isDeleted = false;
     shapeInfo m_selectedShape { nullptr, shapeType::NullType};

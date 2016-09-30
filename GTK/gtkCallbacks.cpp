@@ -2,9 +2,17 @@
 // Created by Hindrik Stegenga on 24-9-16.
 //
 
+#include "../States/NullState.h"
+#include "../States/MoveShapeState.h"
+#include "../States/EditShapeState.h"
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "gtkCallbacks.h"
 #include "../Application.h"
+
+static NullState nullState;
+static MoveShapeState moveState;
+static EditShapeState editState;
+
 
 void clicked(GtkWidget *widget, gpointer data) {
     //er is geklikt
@@ -18,17 +26,17 @@ void suppress(GtkWidget *widget, gpointer data)
 
 void selectmove(GtkWidget* widget, gpointer data)
 {
-    Application::getInstance().setEditMode(EditMode::Select_and_move);
+    Application::getInstance().setState(&moveState);
 }
 
 void noeditmode(GtkWidget *widget, gpointer data)
 {
-    Application::getInstance().setEditMode(EditMode::Null_mode);
+    Application::getInstance().setState(&nullState);
 }
 
 void selectedit(GtkWidget *widget, gpointer data)
 {
-    Application::getInstance().setEditMode(EditMode::Select_and_edit);
+    Application::getInstance().setState(&editState);
 }
 
 void setEdited(GtkWidget *widget, gpointer data)
