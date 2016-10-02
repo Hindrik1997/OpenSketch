@@ -33,7 +33,7 @@ endif (GTK2_FOUND)
 
 link_libraries(libGLEW.a glfw3.a GL GLU X11 Xxf86vm dl Xinerama Xcursor pthread Xi Xrandr)
 
-set(SOURCE_FILES main.cpp main.cpp GLFW/GLFWfunctions.cpp GLFW/GLFWfunctions.h Application.cpp Application.h GTK/gtkCallbacks.cpp GTK/gtkCallbacks.h includeLibs.h GTK/GTKManager.cpp GTK/GTKManager.h GTK/GTKWindow.cpp GTK/GTKWindow.h OpenGL/OpenGLRenderManager.cpp OpenGL/OpenGLRenderManager.h OpenGL/DrawableObject.cpp OpenGL/DrawableObject.h Shapes/Rectangle.cpp Shapes/Rectangle.h Shapes/Ellipse.cpp Shapes/Ellipse.h States/State.h SupportClasses.h States/EditShapeState.cpp States/EditShapeState.h States/MoveShapeState.cpp States/MoveShapeState.h States/NullState.cpp States/NullState.h)
+set(SOURCE_FILES main.cpp main.cpp GLFW/GLFWfunctions.cpp GLFW/GLFWfunctions.h Application.cpp Application.h GTK/gtkCallbacks.cpp GTK/gtkCallbacks.h includeLibs.h GTK/GTKManager.cpp GTK/GTKManager.h GTK/GTKWindow.cpp GTK/GTKWindow.h OpenGL/OpenGLRenderManager.cpp OpenGL/OpenGLRenderManager.h OpenGL/DrawableObject.cpp OpenGL/DrawableObject.h Shapes/Rectangle.cpp Shapes/Rectangle.h Shapes/Ellipse.cpp Shapes/Ellipse.h States/State.h SupportClasses.h States/EditShapeState.cpp States/EditShapeState.h States/MoveShapeState.cpp States/MoveShapeState.h States/NullState.cpp States/NullState.h Commands/Command.cpp Commands/Command.h Commands/CommandContext.cpp Commands/CommandContext.h)
 add_executable(open_sketch ${SOURCE_FILES})
 
 add_custom_command(TARGET open_sketch PRE_BUILD
