@@ -13,12 +13,19 @@
  * zodat ze niet gecalled kunnen worden.
  */
 
+/*
+ * CRTP PATTERN
+ * Door de derived classes zichzelf als template parameter mee te geven kan ik de commands toegang geven tot
+ * members van de derived classes op een mooie manier.
+ */
+
 #include "SupportClasses.h"
 #include <iostream>
 #include "includeLibs.h"
 #include "GTK/GTKManager.h"
 #include "GTK/GTKWindow.h"
 #include "States/State.h"
+#include "Commands/CommandContext.h"
 
 
 //prototypes
@@ -26,7 +33,7 @@ class OpenGLRenderManager;
 
 
 
-class Application {
+class Application : public CommandContext<Application> {
 public:
     static Application& getInstance();
 private:
@@ -121,6 +128,8 @@ private:
     GtkWidget* m_labelsizex;
     GtkWidget* m_labelsizey;
     GtkWidget* m_delete_shape;
+    GtkWidget* m_undo_button;
+    GtkWidget* m_redo_button;
 private:
     friend class OpenGLRenderManager;
 };

@@ -25,4 +25,8 @@ void addEllips(GtkWidget* widget, gpointer data);
 
 void deleteShape(GtkWidget* widget, gpointer data);
 
+void redoCommand(GtkWidget* widget, gpointer data);
+
+void undoCommand(GtkWidget* widget, gpointer data);
+
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

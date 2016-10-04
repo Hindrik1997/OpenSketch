@@ -10,6 +10,7 @@
 #include "GTK/gtkCallbacks.h"
 #include "Shapes/Rectangle.h"
 #include "Shapes/Ellipse.h"
+#include "Commands/AddRectangleCommand.h"
 
 using std::string;
 using std::cout;
@@ -60,6 +61,8 @@ void Application::initGTK() {
 void Application::initialize() {
     bool status = true;
 
+    execute(new AddRectangleCommand());
+
     //GLFW initten
     status = initGLFW();
     if(!status)
@@ -89,7 +92,7 @@ void Application::initialize() {
     glViewport(0, 0, width, height);
 
     //Tools window maken
-    m_toolWindow = &m_gtkManager->createWindow(300, 400, "Tools");
+    m_toolWindow = &m_gtkManager->createWindow(300, 600, "Tools");
     m_toolWindow->present();
 
     //Doet alle toolwindow stuff
@@ -151,12 +154,18 @@ void Application::initToolWindow()
     m_new_rectangle = gtk_button_new_with_label("New rectangle");
     m_new_ellips = gtk_button_new_with_label("New ellips");
 
+    m_undo_button = gtk_button_new_with_label("undo");
+    m_redo_button = gtk_button_new_with_label("Redo");
+
     gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_m_move_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_edit);
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_new_rectangle);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_new_ellips);
+
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_undo_button);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_redo_button);
 
     //BOTTOMBOX
 
@@ -230,6 +239,8 @@ void Application::initToolWindow()
     gtk_widget_show(m_null_mode_button);
     gtk_widget_show(m_new_rectangle);
     gtk_widget_show(m_new_ellips);
+    gtk_widget_show(m_undo_button);
+    gtk_widget_show(m_redo_button);
     gtk_widget_show(m_box);
 
     //select mode button signal connecten
@@ -255,6 +266,12 @@ void Application::initToolWindow()
 
     //delete button
     g_signal_connect(m_delete_shape, "clicked", G_CALLBACK(deleteShape), NULL);
+
+    //undo button
+    g_signal_connect(m_undo_button, "clicked", G_CALLBACK(undoCommand), NULL);
+
+    //redo button
+    g_signal_connect(m_redo_button, "clicked", G_CALLBACK(redoCommand), NULL);
 
 }
 

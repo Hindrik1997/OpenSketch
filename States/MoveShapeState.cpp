@@ -64,13 +64,13 @@ void MoveShapeState::doAction(Application *_context)
     }
     else
     {
-        selected.m_shapePointer = _context->getGLManager().getSelectedRectangle();
-        selected.m_shapeT = shapeType::RectangleType;
+        selected.m_shapePointer = _context->getGLManager().getSelectedEllipse();
+        selected.m_shapeT = shapeType::EllipseType;
         if(selected.m_shapePointer == nullptr)
         {
-            selected.m_shapePointer = _context->getGLManager().getSelectedEllipse();
+            selected.m_shapePointer = _context->getGLManager().getSelectedRectangle();
             if(selected.m_shapePointer != nullptr)
-                selected.m_shapeT = shapeType::EllipseType;
+                selected.m_shapeT = shapeType::RectangleType;
         }
     }
 

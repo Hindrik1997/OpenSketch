@@ -8,6 +8,7 @@
 
 void EditShapeState::doAction(Application *_context)
 {
+
     int w,h;
     _context->getPaintWindowSize(w,h);
     glm::vec2 v(static_cast<int>(_context->getPaintWindowCursorPos().x),
@@ -51,9 +52,9 @@ void EditShapeState::doAction(Application *_context)
         if(_context->getM_selectedShape().m_shapePointer != nullptr) {
 
             if(_context->getM_selectedShape().m_shapeT == shapeType::RectangleType)
-                static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSelected(false);
-            else
                 static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setSelected(false);
+            else
+                static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSelected(false);
         }
 
         _context->getM_selectedShape().m_shapePointer = currentSelected.m_shapePointer;

@@ -160,6 +160,8 @@ Rectangle* OpenGLRenderManager::getSelectedRectangle() {
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
 
+    Rectangle* found = nullptr;
+
     for(size_t i = 0; i < m_rectangles.size(); ++i)
     {
         int xleft, xright, ytop, ybottom;
@@ -169,10 +171,11 @@ Rectangle* OpenGLRenderManager::getSelectedRectangle() {
         ybottom = static_cast<int>(m_rectangles[i].getPosition().y + (m_rectangles[i].getSize().y / 2));
 
         if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
-            return &m_rectangles[i];
+            found = &m_rectangles[i];
 
     }
-    return nullptr;
+
+    return found;
 }
 
 glm::vec2 OpenGLRenderManager::getMouseOffsetInRectangle(Rectangle& _rect,int _mousex, int _mousey) {
@@ -233,6 +236,8 @@ Ellipse* OpenGLRenderManager::getSelectedEllipse() {
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
 
+    Ellipse* found = nullptr;
+
     for(size_t i = 0; i < m_ellipses.size(); ++i)
     {
         int xleft, xright, ytop, ybottom;
@@ -242,10 +247,10 @@ Ellipse* OpenGLRenderManager::getSelectedEllipse() {
         ybottom = static_cast<int>(m_ellipses[i].getPosition().y + (m_ellipses[i].getSize().y / 2));
 
         if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
-            return &m_ellipses[i];
+            found = &m_ellipses[i];
 
     }
-    return nullptr;
+    return found;
 }
 
 glm::vec2 OpenGLRenderManager::getMouseOffsetInEllipse(Ellipse& _ellipse,int _mousex, int _mousey) {

@@ -58,3 +58,11 @@ void deleteShape(GtkWidget* widget, gpointer data)
 {
     Application::getInstance().setShapeDeleted(true);
 }
+
+void redoCommand(GtkWidget *widget, gpointer data) {
+    Application::getInstance().redo();
+}
+
+void undoCommand(GtkWidget *widget, gpointer data) {
+    Application::getInstance().undo();
+}
