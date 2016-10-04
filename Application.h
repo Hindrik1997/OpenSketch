@@ -16,7 +16,7 @@
 /*
  * CRTP PATTERN
  * Door de derived classes zichzelf als template parameter mee te geven kan ik de commands toegang geven tot
- * members van de derived classes op een mooie manier.
+ * members van de derived classes op een mooie manier, en meteen ook type-safety te garanderen.
  */
 
 #include "SupportClasses.h"
