@@ -61,7 +61,7 @@ void Application::initGTK() {
 void Application::initialize() {
     bool status = true;
 
-    execute(new AddRectangleCommand());
+
 
     //GLFW initten
     status = initGLFW();
@@ -154,7 +154,7 @@ void Application::initToolWindow()
     m_new_rectangle = gtk_button_new_with_label("New rectangle");
     m_new_ellips = gtk_button_new_with_label("New ellips");
 
-    m_undo_button = gtk_button_new_with_label("undo");
+    m_undo_button = gtk_button_new_with_label("Undo");
     m_redo_button = gtk_button_new_with_label("Redo");
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);

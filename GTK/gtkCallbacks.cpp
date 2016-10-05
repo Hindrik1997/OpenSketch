@@ -7,6 +7,8 @@
 #include "../States/EditShapeState.h"
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "gtkCallbacks.h"
+#include "../Commands/AddRectangleCommand.h"
+#include "../Commands/AddEllipseCommand.h"
 #include "../Application.h"
 
 static NullState nullState;
@@ -46,12 +48,12 @@ void setEdited(GtkWidget *widget, gpointer data)
 
 void addRect(GtkWidget *widget, gpointer data)
 {
-    Application::getInstance().getGLManager().addRectangle(100,100,100,100);
+    Application::getInstance().execute(new AddRectangleCommand());
 }
 
 void addEllips(GtkWidget *widget, gpointer data)
 {
-    Application::getInstance().getGLManager().addEllipse(100,100,200,100);
+    Application::getInstance().execute(new AddEllipseCommand());
 }
 
 void deleteShape(GtkWidget* widget, gpointer data)

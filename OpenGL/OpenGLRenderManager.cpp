@@ -299,3 +299,13 @@ Ellipse *OpenGLRenderManager::getSelectedEllipsePriority(Ellipse* _ellipse) {
         return &m_ellipses[indexSecond];
     return nullptr;
 }
+
+void OpenGLRenderManager::removeLastRectangle()
+{
+    m_rectangles.pop_back();
+}
+
+void OpenGLRenderManager::removeLastEllipse()
+{
+    m_ellipses.pop_back();
+}

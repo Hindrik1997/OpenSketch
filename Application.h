@@ -14,9 +14,16 @@
  */
 
 /*
- * CRTP PATTERN
+ * CRTP : Curriously Recurring Template Pattern
  * Door de derived classes zichzelf als template parameter mee te geven kan ik de commands toegang geven tot
  * members van de derived classes op een mooie manier, en meteen ook type-safety te garanderen.
+ */
+
+/*
+ * COMMAND PATTERN
+ * Doormiddel van het CRTP pattern hierboven, heb ik een variant van het command pattern geimplementeerd.
+ * Er kan nu domweg gezegd worden: Application::getInstance().execute(new CommandSomething()) om een command toe te voegen.
+ * Daarnaast kan je de Application::undo() en redo() functies gebruiken om te re/undo'en.
  */
 
 #include "SupportClasses.h"

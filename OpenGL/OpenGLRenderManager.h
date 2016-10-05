@@ -47,6 +47,9 @@ public:
     void addRectangle(int _posx, int _posy, int _width, int _height);
     void addEllipse(int _posx, int _posy, int _width, int _height);
 
+    void removeLastRectangle();
+    void removeLastEllipse();
+
     void render();
     void createCustomShaderProgam(string _vertexShader, string _fragmentShader,GLuint& _shaderID);
     void setCustomShaderProgram(GLuint& _shaderProgam);

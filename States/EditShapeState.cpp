@@ -5,6 +5,8 @@
 #include "EditShapeState.h"
 #include "../Application.h"
 #include "../OpenGL/OpenGLRenderManager.h"
+#include "../Commands/RemoveRectangleCommand.h"
+#include "../Commands/RemoveEllipseCommand.h"
 
 void EditShapeState::doAction(Application *_context)
 {
@@ -158,7 +160,9 @@ void EditShapeState::doAction(Application *_context)
                 {
                     if(&vec[i] == _context->getM_selectedShape().m_shapePointer)
                     {
-                        vec.erase(vec.begin() + i);
+
+                        Rectangle& rect = *static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer);
+                        _context->execute(new RemoveRectangleCommand(i, static_cast<int>(rect.getPosition().x), static_cast<int>(rect.getPosition().y), static_cast<int>(rect.getSize().x), static_cast<int>(rect.getSize().y)));
                         break;
                     }
                 }
@@ -170,7 +174,8 @@ void EditShapeState::doAction(Application *_context)
                 {
                     if(&vec[i] == _context->getM_selectedShape().m_shapePointer)
                     {
-                        vec.erase(vec.begin() + i);
+                        Ellipse& rect = *static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer);
+                        _context->execute(new RemoveEllipseCommand(i, static_cast<int>(rect.getPosition().x), static_cast<int>(rect.getPosition().y), static_cast<int>(rect.getSize().x), static_cast<int>(rect.getSize().y)));
                         break;
                     }
                 }
