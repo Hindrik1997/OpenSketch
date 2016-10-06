@@ -7,6 +7,8 @@
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "../Commands/RemoveRectangleCommand.h"
 #include "../Commands/RemoveEllipseCommand.h"
+#include "../Commands/ChangeEllipseCommand.h"
+#include "../Commands/ChangeRectangleCommand.h"
 
 void EditShapeState::doAction(Application *_context)
 {
@@ -122,17 +124,58 @@ void EditShapeState::doAction(Application *_context)
                 return;
             }
 
-            if(_context->getM_selectedShape().m_shapeT == shapeType::RectangleType){
-                static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
-                static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
+            if(_context->getM_selectedShape().m_shapeT == shapeType::RectangleType) {
+
+                vector<Rectangle> &vec = const_cast<vector<Rectangle> &>(_context->getGLManager().getRectangles());
+                size_t index = 0;
+                for (size_t i = 0; i < vec.size(); ++i) {
+                    if (&vec[i] == _context->getM_selectedShape().m_shapePointer) {
+                        index = i;
+                    }
+                }
+
+                Rectangle& rect = *static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer);
+
+                int ox,oy, osx,osy;
+
+                ox = static_cast<int>(rect.getPosition().x);
+                oy = static_cast<int>(rect.getPosition().y);
+                osx = static_cast<int>(rect.getSize().x);
+                osy = static_cast<int>(rect.getSize().y);
+
+
+                _context->execute(new ChangeRectangleCommand(index, px - ox, py - oy, sx - osx, sy - osy));
+
+                //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
+                //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
 
                 //shape stuff weer goed zetten
                 static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSelected(false);
             }
             else
             {
-                static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
-                static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
+                vector<Ellipse> &vec = const_cast<vector<Ellipse> &>(_context->getGLManager().getEllipses());
+                size_t index = 0;
+                for (size_t i = 0; i < vec.size(); ++i) {
+                    if (&vec[i] == _context->getM_selectedShape().m_shapePointer) {
+                        index = i;
+                    }
+                }
+
+                Ellipse& rect = *static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer);
+
+                int ox,oy, osx,osy;
+
+                ox = static_cast<int>(rect.getPosition().x);
+                oy = static_cast<int>(rect.getPosition().y);
+                osx = static_cast<int>(rect.getSize().x);
+                osy = static_cast<int>(rect.getSize().y);
+
+
+                _context->execute(new ChangeEllipseCommand(index, px - ox, py - oy, sx - osx, sy - osy));
+
+                //static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
+                //static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
 
                 //shape stuff weer goed zetten
                 static_cast<Ellipse*>(_context->getM_selectedShape().m_shapePointer)->setSelected(false);

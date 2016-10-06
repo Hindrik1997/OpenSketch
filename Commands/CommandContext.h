@@ -21,9 +21,11 @@ using std::stack;
 
 /*
  * COMMAND PATTERN
- * Doormiddel van het CRTP pattern hierboven, heb ik een variant van het command pattern geimplementeerd.
+ * Doormiddel van het CRTP pattern, heb ik een variant van het command pattern geimplementeerd.
  * Er kan nu domweg gezegd worden: Application::getInstance().execute(new CommandSomething()) om een command toe te voegen.
- * Daarnaast kan je de Application::undo() en redo() functies gebruiken om te re/undo'en.
+ * Daarnaast kan je de Application::undo() en redo() functies gebruiken om te re/undo'en. (Application is een derived klasse
+ * van CommandContext). Deze commandcontext implementeert alles wat nodig is voor generieke commands van het type D.
+ * Door CRTP kan ik hiermee dus specifiek commands schrijven voor mijn Application class.
  */
 
 template<typename D>

@@ -5,6 +5,8 @@
 #include "MoveShapeState.h"
 #include "../Application.h"
 #include "../OpenGL/OpenGLRenderManager.h"
+#include "../Commands/ChangeEllipseCommand.h"
+#include "../Commands/ChangeRectangleCommand.h"
 
 
 void MoveShapeState::doAction(Application *_context)
@@ -44,7 +46,7 @@ void MoveShapeState::doAction(Application *_context)
 
 
     static shapeInfo s_selectedShapeLastFrame { nullptr, shapeType::NullType };
-    static int s_selectedxOffset = 0, s_selectedyOffset = 0;
+    static int s_selectedxOffset = 0, s_selectedyOffset = 0, s_original_x = 0, s_original_y = 0;
 
 
 
@@ -86,26 +88,35 @@ void MoveShapeState::doAction(Application *_context)
                 if(selected.m_shapeT == shapeType::RectangleType)
                 {
                     offset = _context->getGLManager().getMouseOffsetInRectangle(*static_cast<Rectangle*>(selected.m_shapePointer), static_cast<int>(v.x), static_cast<int>(v.y));
-                    static_cast<Rectangle*>(selected.m_shapePointer)->setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
+                    Rectangle& rect = *static_cast<Rectangle*>(selected.m_shapePointer);
+                    rect.setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
                     s_selectedShapeLastFrame.m_shapePointer = selected.m_shapePointer;
                     s_selectedShapeLastFrame.m_shapeT = selected.m_shapeT;
                     s_selectedxOffset = static_cast<int>(offset.x);
                     s_selectedyOffset = static_cast<int>(offset.y);
+                    s_original_x = static_cast<int>(rect.getPosition().x);
+                    s_original_y = static_cast<int>(rect.getPosition().y);
+
                     static_cast<Rectangle*>(selected.m_shapePointer)->setSelected(true);
                 } else
                 {
                     offset = _context->getGLManager().getMouseOffsetInEllipse(*static_cast<Ellipse*>(selected.m_shapePointer), static_cast<int>(v.x), static_cast<int>(v.y));
-                    static_cast<Ellipse*>(selected.m_shapePointer)->setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
+                    Ellipse& ellips = *static_cast<Ellipse*>(selected.m_shapePointer);
+                    ellips.setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
                     s_selectedShapeLastFrame.m_shapePointer = selected.m_shapePointer;
                     s_selectedShapeLastFrame.m_shapeT = selected.m_shapeT;
                     s_selectedxOffset = static_cast<int>(offset.x);
                     s_selectedyOffset = static_cast<int>(offset.y);
+                    s_original_x = static_cast<int>(ellips.getPosition().x);
+                    s_original_y = static_cast<int>(ellips.getPosition().y);
+
                     static_cast<Ellipse*>(selected.m_shapePointer)->setSelected(true);
                 }
             }
             else
             {
-                s_selectedxOffset = 0; s_selectedyOffset = 0; s_selectedShapeLastFrame.m_shapePointer = nullptr; s_selectedShapeLastFrame.m_shapeT = shapeType::NullType;
+                s_selectedxOffset = 0; s_selectedyOffset = 0; s_selectedShapeLastFrame.m_shapePointer = nullptr;
+                s_selectedShapeLastFrame.m_shapeT = shapeType::NullType; s_original_x = 0; s_original_y = 0;
             }
         }
         else
@@ -113,21 +124,75 @@ void MoveShapeState::doAction(Application *_context)
             //same shape
             if(glfwGetMouseButton(_context->getM_paintWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
             {
-                if(selected.m_shapeT == shapeType::RectangleType)
-                    static_cast<Rectangle*>(selected.m_shapePointer)->setPosition(static_cast<int>(v.x + s_selectedxOffset),static_cast<int>(v.y + s_selectedyOffset));
-                else
+                if(selected.m_shapeT == shapeType::RectangleType) {
+                    static_cast<Rectangle *>(selected.m_shapePointer)->setPosition(
+                            static_cast<int>(v.x + s_selectedxOffset), static_cast<int>(v.y + s_selectedyOffset));
+                }
+                else{
                     static_cast<Ellipse*>(selected.m_shapePointer)->setPosition(static_cast<int>(v.x + s_selectedxOffset),static_cast<int>(v.y + s_selectedyOffset));
+                }
             }
             else
             {
                 if(s_selectedShapeLastFrame.m_shapePointer != nullptr)
                 {
-                    if(s_selectedShapeLastFrame.m_shapeT == shapeType::RectangleType)
-                        static_cast<Rectangle*>(s_selectedShapeLastFrame.m_shapePointer)->setSelected(false);
-                    else
-                        static_cast<Ellipse*>(s_selectedShapeLastFrame.m_shapePointer)->setSelected(false);;
+                    //muis laat hier los
+                    if(s_selectedShapeLastFrame.m_shapeT == shapeType::RectangleType){
+
+                        size_t index = 0;
+                        for(size_t i = 0; i < _context->getGLManager().getRectangles().size(); ++i)
+                        {
+                            if(&_context->getGLManager().getRectangles()[i] == static_cast<Rectangle*>(s_selectedShapeLastFrame.m_shapePointer))
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+
+
+                        Rectangle* rect = static_cast<Rectangle*>(s_selectedShapeLastFrame.m_shapePointer);
+                        rect->setSelected(false);
+
+                        int currentx, currenty;
+                        currentx = static_cast<int>(rect->getPosition().x);
+                        currenty = static_cast<int>(rect->getPosition().y);
+
+                        int xdiff = currentx - s_original_x;
+                        int ydiff = currenty - s_original_y;
+
+                        rect->setPosition(s_original_x, s_original_y);
+
+                        _context->execute(new ChangeRectangleCommand(index, xdiff,ydiff,0,0));
+                    }
+                    else{
+                        size_t index = 0;
+                        for(size_t i = 0; i < _context->getGLManager().getEllipses().size(); ++i)
+                        {
+                            if(&_context->getGLManager().getEllipses()[i] == static_cast<Ellipse*>(s_selectedShapeLastFrame.m_shapePointer))
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+
+
+                        Ellipse* rect = static_cast<Ellipse*>(s_selectedShapeLastFrame.m_shapePointer);
+                        rect->setSelected(false);
+
+                        int currentx, currenty;
+                        currentx = static_cast<int>(rect->getPosition().x);
+                        currenty = static_cast<int>(rect->getPosition().y);
+
+                        int xdiff = currentx - s_original_x;
+                        int ydiff = currenty - s_original_y;
+
+                        rect->setPosition(s_original_x, s_original_y);
+
+                        _context->execute(new ChangeEllipseCommand(index, xdiff,ydiff,0,0));
+                    }
                 }
-                s_selectedxOffset = 0; s_selectedyOffset = 0; s_selectedShapeLastFrame.m_shapePointer = nullptr; s_selectedShapeLastFrame.m_shapeT = shapeType::NullType;
+                s_selectedxOffset = 0; s_selectedyOffset = 0; s_original_x = 0; s_original_y = 0;
+                s_selectedShapeLastFrame.m_shapePointer = nullptr; s_selectedShapeLastFrame.m_shapeT = shapeType::NullType;
             }
         }
     } else {
@@ -139,6 +204,7 @@ void MoveShapeState::doAction(Application *_context)
                 static_cast<Ellipse*>(s_selectedShapeLastFrame.m_shapePointer)->setSelected(false);
 
         }
-        s_selectedxOffset = 0; s_selectedyOffset = 0; s_selectedShapeLastFrame.m_shapePointer = nullptr; s_selectedShapeLastFrame.m_shapeT = shapeType::NullType;
+        s_selectedxOffset = 0; s_selectedyOffset = 0; s_original_x = 0; s_original_y = 0;
+        s_selectedShapeLastFrame.m_shapePointer = nullptr; s_selectedShapeLastFrame.m_shapeT = shapeType::NullType;
     }
 }
