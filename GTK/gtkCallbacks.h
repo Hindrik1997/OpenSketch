@@ -29,4 +29,8 @@ void redoCommand(GtkWidget* widget, gpointer data);
 
 void undoCommand(GtkWidget* widget, gpointer data);
 
+void loadButton(GtkWidget* widget, gpointer data);
+
+void saveButton(GtkWidget* widget, gpointer data);
+
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

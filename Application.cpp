@@ -5,12 +5,14 @@
 #include <algorithm>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
 #include "GTK/gtkCallbacks.h"
 #include "Shapes/Rectangle.h"
 #include "Shapes/Ellipse.h"
 #include "Commands/AddRectangleCommand.h"
+#include "Commands/AddEllipseCommand.h"
 
 using std::string;
 using std::cout;
@@ -169,8 +171,13 @@ void Application::initToolWindow()
 
     //BOTTOMBOX
 
+    m_file_box = gtk_vbox_new(0,0);
+
     m_acceptBttn = gtk_button_new_with_label("Accept");
     m_delete_shape = gtk_button_new_with_label("Delete shape");
+
+    m_save_button = gtk_button_new_with_label("Save");
+    m_load_button = gtk_button_new_with_label("Load");
 
     m_infoBox = gtk_hbox_new(0,0);
 
@@ -206,9 +213,13 @@ void Application::initToolWindow()
 
     //END
 
+    gtk_container_add(GTK_CONTAINER(m_file_box), m_save_button);
+    gtk_container_add(GTK_CONTAINER(m_file_box), m_load_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_delete_shape);
+
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_file_box);
     gtk_container_add(GTK_CONTAINER(m_box), m_topBox);
     gtk_container_add(GTK_CONTAINER(m_box), m_bottomBox);
 
@@ -229,6 +240,10 @@ void Application::initToolWindow()
 
     gtk_widget_show(m_acceptBttn);
     gtk_widget_show(m_delete_shape);
+    gtk_widget_show(m_load_button);
+    gtk_widget_show(m_save_button);
+
+    gtk_widget_show(m_file_box);
 
     gtk_widget_show(m_infoBox);
 
@@ -272,6 +287,14 @@ void Application::initToolWindow()
 
     //redo button
     g_signal_connect(m_redo_button, "clicked", G_CALLBACK(redoCommand), NULL);
+
+    //load button
+    g_signal_connect(m_load_button, "clicked", G_CALLBACK(loadButton), NULL);
+
+    //save button
+    g_signal_connect(m_save_button, "clicked", G_CALLBACK(saveButton), NULL);
+
+
 
 }
 
@@ -416,4 +439,130 @@ GtkWidget *Application::getM_leftColumn() const {
 
 GtkWidget *Application::getM_rightColumn() const {
     return m_rightColumn;
+}
+
+string trim(string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last-first+1));
+}
+
+void split(const std::string &s, char delim, std::vector<string> &elems) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+void Application::loadFromFile()
+{
+    const_cast<vector<Rectangle>&>(getGLManager().getRectangles()).clear();
+    const_cast<vector<Ellipse>&>(getGLManager().getEllipses()).clear();
+
+    std::vector<std::string> lines;
+
+    std::ifstream input("datafile.txt");
+    for(std::string line; getline(input, line);)
+    {
+        lines.push_back(line);
+    }
+
+    for(auto&& line : lines)
+    {
+        line = trim(line);
+    }
+
+    for(auto&& line : lines)
+    {
+        if(line.substr(0, 9) == std::string("rectangle"))
+        {
+            //add rect
+            std::string part = line.substr(9, line.size() - 9);
+            part = trim(part);
+
+            std::vector<string> vals = split(part, ' ');
+            execute(new AddRectangleCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str())));
+        }
+
+        if(line.substr(0, 7) == std::string("ellipse"))
+        {
+            //add ellips
+            std::string part = line.substr(7, line.size() - 7);
+            part = trim(part);
+
+            std::vector<string> vals = split(part, ' ');
+            execute(new AddEllipseCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str())));
+        }
+    }
+    input.close();
+
+    //history clearen
+    while ( !m_history.empty() )
+    {
+        m_history.pop();
+    }
+
+    while(!m_redoHistory.empty())
+    {
+        m_redoHistory.pop();
+    }
+
+}
+
+void Application::saveToFile()
+{
+    std::string lines("group ");
+
+    int count = static_cast<int>(getGLManager().getEllipses().size() + getGLManager().getRectangles().size());
+
+    lines.append(std::to_string(count));
+    lines.append("\n");
+
+    for(size_t i = 0; i < getGLManager().getRectangles().size(); ++i)
+    {
+        std::string line("  rectangle ");
+        const Rectangle& rect = getGLManager().getRectangles()[i];
+
+        line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getPosition().y) - static_cast<int>(rect.getSize().y / 2)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getSize().x)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getSize().y)));
+        line.append("\n");
+        lines.append(line);
+    }
+    for(size_t i = 0; i < getGLManager().getEllipses().size(); ++i)
+    {
+        std::string line("  ellipse ");
+        const Ellipse& rect = getGLManager().getEllipses()[i];
+
+        line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getPosition().y) - static_cast<int>(rect.getSize().y / 2)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getSize().x)));
+        line.append(" ");
+        line.append(std::to_string(static_cast<int>(rect.getSize().y)));
+        line.append("\n");
+        lines.append(line);
+    }
+
+
+
+    std::ofstream out("datafile2.txt");
+    out << lines;
+    out.close();
+
 }

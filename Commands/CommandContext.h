@@ -30,7 +30,7 @@ using std::stack;
 
 template<typename D>
 class CommandContext {
-private:
+protected:
     stack<unique_ptr<Command<D>>> m_history;
     stack<unique_ptr<Command<D>>> m_redoHistory;
 public:

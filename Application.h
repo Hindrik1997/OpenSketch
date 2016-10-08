@@ -64,6 +64,9 @@ public:
     State* getState();
     void resetState();
 
+    void loadFromFile();
+    void saveToFile();
+
     //Init functions
     void initialize();
     void run();
@@ -137,6 +140,10 @@ private:
     GtkWidget* m_delete_shape;
     GtkWidget* m_undo_button;
     GtkWidget* m_redo_button;
+    GtkWidget* m_file_box;
+    GtkWidget* m_load_button;
+    GtkWidget* m_save_button;
+
 private:
     friend class OpenGLRenderManager;
 };

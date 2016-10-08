@@ -39,3 +39,6 @@ add_executable(open_sketch ${SOURCE_FILES})
 add_custom_command(TARGET open_sketch PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:open_sketch>)
+add_custom_command(TARGET open_sketch PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Data $<TARGET_FILE_DIR:open_sketch>)

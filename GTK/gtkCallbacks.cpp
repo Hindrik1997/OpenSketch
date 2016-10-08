@@ -68,3 +68,11 @@ void redoCommand(GtkWidget *widget, gpointer data) {
 void undoCommand(GtkWidget *widget, gpointer data) {
     Application::getInstance().undo();
 }
+
+void loadButton(GtkWidget *widget, gpointer data) {
+    Application::getInstance().loadFromFile();
+}
+
+void saveButton(GtkWidget *widget, gpointer data) {
+    Application::getInstance().saveToFile();
+}
