@@ -12,18 +12,4 @@ struct Args
     char** m_argv = nullptr;
 };
 
-//ShapeType
-enum class shapeType : char
-{
-    NullType,
-    EllipseType,
-    RectangleType,
-};
-
-//ShapeInfo
-struct shapeInfo {
-    void* m_shapePointer = nullptr;
-    shapeType m_shapeT;
-};
-
 #endif //OPEN_SKETCH_SUPPORTCLASSES_H
