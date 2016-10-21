@@ -9,10 +9,10 @@
 #include "Application.h"
 #include "OpenGL/OpenGLRenderManager.h"
 #include "GTK/gtkCallbacks.h"
-#include "Shapes/Rectangle.h"
-#include "Shapes/Ellipse.h"
-#include "Commands/AddRectangleCommand.h"
-#include "Commands/AddEllipseCommand.h"
+#include "Shapes/Shape.h"
+#include "Commands/AddShapeCommand.h"
+#include "OpenGL/RectangleDrawer.h"
+#include "OpenGL/EllipseDrawer.h"
 
 using std::string;
 using std::cout;
@@ -39,8 +39,8 @@ Application::~Application() {
 
 bool Application::initGLFW() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     return true;
@@ -327,18 +327,12 @@ void Application::resetState() {
     gtk_entry_set_text(GTK_ENTRY(m_sizexBox), "Nothing");
     gtk_entry_set_text(GTK_ENTRY(m_sizeyBox), "selected");
 
-    if(m_selectedShape.m_shapePointer != nullptr)
+
+    if(m_selectedShape != nullptr)
     {
-        if(m_selectedShape.m_shapeT == shapeType::RectangleType)
-        {
-            static_cast<Rectangle*>(m_selectedShape.m_shapePointer)->setSelected(false);
-        } else
-        {
-            static_cast<Ellipse*>(m_selectedShape.m_shapePointer)->setSelected(false);
-        }
+        m_selectedShape->setSelected(false);
     }
-    m_selectedShape.m_shapePointer = nullptr;
-    m_selectedShape.m_shapeT = shapeType::NullType;
+    m_selectedShape = nullptr;
 }
 
 GLFWwindow *Application::getM_paintWindow() const {
@@ -353,7 +347,7 @@ bool Application::isM_isDeleted() const {
     return m_isDeleted;
 }
 
-shapeInfo &Application::getM_selectedShape() {
+Shape* &Application::getM_selectedShape() {
     return m_selectedShape;
 }
 
@@ -466,8 +460,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 void Application::loadFromFile()
 {
-    const_cast<vector<Rectangle>&>(getGLManager().getRectangles()).clear();
-    const_cast<vector<Ellipse>&>(getGLManager().getEllipses()).clear();
+    const_cast<vector<Shape>&>(getGLManager().getShapes()).clear();
 
     std::vector<std::string> lines;
 
@@ -491,7 +484,7 @@ void Application::loadFromFile()
             part = trim(part);
 
             std::vector<string> vals = split(part, ' ');
-            execute(new AddRectangleCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str())));
+            execute(new AddShapeCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str()), &RectangleDrawer::getInstance()));
         }
 
         if(line.substr(0, 7) == std::string("ellipse"))
@@ -501,7 +494,7 @@ void Application::loadFromFile()
             part = trim(part);
 
             std::vector<string> vals = split(part, ' ');
-            execute(new AddEllipseCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str())));
+            execute(new AddShapeCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str()), &EllipseDrawer::getInstance()));
         }
     }
     input.close();
@@ -523,15 +516,15 @@ void Application::saveToFile()
 {
     std::string lines("group ");
 
-    int count = static_cast<int>(getGLManager().getEllipses().size() + getGLManager().getRectangles().size());
+    int count = static_cast<int>(getGLManager().getShapes().size() + getGLManager().getShapes().size());
 
     lines.append(std::to_string(count));
     lines.append("\n");
 
-    for(size_t i = 0; i < getGLManager().getRectangles().size(); ++i)
+    for(size_t i = 0; i < getGLManager().getShapes().size(); ++i)
     {
         std::string line("  rectangle ");
-        const Rectangle& rect = getGLManager().getRectangles()[i];
+        const Shape& rect = getGLManager().getShapes()[i];
 
         line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
         line.append(" ");
@@ -543,10 +536,10 @@ void Application::saveToFile()
         line.append("\n");
         lines.append(line);
     }
-    for(size_t i = 0; i < getGLManager().getEllipses().size(); ++i)
+    for(size_t i = 0; i < getGLManager().getShapes().size(); ++i)
     {
         std::string line("  ellipse ");
-        const Ellipse& rect = getGLManager().getEllipses()[i];
+        const Shape& rect = getGLManager().getShapes()[i];
 
         line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
         line.append(" ");
@@ -558,8 +551,6 @@ void Application::saveToFile()
         line.append("\n");
         lines.append(line);
     }
-
-
 
     std::ofstream out("datafile2.txt");
     out << lines;

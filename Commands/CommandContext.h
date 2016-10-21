@@ -90,6 +90,9 @@ void CommandContext<D>::execute(Command<D>* _cmd)
     unique_ptr<Command<D>> cmd = std::unique_ptr<Command<D>>(_cmd);
     cmd->execute(static_cast<D*>(this));
     m_history.push(std::move(cmd));
+    //swappen met empty stack
+    stack<unique_ptr<Command<Application>>> t;
+    m_redoHistory.swap(t);
 }
 
 

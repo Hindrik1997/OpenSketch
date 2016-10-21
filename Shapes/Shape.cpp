@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "../Application.h"
+#include "../OpenGL/Drawer.h"
 
 //mappen van range x-y naar w-z
 static float map(float _value, float _from1, float _to1, float _from2, float _to2)
@@ -13,17 +14,8 @@ static float map(float _value, float _from1, float _to1, float _from2, float _to
     return _from2 + (_value - _from1) * (_to2 - _from2) / (_to1 - _from1);
 }
 
-Shape::Shape(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height)
-        : m_oglRenderer(_oglRenderer), m_drawable(vector<GLfloat>{
-        //  position              uv
-        0.5f,  0.5f, 0.0f,     1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f,     0.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,
-        -0.5f,  0.5f, 0.0f,    1.0f, 0.0f
-}, vector<GLint>{
-        0, 1, 3,
-        1, 2, 3
-})
+Shape::Shape(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height, Drawer* _drawer)
+        : m_oglRenderer(_oglRenderer), m_drawer(_drawer)
 {
     //Basic Shape in t midden, deze transformeer ik doormiddel van matrices naar de juiste positie en grootte
     setSize(_width, _height);
@@ -79,7 +71,7 @@ void Shape::setSize(int _width, int _height)
     m_size = glm::vec2(_width, _height);
 }
 
-const DrawableObject& Shape::getDrawObject() const
-{
-    return m_drawable;
+void Shape::draw() {
+    if(m_drawer != nullptr)
+        m_drawer->draw(*this);
 }

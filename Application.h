@@ -33,6 +33,7 @@
 #include "GTK/GTKWindow.h"
 #include "States/State.h"
 #include "Commands/CommandContext.h"
+#include "Shapes/Shape.h"
 
 
 //prototypes
@@ -90,7 +91,7 @@ public:
     GLFWwindow *getM_paintWindow() const;
     bool isM_isEdited() const;
     bool isM_isDeleted() const;
-    shapeInfo &getM_selectedShape();
+    Shape* &getM_selectedShape();
     GtkWidget *getM_posxBox() const;
     GtkWidget *getM_posyBox() const;
     GtkWidget *getM_sizexBox() const;
@@ -115,7 +116,7 @@ public:
 private:
     bool m_isEdited = false;
     bool m_isDeleted = false;
-    shapeInfo m_selectedShape { nullptr, shapeType::NullType};
+    Shape* m_selectedShape = nullptr;
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;

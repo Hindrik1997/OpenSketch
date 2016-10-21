@@ -7,6 +7,8 @@
 
 #include "../OpenGL/DrawableObject.h"
 
+class Drawer;
+
 class OpenGLRenderManager;
 
 class Shape {
@@ -17,10 +19,10 @@ protected:
     glm::vec2 m_size;
     bool m_isSelected = false;
 
-    DrawableObject m_drawable;
-    OpenGLRenderManager* m_oglRenderer;
+    Drawer* m_drawer = nullptr;
+    OpenGLRenderManager* m_oglRenderer = nullptr;
 public:
-    Shape(OpenGLRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height);
+    Shape(OpenGLRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height, Drawer* _drawer);
     virtual ~Shape();
 
     //Geen copies
@@ -32,6 +34,8 @@ public:
     Shape(Shape&&) = default;
     Shape& operator=(Shape&&) = default;
 
+    void draw();
+
     void setPosition(int _pixelsX, int _pixelsY);
     void setSize(int _width, int _height);
 
@@ -40,7 +44,8 @@ public:
     inline glm::mat4 getMatrix() const;
     inline glm::vec2 getPosition() const;
     inline glm::vec2 getSize() const;
-    const DrawableObject& getDrawObject() const;
+    inline Drawer* getDrawer() const;
+
 };
 
 inline void Shape::setSelected(bool _isSelected)
@@ -66,6 +71,11 @@ inline glm::vec2 Shape::getPosition() const
 inline glm::vec2 Shape::getSize() const
 {
     return m_size;
+}
+
+inline Drawer* Shape::getDrawer() const
+{
+    return m_drawer;
 }
 
 

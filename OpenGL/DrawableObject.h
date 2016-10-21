@@ -13,13 +13,16 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+//SINGLETON PATTERN
+
 class DrawableObject {
 private:
     GLuint m_VBO = 0, m_EBO = 0, m_VAO = 0;
     vector<GLfloat> m_vertices;
     vector<GLint> m_indices;
-public:
+private:
     DrawableObject(vector<GLfloat> _vertices, vector<GLint> _indices);
+public:
     ~DrawableObject();
 
     //Geen copies
@@ -31,6 +34,7 @@ public:
     DrawableObject(DrawableObject&&) = default;
     DrawableObject& operator=(DrawableObject&&) = default;
 public:
+    static DrawableObject& getInstance();
     void resetObject();
     void resetObject(vector<GLfloat> _vertices, vector<GLint> _indices);
     void draw() const;

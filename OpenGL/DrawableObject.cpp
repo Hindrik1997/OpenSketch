@@ -11,7 +11,6 @@ DrawableObject::DrawableObject(vector<GLfloat> _vertices, vector<GLint> _indices
 }
 
 DrawableObject::~DrawableObject() {
-
 }
 
 void DrawableObject::resetObject(vector<GLfloat> _vertices, vector<GLint> _indices) {
@@ -67,8 +66,25 @@ void DrawableObject::resetObject()
     glBindVertexArray(0);
 }
 
-void DrawableObject::draw() const {
+void DrawableObject::draw() const
+{
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+DrawableObject& DrawableObject::getInstance() {
+    static DrawableObject instance = DrawableObject
+            (
+            vector<GLfloat>{
+            //  position              uv
+            0.5f,  0.5f, 0.0f,     1.0f, 1.0f,
+            0.5f, -0.5f, 0.0f,     0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,
+            -0.5f,  0.5f, 0.0f,    1.0f, 0.0f
+    }, vector<GLint>{
+            0, 1, 3,
+            1, 2, 3
+    });
+    return instance;
 }

@@ -2,15 +2,16 @@
 // Created by hindrik on 5-10-16.
 //
 
-#ifndef OPEN_SKETCH_CHANGERECTANGLECOMMAND_H
-#define OPEN_SKETCH_CHANGERECTANGLECOMMAND_H
+#ifndef OPEN_SKETCH_CHANGEELLIPSECOMMAND_H
+#define OPEN_SKETCH_CHANGEELLIPSECOMMAND_H
+
 
 #include <cstddef>
 #include "Command.h"
 
 class Application;
 
-class ChangeRectangleCommand : public Command<Application>
+class ChangeShapeCommand : public Command<Application>
 {
 private:
     std::size_t m_index;
@@ -19,7 +20,7 @@ private:
     int m_sizex_change;
     int m_sizey_change;
 public:
-    ChangeRectangleCommand(std::size_t _index, int _posx_change, int _posy_change, int _sizex_change, int _sizey_change);
+    ChangeShapeCommand(std::size_t _index, int _posx_change, int _posy_change, int _sizex_change, int _sizey_change);
 
     void execute(Application* _context);
     void undo(Application* _context);
@@ -27,4 +28,4 @@ public:
 };
 
 
-#endif //OPEN_SKETCH_CHANGERECTANGLECOMMAND_H
+#endif //OPEN_SKETCH_CHANGEELLIPSECOMMAND_H

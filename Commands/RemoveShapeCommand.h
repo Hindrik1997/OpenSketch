@@ -8,9 +8,10 @@
 #include <cstddef>
 #include "Command.h"
 
+class Drawer;
 class Application;
 
-class RemoveEllipseCommand : public Command<Application>
+class RemoveShapeCommand : public Command<Application>
 {
 private:
     size_t m_index;
@@ -18,8 +19,9 @@ private:
     int m_posy = 100;
     int m_sizex = 100;
     int m_sizey = 100;
+    Drawer* m_drawer = nullptr;
 public:
-    RemoveEllipseCommand(size_t _index, int _posx, int _posy, int _sizex, int _sizey );
+    RemoveShapeCommand(size_t _index, int _posx, int _posy, int _sizex, int _sizey, Drawer* _drawer);
 
     void execute(Application* _context);
     void undo(Application* _context);
