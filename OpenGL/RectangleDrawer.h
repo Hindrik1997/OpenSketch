@@ -28,9 +28,8 @@ public:
     RectangleDrawer(RectangleDrawer&&) = delete;
     RectangleDrawer& operator=(RectangleDrawer&&) = delete;
     ~RectangleDrawer() = default;
-
-
-
+public:
+    std::string toString() const;
 };
 
 

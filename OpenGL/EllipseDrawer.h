@@ -28,6 +28,8 @@ public:
     EllipseDrawer(EllipseDrawer&&) = delete;
     EllipseDrawer& operator=(EllipseDrawer&&) = delete;
     ~EllipseDrawer() = default;
+public:
+    std::string toString() const;
 };
 
 

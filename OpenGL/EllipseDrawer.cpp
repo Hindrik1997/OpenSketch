@@ -13,3 +13,7 @@ EllipseDrawer &EllipseDrawer::getInstance() {
     static EllipseDrawer instance;
     return instance;
 }
+
+std::string EllipseDrawer::toString() const {
+    return std::string("EllipseDrawer: draws ellipses");
+}

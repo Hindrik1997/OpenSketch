@@ -12,3 +12,7 @@ RectangleDrawer &RectangleDrawer::getInstance() {
     static RectangleDrawer instance;
     return instance;
 }
+
+std::string RectangleDrawer::toString() const {
+    return std::string("RectangleDrawer: draws rectangles");
+}

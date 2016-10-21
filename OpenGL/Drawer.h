@@ -15,6 +15,7 @@ protected:
     Drawer(std::string _vshader, std::string _fshader);
 public:
     virtual void draw(Shape& _shape) const;
+    virtual std::string toString() const = 0;
     virtual ~Drawer() = 0;
 };
 
