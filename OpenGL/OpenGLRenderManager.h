@@ -11,6 +11,7 @@
 #include <fstream>
 #include <streambuf>
 #include "../Shapes/Shape.h"
+#include "../Shapes/Group.h"
 #include "DrawableObject.h"
 #include "../includeLibs.h"
 #include "../Application.h"
@@ -20,7 +21,7 @@ using namespace std;
 class OpenGLRenderManager {
 private:
     Application& m_application;
-    vector<Shape> m_shapes;
+    Group m_rootGroup;
 public:
     OpenGLRenderManager(Application& _app);
 
@@ -31,28 +32,24 @@ public:
 public:
     //Returns nullptr if no rectangle/ellipse is selected!
     Shape* getSelectedShape();
+    Shape* getSelectedShapePriority(Shape* _shape);
 
-    //Prioritizes the rectangle/ellipse specified
-    Shape* getSelectedShapePriority(Shape* _rect);
+    vector<int> getIndex(Shape* _shape);
 
-    glm::vec2 getMouseOffsetInShape(Shape& _rect, int _mousex, int _mousey);
+    static glm::vec2 getMouseOffsetInShape(Shape& _rect, int _mousex, int _mousey);
 
-    void addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer);
-
-    void removeLastShape();
+    Shape& addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer);
 
     void render();
     static void createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID);
     static void setCustomShaderProgram(const GLuint& _shaderProgam);
     static void setNullShaderProgram();
-    inline const vector<Shape>& getShapes() const;
-private:
-    void createDefaultShaderProgram();
+    inline const Group& getRootGroup() const;
 };
 
-inline const vector<Shape>& OpenGLRenderManager::getShapes() const
+inline const Group& OpenGLRenderManager::getRootGroup() const
 {
-    return m_shapes;
+    return m_rootGroup;
 };
 
 #endif //OPEN_SKETCH_OPENGLRENDERER_H

@@ -5,6 +5,7 @@
 #ifndef OPEN_SKETCH_SHAPE_H
 #define OPEN_SKETCH_SHAPE_H
 
+#include <typeinfo>
 #include "../OpenGL/DrawableObject.h"
 
 class Drawer;
@@ -34,7 +35,10 @@ public:
     Shape(Shape&&) = default;
     Shape& operator=(Shape&&) = default;
 
-    void draw();
+    virtual Shape* getSelectedShapePriority(int _xpos, int _ypos, Shape* _prioShape, bool& _isPrio);
+    virtual Shape* getSelectedShape(int _xpos, int _ypos) const;
+    virtual void draw() const;
+
 
     void setPosition(int _pixelsX, int _pixelsY);
     void setSize(int _width, int _height);
@@ -77,6 +81,5 @@ inline Drawer* Shape::getDrawer() const
 {
     return m_drawer;
 }
-
 
 #endif //OPEN_SKETCH_SHAPE_H

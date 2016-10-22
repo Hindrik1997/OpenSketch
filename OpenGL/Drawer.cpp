@@ -10,7 +10,7 @@ Drawer::~Drawer()
     glDeleteShader(m_shader);
 }
 
-void Drawer::draw(Shape& _shape) const
+void Drawer::draw(const Shape& _shape) const
 {
     OpenGLRenderManager::setCustomShaderProgram(m_shader);
 

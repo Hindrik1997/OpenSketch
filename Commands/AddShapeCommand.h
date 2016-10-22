@@ -5,6 +5,7 @@
 #ifndef OPEN_SKETCH_ADDELLIPSECOMMAND_H
 #define OPEN_SKETCH_ADDELLIPSECOMMAND_H
 
+#include <vector>
 #include "Command.h"
 
 class Drawer;
@@ -17,6 +18,7 @@ private:
     int m_sizex = 100;
     int m_sizey = 100;
     Drawer* m_drawer = nullptr;
+    std::vector<int> m_index;
 public:
     AddShapeCommand(int _posx, int _posy, int _sizex, int _sizey, Drawer* _drawer);
 

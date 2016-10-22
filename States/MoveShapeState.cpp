@@ -28,8 +28,6 @@ void MoveShapeState::doAction(Application *_context)
     static Shape* s_selectedShapeLastFrame = nullptr;
     static int s_selectedxOffset = 0, s_selectedyOffset = 0, s_original_x = 0, s_original_y = 0;
 
-
-
     Shape* selected;
     if(s_selectedShapeLastFrame != nullptr)
     {
@@ -78,16 +76,8 @@ void MoveShapeState::doAction(Application *_context)
                 if(s_selectedShapeLastFrame != nullptr)
                 {
                     //muis laat hier los
-                    size_t index = 0;
-                    for(size_t i = 0; i < _context->getGLManager().getShapes().size(); ++i)
-                    {
-                        if(&_context->getGLManager().getShapes()[i] == s_selectedShapeLastFrame)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
 
+                    vector<int> indexList = _context->getGLManager().getIndex(s_selectedShapeLastFrame);
 
                     Shape* rect = s_selectedShapeLastFrame;
                     rect->setSelected(false);
@@ -101,7 +91,7 @@ void MoveShapeState::doAction(Application *_context)
 
                     rect->setPosition(s_original_x, s_original_y);
 
-                    _context->execute(new ChangeShapeCommand(index, xdiff,ydiff,0,0));
+                    _context->execute(new ChangeShapeCommand(indexList, xdiff,ydiff,0,0));
                 }
                 s_selectedxOffset = 0; s_selectedyOffset = 0; s_original_x = 0; s_original_y = 0;
                 s_selectedShapeLastFrame = nullptr;

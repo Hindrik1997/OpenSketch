@@ -460,6 +460,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 void Application::loadFromFile()
 {
+    /*
     const_cast<vector<Shape>&>(getGLManager().getShapes()).clear();
 
     std::vector<std::string> lines;
@@ -509,11 +510,12 @@ void Application::loadFromFile()
     {
         m_redoHistory.pop();
     }
-
+*/
 }
 
 void Application::saveToFile()
 {
+    /*
     std::string lines("group ");
 
     int count = static_cast<int>(getGLManager().getShapes().size() + getGLManager().getShapes().size());
@@ -555,5 +557,5 @@ void Application::saveToFile()
     std::ofstream out("datafile2.txt");
     out << lines;
     out.close();
-
+*/
 }

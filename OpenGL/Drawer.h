@@ -14,11 +14,9 @@ private:
 protected:
     Drawer(std::string _vshader, std::string _fshader);
 public:
-    virtual void draw(Shape& _shape) const;
+    virtual void draw(const Shape& _shape) const;
     virtual std::string toString() const = 0;
     virtual ~Drawer() = 0;
 };
-
-
 
 #endif //OPEN_SKETCH_DRAWER_H

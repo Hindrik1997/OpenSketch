@@ -78,13 +78,10 @@ void EditShapeState::doAction(Application *_context)
                 return;
             }
 
-            vector<Shape> &vec = const_cast<vector<Shape> &>(_context->getGLManager().getShapes());
-            size_t index = 0;
-            for (size_t i = 0; i < vec.size(); ++i) {
-                if (&vec[i] == _context->getM_selectedShape()) {
-                    index = i;
-                }
-            }
+
+            vector<int> indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
+
+
 
             Shape &rect = *_context->getM_selectedShape();
 
@@ -96,7 +93,7 @@ void EditShapeState::doAction(Application *_context)
             osy = static_cast<int>(rect.getSize().y);
 
 
-            _context->execute(new ChangeShapeCommand(index, px - ox, py - oy, sx - osx, sy - osy));
+            _context->execute(new ChangeShapeCommand(indexList, px - ox, py - oy, sx - osx, sy - osy));
 
             //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
             //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
@@ -117,19 +114,12 @@ void EditShapeState::doAction(Application *_context)
 
         if(_context->isM_isDeleted())
         {
-
+            vector<int> indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
             _context->getM_selectedShape()->setSelected(false);
-            vector<Shape>& vec = const_cast<vector<Shape>&>(_context->getGLManager().getShapes());
-            for( size_t i = 0; i < vec.size(); ++i)
-            {
-                if(&vec[i] == _context->getM_selectedShape())
-                {
 
-                    Shape& rect = *_context->getM_selectedShape();
-                    _context->execute(new RemoveShapeCommand(i, static_cast<int>(rect.getPosition().x), static_cast<int>(rect.getPosition().y), static_cast<int>(rect.getSize().x), static_cast<int>(rect.getSize().y),rect.getDrawer()));
-                    break;
-                }
-            }
+            Shape& rect = *_context->getM_selectedShape();
+            _context->execute(new RemoveShapeCommand(indexList, static_cast<int>(rect.getPosition().x), static_cast<int>(rect.getPosition().y), static_cast<int>(rect.getSize().x), static_cast<int>(rect.getSize().y),rect.getDrawer()));
+
 
             _context->getM_selectedShape() = nullptr;
             _context->setShapeEdited(false);
