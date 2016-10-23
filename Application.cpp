@@ -32,6 +32,8 @@ Application::~Application() {
     //Alleen GTKManager en de rendermanager moeten opgeruimd worden, hiervoor heb ik n leuke macro gemaakt.
     SAFE_PNTR_DEL(m_gtkManager);
     SAFE_PNTR_DEL(m_renderManager);
+    SAFE_PNTR_DEL(m_ft);
+    SAFE_PNTR_DEL(m_fontface);
 
     //GLFW vereist speciale clean up
     glfwTerminate();
@@ -43,6 +45,7 @@ bool Application::initGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_SAMPLES, 16);
     return true;
 }
 
@@ -63,6 +66,20 @@ void Application::initGTK() {
 void Application::initialize() {
     bool status = true;
 
+    m_ft = new FT_Library;
+    //FreeType initten
+    if(FT_Init_FreeType(m_ft))
+    {
+        throw("Initialization failed!");
+    }
+
+    //Font laden
+
+    m_fontface = new FT_Face;
+    if(FT_New_Face(*m_ft, "consola.ttf", 0, m_fontface))
+    {
+        throw("Initialization failed!");
+    }
 
 
     //GLFW initten
@@ -78,6 +95,18 @@ void Application::initialize() {
         glfwTerminate();
         throw("Initialization failed!");
     }
+    glfwMakeContextCurrent(m_paintWindow);
+
+    m_structWindow = glfwCreateWindow(200, 800, "Shape Structure", nullptr, nullptr);
+    if (m_structWindow == nullptr)
+    {
+        std::cout << "Window creation failed!" << std::endl;
+        glfwTerminate();
+        throw("Initialization failed!");
+    }
+    glfwMakeContextCurrent(m_structWindow);
+
+    //reset to default context for init process
     glfwMakeContextCurrent(m_paintWindow);
 
     status = initGLEW();

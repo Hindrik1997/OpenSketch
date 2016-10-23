@@ -4,24 +4,43 @@
 
 #include <cmath>
 #include "OpenGLRenderManager.h"
-#include "../Shapes/Shape.h"
-
 
 void OpenGLRenderManager::render()
 {
-    //Clear color state setten
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
-    // deze gebruik ik niet in deze applicatie)
-    glClear(GL_COLOR_BUFFER_BIT);
+    //paint window
+    glfwMakeContextCurrent(m_application.m_paintWindow);
 
-    m_rootGroup.draw();
+        //Clear color state setten
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    setNullShaderProgram();
+        //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
+        // deze gebruik ik niet in deze applicatie)
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        m_rootGroup.draw();
+
+        setNullShaderProgram();
 
     //Buffer swappen om te laten zien
     glfwSwapBuffers(m_application.m_paintWindow);
+
+
+    //struct window
+    glfwMakeContextCurrent(m_application.m_structWindow);
+
+        //Clear color state setten
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
+        // deze gebruik ik niet in deze applicatie)
+        glClear(GL_COLOR_BUFFER_BIT);
+
+
+    glfwSwapBuffers(m_application.m_structWindow);
+
+    //reset to paint context
+    glfwMakeContextCurrent(m_application.m_paintWindow);
 }
 
 OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app), m_rootGroup(this)

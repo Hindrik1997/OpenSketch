@@ -18,6 +18,9 @@
 #include "GLM/gtx/matrix_decompose.hpp"
 #include "GLM/gtc/type_ptr.hpp"
 
+#include "ft2build.h"
+#include FT_FREETYPE_H
+
 //Simpele macro om pointers te deleten enzo
 #define SAFE_PNTR_DEL(x) if(x != nullptr) delete x;
 

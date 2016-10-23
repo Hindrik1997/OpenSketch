@@ -39,8 +39,6 @@
 //prototypes
 class OpenGLRenderManager;
 
-
-
 class Application : public CommandContext<Application> {
 public:
     static Application& getInstance();
@@ -81,6 +79,7 @@ public:
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
+    GLFWwindow* m_structWindow;
     GTKWindow* m_toolWindow;
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
@@ -117,6 +116,10 @@ private:
     bool m_isEdited = false;
     bool m_isDeleted = false;
     Shape* m_selectedShape = nullptr;
+    //FreeType
+    FT_Library* m_ft = nullptr;
+    FT_Face* m_fontface = nullptr;
+
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;
@@ -144,7 +147,6 @@ private:
     GtkWidget* m_file_box;
     GtkWidget* m_load_button;
     GtkWidget* m_save_button;
-
 private:
     friend class OpenGLRenderManager;
 };
