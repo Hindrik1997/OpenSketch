@@ -33,4 +33,10 @@ void loadButton(GtkWidget* widget, gpointer data);
 
 void saveButton(GtkWidget* widget, gpointer data);
 
+void groupButton(GtkWidget* widget, gpointer data);
+
+void ungroupButton(GtkWidget* widget, gpointer data);
+
+void selectgroupButton(GtkWidget* widget, gpointer data);
+
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

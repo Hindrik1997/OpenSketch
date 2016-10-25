@@ -79,7 +79,6 @@ public:
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
-    GLFWwindow* m_structWindow;
     GTKWindow* m_toolWindow;
     OpenGLRenderManager* m_renderManager;
     Args m_startupArgs;
@@ -90,6 +89,7 @@ public:
     GLFWwindow *getM_paintWindow() const;
     bool isM_isEdited() const;
     bool isM_isDeleted() const;
+    vector<Shape*>& getSelectedShapes();
     Shape* &getM_selectedShape();
     GtkWidget *getM_posxBox() const;
     GtkWidget *getM_posyBox() const;
@@ -120,12 +120,14 @@ private:
     FT_Library* m_ft = nullptr;
     FT_Face* m_fontface = nullptr;
 
+    vector<Shape*> m_selected_shapes;
+
     //ToolWindow pointers
     GtkWidget* m_box;
     GtkWidget* m_topBox;
     GtkWidget* m_bottomBox;
     GtkWidget* m_null_mode_button;
-    GtkWidget* m_select_and_m_move_button;
+    GtkWidget* m_select_and_move_button;
     GtkWidget* m_select_and_edit;
     GtkWidget* m_new_rectangle;
     GtkWidget* m_new_ellips;
@@ -145,6 +147,9 @@ private:
     GtkWidget* m_undo_button;
     GtkWidget* m_redo_button;
     GtkWidget* m_file_box;
+    GtkWidget* m_select_for_group_button;
+    GtkWidget* m_group_button;
+    GtkWidget* m_ungroup_button;
     GtkWidget* m_load_button;
     GtkWidget* m_save_button;
 private:

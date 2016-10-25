@@ -40,6 +40,8 @@ public:
 
     Shape& addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer);
 
+    void createGroup(std::vector<Shape*>& _set);
+
     void render();
     static void createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID);
     static void setCustomShaderProgram(const GLuint& _shaderProgam);

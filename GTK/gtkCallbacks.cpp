@@ -8,13 +8,14 @@
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "gtkCallbacks.h"
 #include "../Commands/AddShapeCommand.h"
-#include "../Application.h"
+#include "../States/GroupShapesState.h"
 #include "../OpenGL/RectangleDrawer.h"
 #include "../OpenGL/EllipseDrawer.h"
 
 static NullState nullState;
 static MoveShapeState moveState;
 static EditShapeState editState;
+static GroupShapesState groupState;
 
 
 void clicked(GtkWidget *widget, gpointer data) {
@@ -76,4 +77,17 @@ void loadButton(GtkWidget *widget, gpointer data) {
 
 void saveButton(GtkWidget *widget, gpointer data) {
     Application::getInstance().saveToFile();
+}
+
+void groupButton(GtkWidget *widget, gpointer data) {
+
+}
+
+void ungroupButton(GtkWidget *widget, gpointer data) {
+    //Application::getInstance().setState(&groupState);
+    //TODO: implement this stuff here
+}
+
+void selectgroupButton(GtkWidget *widget, gpointer data) {
+    Application::getInstance().setState(&groupState);
 }

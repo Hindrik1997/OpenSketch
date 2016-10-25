@@ -9,6 +9,7 @@ Group::Group(OpenGLRenderManager* _oglRenderer) : Shape(_oglRenderer, 0,0,0,0, n
 {
 }
 
+
 Shape& Group::addShape(OpenGLRenderManager *_oglRenderer, int _posx, int _posy, int _width, int _height, Drawer *_drawer) {
     m_shapes.emplace_back(_oglRenderer,_posx, _posy, _width, _height, _drawer);
     return m_shapes.back();
@@ -46,6 +47,12 @@ vector<int> Group::getIndex(Shape *_shape) {
         Shape& s = m_shapes[i];
         if(typeid(s) == typeid(Group))
         {
+            if(&s == _shape)
+            {
+                indices.push_back(i);
+                continue;
+            }
+
             //if group
             vector<int> result = dynamic_cast<Group&>(s).getIndex(_shape);
             if(result.size() == 0)

@@ -10,20 +10,6 @@
 
 void EditShapeState::doAction(Application *_context)
 {
-
-    int w,h;
-    _context->getPaintWindowSize(w,h);
-    glm::vec2 v(static_cast<int>(_context->getPaintWindowCursorPos().x),
-                static_cast<int>(_context->getPaintWindowCursorPos().y));
-    if(v.x < 0)
-        v.x = 0;
-    if(v.x > w)
-        v.x = w;
-    if(v.y < 0)
-        v.y = 0;
-    if(v.y > h)
-        v.y = h;
-
     Shape* currentSelected = _context->getGLManager().getSelectedShape();
 
 

@@ -97,17 +97,6 @@ void Application::initialize() {
     }
     glfwMakeContextCurrent(m_paintWindow);
 
-    m_structWindow = glfwCreateWindow(200, 800, "Shape Structure", nullptr, nullptr);
-    if (m_structWindow == nullptr)
-    {
-        std::cout << "Window creation failed!" << std::endl;
-        glfwTerminate();
-        throw("Initialization failed!");
-    }
-    glfwMakeContextCurrent(m_structWindow);
-
-    //reset to default context for init process
-    glfwMakeContextCurrent(m_paintWindow);
 
     status = initGLEW();
     if(!status)
@@ -179,21 +168,25 @@ void Application::initToolWindow()
     //TOPBOX
 
     m_null_mode_button = gtk_button_new_with_label("No edit mode");
-    m_select_and_m_move_button = gtk_button_new_with_label("Select and move");
+    m_select_and_move_button = gtk_button_new_with_label("Select and move");
     m_select_and_edit = gtk_button_new_with_label("Select and modify");
 
     m_new_rectangle = gtk_button_new_with_label("New rectangle");
     m_new_ellips = gtk_button_new_with_label("New ellips");
 
+    m_select_for_group_button = gtk_button_new_with_label("Select for new group");
+
     m_undo_button = gtk_button_new_with_label("Undo");
     m_redo_button = gtk_button_new_with_label("Redo");
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_null_mode_button);
-    gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_m_move_button);
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_move_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_select_and_edit);
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_new_rectangle);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_new_ellips);
+
+    gtk_container_add(GTK_CONTAINER(m_topBox), m_select_for_group_button);
 
     gtk_container_add(GTK_CONTAINER(m_topBox), m_undo_button);
     gtk_container_add(GTK_CONTAINER(m_topBox), m_redo_button);
@@ -204,6 +197,9 @@ void Application::initToolWindow()
 
     m_acceptBttn = gtk_button_new_with_label("Accept");
     m_delete_shape = gtk_button_new_with_label("Delete shape");
+
+    m_group_button = gtk_button_new_with_label("Group shapes");
+    m_ungroup_button = gtk_button_new_with_label("Ungroup shapes");
 
     m_save_button = gtk_button_new_with_label("Save");
     m_load_button = gtk_button_new_with_label("Load");
@@ -242,9 +238,12 @@ void Application::initToolWindow()
 
     //END
 
+
     gtk_container_add(GTK_CONTAINER(m_file_box), m_save_button);
     gtk_container_add(GTK_CONTAINER(m_file_box), m_load_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_group_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ungroup_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_delete_shape);
 
@@ -271,6 +270,8 @@ void Application::initToolWindow()
     gtk_widget_show(m_delete_shape);
     gtk_widget_show(m_load_button);
     gtk_widget_show(m_save_button);
+    gtk_widget_show(m_group_button);
+    gtk_widget_show(m_ungroup_button);
 
     gtk_widget_show(m_file_box);
 
@@ -278,17 +279,18 @@ void Application::initToolWindow()
 
     gtk_widget_show(m_topBox);
     gtk_widget_show(m_bottomBox);
-    gtk_widget_show(m_select_and_m_move_button);
+    gtk_widget_show(m_select_and_move_button);
     gtk_widget_show(m_select_and_edit);
     gtk_widget_show(m_null_mode_button);
     gtk_widget_show(m_new_rectangle);
     gtk_widget_show(m_new_ellips);
+    gtk_widget_show(m_select_for_group_button);
     gtk_widget_show(m_undo_button);
     gtk_widget_show(m_redo_button);
     gtk_widget_show(m_box);
 
     //select mode button signal connecten
-    g_signal_connect(m_select_and_m_move_button, "clicked", G_CALLBACK(selectmove), NULL);
+    g_signal_connect(m_select_and_move_button, "clicked", G_CALLBACK(selectmove), NULL);
 
     //no edit mode button connecten
     g_signal_connect(m_null_mode_button, "clicked", G_CALLBACK(noeditmode), NULL);
@@ -323,6 +325,13 @@ void Application::initToolWindow()
     //save button
     g_signal_connect(m_save_button, "clicked", G_CALLBACK(saveButton), NULL);
 
+    //select for group button
+    g_signal_connect(m_select_for_group_button, "clicked", G_CALLBACK(selectgroupButton), NULL);
+
+    //group button
+    g_signal_connect(m_group_button, "clicked", G_CALLBACK(groupButton), NULL);
+    //ungroup button
+    g_signal_connect(m_ungroup_button, "clicked", G_CALLBACK(ungroupButton), NULL);
 
 
 }
@@ -349,6 +358,11 @@ State *Application::getState() {
 }
 
 void Application::resetState() {
+
+    for(auto&& s : m_selected_shapes)
+        s->setSelected(false);
+
+    m_selected_shapes.clear();
     setShapeDeleted(false);
     setShapeEdited(false);
     gtk_entry_set_text(GTK_ENTRY(m_posxBox), "Nothing");
@@ -433,7 +447,7 @@ GtkWidget *Application::getM_null_mode_button() const {
 }
 
 GtkWidget *Application::getM_select_and_m_move_button() const {
-    return m_select_and_m_move_button;
+    return m_select_and_move_button;
 }
 
 GtkWidget *Application::getM_select_and_edit() const {
@@ -587,4 +601,8 @@ void Application::saveToFile()
     out << lines;
     out.close();
 */
+}
+
+vector<Shape*>& Application::getSelectedShapes() {
+    return m_selected_shapes;
 }
