@@ -12,8 +12,6 @@ void EditShapeState::doAction(Application *_context)
 {
     Shape* currentSelected = _context->getGLManager().getSelectedShape();
 
-
-
     if(glfwGetMouseButton(_context->getM_paintWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS
        && currentSelected != nullptr
        && currentSelected != _context->getM_selectedShape())
@@ -67,8 +65,6 @@ void EditShapeState::doAction(Application *_context)
 
             vector<int> indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
 
-
-
             Shape &rect = *_context->getM_selectedShape();
 
             int ox, oy, osx, osy;
@@ -80,9 +76,6 @@ void EditShapeState::doAction(Application *_context)
 
 
             _context->execute(new ChangeShapeCommand(indexList, px - ox, py - oy, sx - osx, sy - osy));
-
-            //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setPosition(px,py);
-            //static_cast<Rectangle*>(_context->getM_selectedShape().m_shapePointer)->setSize(sx,sy);
 
             //shape stuff weer goed zetten
             _context->getM_selectedShape()->setSelected(false);

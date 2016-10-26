@@ -17,19 +17,19 @@ private:
 public:
     Group(OpenGLRenderManager* _oglRenderer);
 
-    Shape& operator[] (const int _index);
+    void draw() const override;
 
-    Shape& addShape(OpenGLRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height, Drawer* _drawer);
-    void removeShape(Shape* _shape);
-    void draw() const;
+    virtual void setPosition(int _pixelsX, int _pixelsY) override;
 
-    Shape* getSelectedShapePriority(int _xpos, int _ypos, Shape* _prioShape, bool& _isPrio);
-    Shape* getSelectedShape(int _xpos, int _ypos) const;
-    vector<int> getIndex(Shape* _shape);
+    virtual void setSize(int _width, int _height) override;
 
-    vector<Shape>& getShapeVector();
+    virtual glm::mat4 getMatrix() const override;
 
-    size_t getShapeCount() const;
+    virtual glm::vec2 getPosition() const override;
+
+    virtual glm::vec2 getSize() const override;
+
+
 };
 
 #endif //OPEN_SKETCH_GROUP_H

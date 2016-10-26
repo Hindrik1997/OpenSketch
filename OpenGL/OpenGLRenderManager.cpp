@@ -113,7 +113,7 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
 
 Shape& OpenGLRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
-    return m_rootGroup.addShape(this, _posx, _posy, _width, _height, _drawer);
+
 }
 
 Shape* OpenGLRenderManager::getSelectedShape() {

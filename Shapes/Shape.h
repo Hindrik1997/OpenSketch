@@ -40,14 +40,14 @@ public:
     virtual void draw() const;
 
 
-    void setPosition(int _pixelsX, int _pixelsY);
-    void setSize(int _width, int _height);
+    virtual void setPosition(int _pixelsX, int _pixelsY);
+    virtual void setSize(int _width, int _height);
 
     inline void setSelected(bool _isSelected);
     inline bool getSelected() const;
-    inline glm::mat4 getMatrix() const;
-    inline glm::vec2 getPosition() const;
-    inline glm::vec2 getSize() const;
+    virtual inline glm::mat4 getMatrix() const;
+    virtual inline glm::vec2 getPosition() const;
+    virtual inline glm::vec2 getSize() const;
     inline Drawer* getDrawer() const;
 
 };
