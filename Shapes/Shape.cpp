@@ -76,6 +76,7 @@ void Shape::draw() const {
         m_drawer->draw(*this);
 }
 
+/*
 Shape* Shape::getSelectedShape(int _xpos, int _ypos) const {
 
     int xleft, xright, ytop, ybottom;
@@ -102,4 +103,4 @@ Shape *Shape::getSelectedShapePriority(int _xpos, int _ypos, Shape *_prioShape, 
         return const_cast<Shape*>(this);
     }
     return nullptr;
-}
+} */

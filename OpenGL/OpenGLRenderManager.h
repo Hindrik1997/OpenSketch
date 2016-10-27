@@ -21,7 +21,7 @@ using namespace std;
 class OpenGLRenderManager {
 private:
     Application& m_application;
-    Group m_rootGroup;
+    vector<unique_ptr<Shape>> m_shapes;
 public:
     OpenGLRenderManager(Application& _app);
 
@@ -34,7 +34,7 @@ public:
     Shape* getSelectedShape();
     Shape* getSelectedShapePriority(Shape* _shape);
 
-    vector<int> getIndex(Shape* _shape);
+    size_t getIndex(Shape* _shape);
 
     static glm::vec2 getMouseOffsetInShape(Shape& _rect, int _mousex, int _mousey);
 
@@ -46,12 +46,12 @@ public:
     static void createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID);
     static void setCustomShaderProgram(const GLuint& _shaderProgam);
     static void setNullShaderProgram();
-    inline const Group& getRootGroup() const;
+    inline const vector<unique_ptr<Shape>>& getShapes() const;
 };
 
-inline const Group& OpenGLRenderManager::getRootGroup() const
+inline const vector<unique_ptr<Shape>>& OpenGLRenderManager::getShapes() const
 {
-    return m_rootGroup;
+    return m_shapes;
 };
 
 #endif //OPEN_SKETCH_OPENGLRENDERER_H

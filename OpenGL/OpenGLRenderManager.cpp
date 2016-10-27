@@ -14,8 +14,11 @@ void OpenGLRenderManager::render()
         //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
         // deze gebruik ik niet in deze applicatie)
         glClear(GL_COLOR_BUFFER_BIT);
-
-        m_rootGroup.draw();
+    
+        for(auto&& s : m_shapes)
+        {
+            s->draw();
+        }
 
         setNullShaderProgram();
 
@@ -24,7 +27,7 @@ void OpenGLRenderManager::render()
 
 }
 
-OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app), m_rootGroup(this)
+OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app)
 {
 }
 
@@ -113,14 +116,29 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
 
 Shape& OpenGLRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
-
+    m_shapes.emplace_back(make_unique<Shape>(this, _posx, _posy, _width, _height, _drawer));
+    return *m_shapes.back();
 }
 
 Shape* OpenGLRenderManager::getSelectedShape() {
     int posx, posy;
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
-    return m_rootGroup.getSelectedShape(posx,posy);
+
+    Shape* found = nullptr;
+
+    for(size_t i = 0; i < m_shapes.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_shapes[i]->getPosition().x - (m_shapes[i]->getSize().x / 2));
+        xright = static_cast<int>(m_shapes[i]->getPosition().x + (m_shapes[i]->getSize().x / 2));
+        ytop = static_cast<int>(m_shapes[i]->getPosition().y - (m_shapes[i]->getSize().y / 2));
+        ybottom = static_cast<int>(m_shapes[i]->getPosition().y + (m_shapes[i]->getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+            found = &(*m_shapes[i]);
+    }
+    return found;
 }
 
 glm::vec2 OpenGLRenderManager::getMouseOffsetInShape(Shape& _rect,int _mousex, int _mousey) {
@@ -142,18 +160,44 @@ glm::vec2 OpenGLRenderManager::getMouseOffsetInShape(Shape& _rect,int _mousex, i
     return result;
 }
 
-vector<int> OpenGLRenderManager::getIndex(Shape *_shape) {
-    return m_rootGroup.getIndex(_shape);
-}
-
 Shape *OpenGLRenderManager::getSelectedShapePriority(Shape* _shape) {
     int posx, posy;
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
-    bool b = false;
-    return m_rootGroup.getSelectedShapePriority(posx,posy, _shape, b);
+
+    int indexSecond = -1;
+
+    for(size_t i = 0; i < m_shapes.size(); ++i)
+    {
+        int xleft, xright, ytop, ybottom;
+        xleft = static_cast<int>(m_shapes[i]->getPosition().x - (m_shapes[i]->getSize().x / 2));
+        xright = static_cast<int>(m_shapes[i]->getPosition().x + (m_shapes[i]->getSize().x / 2));
+        ytop = static_cast<int>(m_shapes[i]->getPosition().y - (m_shapes[i]->getSize().y / 2));
+        ybottom = static_cast<int>(m_shapes[i]->getPosition().y + (m_shapes[i]->getSize().y / 2));
+
+        if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
+        {
+            if(&(*m_shapes[i]) == _shape)
+                return &(*m_shapes[i]);
+            else
+                indexSecond = static_cast<int>(i);
+        }
+    }
+    if(indexSecond != -1)
+        return &(*m_shapes[indexSecond]);
+    return nullptr;
 }
 
-void OpenGLRenderManager::createGroup(std::vector<Shape *> &_set) {
+void OpenGLRenderManager::createGroup(std::vector<Shape*> &_set) {
 
+}
+
+size_t OpenGLRenderManager::getIndex(Shape *_shape)
+{
+    for(size_t i = 0; i != m_shapes.size(); ++i)
+    {
+        if(m_shapes[i].get() == _shape)
+            return static_cast<size_t>(i);
+    }
+    throw "Out of range";
 }

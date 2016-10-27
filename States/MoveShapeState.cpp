@@ -77,7 +77,7 @@ void MoveShapeState::doAction(Application *_context)
                 {
                     //muis laat hier los
 
-                    vector<int> indexList = _context->getGLManager().getIndex(s_selectedShapeLastFrame);
+                    size_t indexList = _context->getGLManager().getIndex(s_selectedShapeLastFrame);
 
                     Shape* rect = s_selectedShapeLastFrame;
                     rect->setSelected(false);

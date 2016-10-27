@@ -63,7 +63,7 @@ void EditShapeState::doAction(Application *_context)
             }
 
 
-            vector<int> indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
+            size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
 
             Shape &rect = *_context->getM_selectedShape();
 
@@ -93,7 +93,7 @@ void EditShapeState::doAction(Application *_context)
 
         if(_context->isM_isDeleted())
         {
-            vector<int> indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
+            size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
             _context->getM_selectedShape()->setSelected(false);
 
             Shape& rect = *_context->getM_selectedShape();

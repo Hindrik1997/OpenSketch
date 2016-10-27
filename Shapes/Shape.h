@@ -35,8 +35,10 @@ public:
     Shape(Shape&&) = default;
     Shape& operator=(Shape&&) = default;
 
+    /*
     virtual Shape* getSelectedShapePriority(int _xpos, int _ypos, Shape* _prioShape, bool& _isPrio);
     virtual Shape* getSelectedShape(int _xpos, int _ypos) const;
+     */
     virtual void draw() const;
 
 
