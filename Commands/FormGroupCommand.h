@@ -21,7 +21,6 @@ class FormGroupCommand : public Command<Application> {
 private:
     vector<size_t> m_indices;
     size_t m_groupIndex;
-    vector<unique_ptr<Shape>> m_temp;
 public:
     FormGroupCommand(vector<size_t> _indices);
 

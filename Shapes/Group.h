@@ -20,20 +20,23 @@ public:
     Group(OpenGLRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec);
     virtual ~Group() override = default;
 
-
     void draw() const override;
 
     virtual void setPosition(int _pixelsX, int _pixelsY) override;
 
     virtual void setSize(int _width, int _height) override;
 
-    virtual glm::mat4 getMatrix() const override;
-
     virtual glm::vec2 getPosition() const override;
 
     virtual glm::vec2 getSize() const override;
 
+    virtual void setSelected(bool _isSelected) override;
+
+    virtual bool getSelected() const override;
+
     vector<unique_ptr<Shape>>& getShapes();
+private:
+    void calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) const;
 };
 
 #endif //OPEN_SKETCH_GROUP_H

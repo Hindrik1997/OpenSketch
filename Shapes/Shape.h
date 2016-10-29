@@ -35,18 +35,13 @@ public:
     Shape(Shape&&) = default;
     Shape& operator=(Shape&&) = default;
 
-    /*
-    virtual Shape* getSelectedShapePriority(int _xpos, int _ypos, Shape* _prioShape, bool& _isPrio);
-    virtual Shape* getSelectedShape(int _xpos, int _ypos) const;
-     */
     virtual void draw() const;
-
 
     virtual void setPosition(int _pixelsX, int _pixelsY);
     virtual void setSize(int _width, int _height);
 
-    inline void setSelected(bool _isSelected);
-    inline bool getSelected() const;
+    virtual inline void setSelected(bool _isSelected);
+    virtual inline bool getSelected() const;
     virtual inline glm::mat4 getMatrix() const;
     virtual inline glm::vec2 getPosition() const;
     virtual inline glm::vec2 getSize() const;

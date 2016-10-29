@@ -64,7 +64,6 @@ void addEllips(GtkWidget *widget, gpointer data)
 void deleteShape(GtkWidget* widget, gpointer data)
 {
     Application::getInstance().setShapeDeleted(true);
-    Application::getInstance().setState(&nullState);
 }
 
 void redoCommand(GtkWidget *widget, gpointer data) {

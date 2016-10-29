@@ -53,6 +53,15 @@ void EditShapeState::doAction(Application *_context)
                 py = std::stoi(posy);
                 sx = std::stoi(sizex);
                 sy = std::stoi(sizey);
+
+                //numbers represent draw surface size
+                if(sx <= 0 || sy <= 0 || px <= 0 || py <= 0 || sx >= 1280 || sy >= 800 || px >= 1280 || py >= 800)
+                {   //Niet accepten
+                    _context->getM_selectedShape()->setSelected(false);
+
+                    _context->getM_selectedShape() = nullptr;
+                    return;
+                }
             }
             catch (...) {
                 //Niet accepten

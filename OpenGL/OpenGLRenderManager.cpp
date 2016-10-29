@@ -137,6 +137,10 @@ Shape* OpenGLRenderManager::getSelectedShape() {
 
         if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
             found = &(*m_shapes[i]);
+
+
+
+
     }
     return found;
 }

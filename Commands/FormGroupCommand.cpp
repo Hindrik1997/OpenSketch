@@ -6,6 +6,34 @@
 #include "FormGroupCommand.h"
 #include "../OpenGL/OpenGLRenderManager.h"
 
+void dropVec()
+{
+    auto& vec = Application::getInstance().getGLManager().getShapes();
+
+    for(int i = 0; i < 10; ++i)
+        std::cout << "-";
+    std::cout << std::endl;
+    for(auto&& s : vec)
+        std::cout << &*s << std::endl;
+    for(int i = 0; i < 10; ++i)
+        std::cout << "-";
+    std::cout << std::endl;
+}
+
+void dropVec(vector<unique_ptr<Shape>>& vec)
+{
+
+    for(int i = 0; i < 10; ++i)
+        std::cout << "-";
+    std::cout << std::endl;
+    for(auto&& s : vec)
+        std::cout << &*s << std::endl;
+    for(int i = 0; i < 10; ++i)
+        std::cout << "-";
+    std::cout << std::endl;
+}
+
+
 FormGroupCommand::FormGroupCommand(vector<size_t> _indices) : m_indices(_indices)
 {
 
@@ -18,60 +46,51 @@ void FormGroupCommand::execute(Application *_context) {
     //reverse it
     std::reverse(m_indices.begin(), m_indices.end());
 
+    vector<unique_ptr<Shape>> temp;
 
     vector<unique_ptr<Shape>> &vec = const_cast<vector<unique_ptr<Shape>> &>(_context->getGLManager().getShapes());
 
+    //contructs temporary vector in which it moves the shapes we decided to group together
     for (auto &&index : m_indices)
     {
         vec[index]->setSelected(false);
-        m_temp.emplace_back(std::move(vec[index]));
+        temp.emplace_back(std::move(vec[index]));
         vec.erase(vec.begin() + index);
     }
 
     _context->getSelectedShapes().clear();
 
-
-    /*
-    unique_ptr<Shape> group = std::make_unique<Group>(&_context->getGLManager(), tvec);
-    m_groupIndex = _context->getGLManager().addGroup(std::move(group)); */
+    unique_ptr<Shape> group = std::make_unique<Group>(&_context->getGLManager(), temp);
+    m_groupIndex = _context->getGLManager().addGroup(std::move(group)); //takes control of the unique ptr
 }
 
 void FormGroupCommand::undo(Application *_context)
 {
+    //does the exact opposite of the execute() function.
+    //takes the sorted index list, instead of reversed
+    //and also reverses the grouped set
+    //which results into a reconstructed list as it was before
+
     vector<unique_ptr<Shape>>& vec = const_cast<vector<unique_ptr<Shape>>&>(_context->getGLManager().getShapes());
 
-    std::reverse(m_indices.begin(), m_indices.end());
+    std::sort(m_indices.begin(), m_indices.end());
 
-
-    for(int i = 0; i < m_temp.size(); ++i)
-    {
-        vec.insert(vec.begin() + m_indices[i], std::move(m_temp[i]));
-    }
-    m_temp.clear();
-
-    std::reverse(m_indices.begin(), m_indices.end());
-
-    _context->resetState();
-
-    /*
-    vector<unique_ptr<Shape>>& vec = const_cast<vector<unique_ptr<Shape>>&>(_context->getGLManager().getShapes());
-
-    unique_ptr<Shape> group = std::move(vec[m_groupIndex]);
+    unique_ptr<Shape> group = std::move(vec[m_groupIndex]); //Control of the resource (shape) moved to unique_ptr on stack
     vec.erase(vec.begin() + m_groupIndex);
     m_groupIndex = 0;
 
-    //nu de shapes uit de group moven en in de originele posities plaatsen.
     Group* g = dynamic_cast<Group*>(group.get());
     if(g == nullptr) throw "FAILURE";
     vector<unique_ptr<Shape>>& gvec = g->getShapes();
+    std::reverse(gvec.begin(), gvec.end());
 
-    for(int i = 0; i < gvec.size(); ++i)
+    for(auto&& index : m_indices)
     {
-        vec.insert(vec.begin() + m_indices[i], std::move(gvec[i]));
-        gvec.erase(gvec.begin() + i);
+        vec.insert(vec.begin() + index, std::move(gvec.front()));
+        gvec.erase(gvec.begin());
     }
-    */
-    //group gets killed here
+
+    _context->resetState();
 }
 
 

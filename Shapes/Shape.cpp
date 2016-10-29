@@ -75,32 +75,3 @@ void Shape::draw() const {
     if(m_drawer != nullptr)
         m_drawer->draw(*this);
 }
-
-/*
-Shape* Shape::getSelectedShape(int _xpos, int _ypos) const {
-
-    int xleft, xright, ytop, ybottom;
-    xleft = static_cast<int>(getPosition().x - (getSize().x / 2));
-    xright = static_cast<int>(getPosition().x + (getSize().x / 2));
-    ytop = static_cast<int>(getPosition().y - (getSize().y / 2));
-    ybottom = static_cast<int>(getPosition().y + (getSize().y / 2));
-
-    if(_xpos >= xleft && _xpos <= xright && _ypos <= ybottom && _ypos >= ytop)
-        return const_cast<Shape*>(this);
-    return nullptr;
-}
-
-Shape *Shape::getSelectedShapePriority(int _xpos, int _ypos, Shape *_prioShape, bool &_isPrio) {
-    int xleft, xright, ytop, ybottom;
-    xleft = static_cast<int>(getPosition().x - (getSize().x / 2));
-    xright = static_cast<int>(getPosition().x + (getSize().x / 2));
-    ytop = static_cast<int>(getPosition().y - (getSize().y / 2));
-    ybottom = static_cast<int>(getPosition().y + (getSize().y / 2));
-
-    if(_xpos >= xleft && _xpos <= xright && _ypos <= ybottom && _ypos >= ytop)
-    {
-        _isPrio = (this == _prioShape);
-        return const_cast<Shape*>(this);
-    }
-    return nullptr;
-} */
