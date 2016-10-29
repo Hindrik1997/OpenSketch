@@ -16,8 +16,8 @@ class Shape {
 protected:
     glm::mat4 m_transformMatrix = glm::mat4(1.0f);
 
-    glm::vec2 m_position;
-    glm::vec2 m_size;
+    glm::vec2 m_position= glm::vec2(0.0f);
+    glm::vec2 m_size = glm::vec2(0.0f);
     bool m_isSelected = false;
 
     Drawer* m_drawer = nullptr;

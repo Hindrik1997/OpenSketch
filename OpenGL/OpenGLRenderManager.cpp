@@ -14,7 +14,7 @@ void OpenGLRenderManager::render()
         //Clear color state fetchen en enkel de color buffer clearen. (Niet de depth/stencil enz,
         // deze gebruik ik niet in deze applicatie)
         glClear(GL_COLOR_BUFFER_BIT);
-    
+
         for(auto&& s : m_shapes)
         {
             s->draw();
@@ -188,11 +188,7 @@ Shape *OpenGLRenderManager::getSelectedShapePriority(Shape* _shape) {
     return nullptr;
 }
 
-void OpenGLRenderManager::createGroup(std::vector<Shape*> &_set) {
-
-}
-
-size_t OpenGLRenderManager::getIndex(Shape *_shape)
+size_t OpenGLRenderManager::getIndex(Shape* _shape)
 {
     for(size_t i = 0; i != m_shapes.size(); ++i)
     {
@@ -200,4 +196,9 @@ size_t OpenGLRenderManager::getIndex(Shape *_shape)
             return static_cast<size_t>(i);
     }
     throw "Out of range";
+}
+
+size_t OpenGLRenderManager::addGroup(unique_ptr<Shape> _ptr) {
+    m_shapes.emplace_back(std::move(_ptr));
+    return m_shapes.size() - 1;
 }

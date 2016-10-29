@@ -39,8 +39,7 @@ public:
     static glm::vec2 getMouseOffsetInShape(Shape& _rect, int _mousex, int _mousey);
 
     Shape& addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer);
-
-    void createGroup(std::vector<Shape*>& _set);
+    size_t addGroup(unique_ptr<Shape> _ptr);
 
     void render();
     static void createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID);

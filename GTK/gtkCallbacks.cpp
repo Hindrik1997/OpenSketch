@@ -11,6 +11,7 @@
 #include "../States/GroupShapesState.h"
 #include "../OpenGL/RectangleDrawer.h"
 #include "../OpenGL/EllipseDrawer.h"
+#include "../Commands/FormGroupCommand.h"
 
 static NullState nullState;
 static MoveShapeState moveState;
@@ -51,16 +52,19 @@ void setEdited(GtkWidget *widget, gpointer data)
 void addRect(GtkWidget *widget, gpointer data)
 {
     Application::getInstance().execute(new AddShapeCommand(100,100,100,100, &RectangleDrawer::getInstance()));
+    Application::getInstance().setState(&nullState);
 }
 
 void addEllips(GtkWidget *widget, gpointer data)
 {
     Application::getInstance().execute(new AddShapeCommand(100,100,100,100, &EllipseDrawer::getInstance()));
+    Application::getInstance().setState(&nullState);
 }
 
 void deleteShape(GtkWidget* widget, gpointer data)
 {
     Application::getInstance().setShapeDeleted(true);
+    Application::getInstance().setState(&nullState);
 }
 
 void redoCommand(GtkWidget *widget, gpointer data) {
@@ -80,12 +84,14 @@ void saveButton(GtkWidget *widget, gpointer data) {
 }
 
 void groupButton(GtkWidget *widget, gpointer data) {
-
+    auto& vec = Application::getInstance().getSelectedShapes();
+    Application::getInstance().execute(new FormGroupCommand(vec));
+    Application::getInstance().resetState();
+    Application::getInstance().setState(&nullState);
 }
 
 void ungroupButton(GtkWidget *widget, gpointer data) {
-    //Application::getInstance().setState(&groupState);
-    //TODO: implement this stuff here
+
 }
 
 void selectgroupButton(GtkWidget *widget, gpointer data) {

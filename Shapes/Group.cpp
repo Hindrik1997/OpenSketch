@@ -5,13 +5,18 @@
 #include "Group.h"
 #include <algorithm>
 
-Group::Group(OpenGLRenderManager* _oglRenderer) : Shape(_oglRenderer, 0,0,0,0, nullptr)
+Group::Group(OpenGLRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
 {
+    for(auto&& s : _vec)
+    {
+        m_shapes.emplace_back(std::move(s));
+    }
+    _vec.clear();
 }
 
 void Group::draw() const {
     for(auto&& s : m_shapes)
-        s.draw();
+        s->draw();
 }
 
 void Group::setPosition(int _pixelsX, int _pixelsY) {
@@ -32,4 +37,8 @@ glm::vec2 Group::getPosition() const {
 
 glm::vec2 Group::getSize() const {
     return Shape::getSize();
+}
+
+vector<unique_ptr<Shape>>& Group::getShapes() {
+    return m_shapes;
 }

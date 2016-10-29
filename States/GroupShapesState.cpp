@@ -43,17 +43,17 @@ void GroupShapesState::doAction(Application *_context) {
         }
 
         //if shape already selected, deselect
-        vector<Shape*>& vec = _context->getSelectedShapes();
-        if(std::find(vec.begin(), vec.end(), selected) != vec.end())
+        vector<size_t>& vec = _context->getSelectedShapes();
+        if(std::find(vec.begin(), vec.end(), _context->getGLManager().getIndex(selected)) != vec.end())
         {
             selected->setSelected(false);
 
-            vec.erase(std::remove(vec.begin(), vec.end(), selected), vec.end());
+            vec.erase(std::remove(vec.begin(), vec.end(), _context->getGLManager().getIndex(selected)), vec.end());
             return;
         }
 
-        //else we select it and push the pointer in the vector
-        vec.push_back(selected);
+        //else we select it and push the index in the vector
+        vec.push_back(_context->getGLManager().getIndex(selected));
         selected->setSelected(true);
     }
 }

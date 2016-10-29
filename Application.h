@@ -89,7 +89,7 @@ public:
     GLFWwindow *getM_paintWindow() const;
     bool isM_isEdited() const;
     bool isM_isDeleted() const;
-    vector<Shape*>& getSelectedShapes();
+    vector<size_t>& getSelectedShapes();
     Shape* &getM_selectedShape();
     GtkWidget *getM_posxBox() const;
     GtkWidget *getM_posyBox() const;
@@ -120,7 +120,7 @@ private:
     FT_Library* m_ft = nullptr;
     FT_Face* m_fontface = nullptr;
 
-    vector<Shape*> m_selected_shapes;
+    vector<size_t> m_selected_shapes;
 
     //ToolWindow pointers
     GtkWidget* m_box;

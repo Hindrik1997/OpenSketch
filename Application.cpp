@@ -360,7 +360,9 @@ State *Application::getState() {
 void Application::resetState() {
 
     for(auto&& s : m_selected_shapes)
-        s->setSelected(false);
+    {
+        m_renderManager->getShapes()[s]->setSelected(false);
+    }
 
     m_selected_shapes.clear();
     setShapeDeleted(false);
@@ -603,6 +605,6 @@ void Application::saveToFile()
 */
 }
 
-vector<Shape*>& Application::getSelectedShapes() {
+vector<size_t>& Application::getSelectedShapes() {
     return m_selected_shapes;
 }

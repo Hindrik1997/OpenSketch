@@ -5,17 +5,21 @@
 #ifndef OPEN_SKETCH_GROUP_H
 #define OPEN_SKETCH_GROUP_H
 
+#include <memory>
 #include <typeinfo>
 #include <vector>
 #include "Shape.h"
 
 using std::vector;
+using std::unique_ptr;
 
 class Group : public Shape {
 private:
-    vector<Shape> m_shapes;
+    vector<unique_ptr<Shape>> m_shapes;
 public:
-    Group(OpenGLRenderManager* _oglRenderer);
+    Group(OpenGLRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec);
+    virtual ~Group() override = default;
+
 
     void draw() const override;
 
@@ -29,7 +33,7 @@ public:
 
     virtual glm::vec2 getSize() const override;
 
-
+    vector<unique_ptr<Shape>>& getShapes();
 };
 
 #endif //OPEN_SKETCH_GROUP_H
