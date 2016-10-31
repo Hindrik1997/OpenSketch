@@ -20,7 +20,16 @@ void Group::draw() const {
 }
 
 void Group::setPosition(int _pixelsX, int _pixelsY) {
-    Shape::setPosition(_pixelsX, _pixelsY);
+
+    int delta_x_g = _pixelsX - static_cast<int>(getPosition().x);
+    int delta_y_g = _pixelsY - static_cast<int>(getPosition().y);
+
+    for (auto &&s : m_shapes)
+    {
+        s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
+    }
+
+
 }
 
 void Group::setSize(int _width, int _height) {
@@ -28,12 +37,21 @@ void Group::setSize(int _width, int _height) {
     int old_width = static_cast<int>(getSize().x);
     int old_height = static_cast<int>(getSize().y);
 
+    float factorX = static_cast<float>(_width) / old_width;
+    float factorY = static_cast<float>(_height) / old_height;
 
+    for (auto &&s : m_shapes)
+    {
+        int newHeight = static_cast<int>(s->getSize().y * factorY);
+        int newWidth = static_cast<int>(s->getSize().x * factorX);
 
+        s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
 
+        int delta_x = static_cast<int>((s->getPosition().x - getPosition().x) * (factorX - 1));
+        int delta_y = static_cast<int>((s->getPosition().y - getPosition().y) * (factorY - 1));
 
-
-
+        s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+    }
 }
 
 glm::vec2 Group::getPosition() const {
@@ -68,10 +86,10 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
 
     for(auto&& s : m_shapes)
     {
-        int txmin = static_cast<int>(s->getPosition().x - (s->getSize().x / 2)),
-                tymin = static_cast<int>(s->getPosition().y - (s->getSize().y / 2)),
-                txmax = static_cast<int>(s->getPosition().x + (s->getSize().x / 2)),
-                tymax = static_cast<int>(s->getPosition().y + (s->getSize().y / 2));
+        int txmin = static_cast<int>(static_cast<int>(s->getPosition().x) - (static_cast<int>(s->getSize().x) / 2)),
+                tymin = static_cast<int>(static_cast<int>(s->getPosition().y) - (static_cast<int>(s->getSize().y) / 2)),
+                txmax = static_cast<int>(static_cast<int>(s->getPosition().x) + (static_cast<int>(s->getSize().x) / 2)),
+                tymax = static_cast<int>(static_cast<int>(s->getPosition().y) + (static_cast<int>(s->getSize().y) / 2));
 
         if(txmin < min_x) min_x = txmin;
         if(txmax > max_x) max_x = txmax;

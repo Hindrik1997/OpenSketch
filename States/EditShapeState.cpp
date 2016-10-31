@@ -106,7 +106,7 @@ void EditShapeState::doAction(Application *_context)
             _context->getM_selectedShape()->setSelected(false);
 
             Shape& rect = *_context->getM_selectedShape();
-            _context->execute(new RemoveShapeCommand(indexList, static_cast<int>(rect.getPosition().x), static_cast<int>(rect.getPosition().y), static_cast<int>(rect.getSize().x), static_cast<int>(rect.getSize().y),rect.getDrawer()));
+            _context->execute(new RemoveShapeCommand(indexList));
 
 
             _context->getM_selectedShape() = nullptr;

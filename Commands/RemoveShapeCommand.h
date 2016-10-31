@@ -5,10 +5,13 @@
 #ifndef OPEN_SKETCH_REMOVEELLIPSECOMMAND_H
 #define OPEN_SKETCH_REMOVEELLIPSECOMMAND_H
 
+#include <memory>
 #include <vector>
 #include <cstddef>
 #include "Command.h"
+#include "../Shapes/Shape.h"
 
+using std::unique_ptr;
 
 class Drawer;
 class Application;
@@ -17,13 +20,9 @@ class RemoveShapeCommand : public Command<Application>
 {
 private:
     size_t m_index;
-    int m_posx = 100;
-    int m_posy = 100;
-    int m_sizex = 100;
-    int m_sizey = 100;
-    Drawer* m_drawer = nullptr;
+    unique_ptr<Shape> m_data = nullptr;
 public:
-    RemoveShapeCommand(size_t _index, int _posx, int _posy, int _sizex, int _sizey, Drawer* _drawer);
+    RemoveShapeCommand(size_t _index);
 
     void execute(Application* _context) override;
     void undo(Application* _context) override;
