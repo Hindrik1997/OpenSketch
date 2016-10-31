@@ -7,6 +7,7 @@
 #include "../OpenGL/OpenGLRenderManager.h"
 #include "../Commands/RemoveShapeCommand.h"
 #include "../Commands/ChangeShapeCommand.h"
+#include "../Commands/UnFormGroupCommand.h"
 
 void EditShapeState::doAction(Application *_context)
 {
@@ -90,8 +91,10 @@ void EditShapeState::doAction(Application *_context)
             _context->getM_selectedShape()->setSelected(false);
 
             _context->getM_selectedShape() = nullptr;
-            //set edit to false
+            //set edit states to false
             _context->setShapeEdited(false);
+            _context->setShapeDeleted(false);
+            _context->setGroupDeformed(false);
 
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posxBox()), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posyBox()), "selected");
@@ -110,14 +113,41 @@ void EditShapeState::doAction(Application *_context)
 
 
             _context->getM_selectedShape() = nullptr;
+
             _context->setShapeEdited(false);
             _context->setShapeDeleted(false);
+            _context->setGroupDeformed(false);
 
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posxBox()), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posyBox()), "selected");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_sizexBox()), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_sizeyBox()), "selected");
         }
+
+        if(_context->isM_isDegrouped())
+        {
+            size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
+            _context->getM_selectedShape()->setSelected(false);
+
+            Shape* s = _context->getM_selectedShape();
+
+            //if a group:
+            if(dynamic_cast<Group*>(s))
+            {
+                _context->execute(new UnFormGroupCommand(indexList));
+            }
+            _context->getM_selectedShape() = nullptr;
+
+            _context->setShapeEdited(false);
+            _context->setShapeDeleted(false);
+            _context->setGroupDeformed(false);
+
+            gtk_entry_set_text(GTK_ENTRY(_context->getM_posxBox()), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(_context->getM_posyBox()), "selected");
+            gtk_entry_set_text(GTK_ENTRY(_context->getM_sizexBox()), "Nothing");
+            gtk_entry_set_text(GTK_ENTRY(_context->getM_sizeyBox()), "selected");
+        }
+
     }
     else
     {

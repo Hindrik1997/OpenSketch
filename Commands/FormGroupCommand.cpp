@@ -6,6 +6,11 @@
 #include "FormGroupCommand.h"
 #include "../OpenGL/OpenGLRenderManager.h"
 
+
+
+//Debug code
+#ifdef DEBUG
+
 void dropVec()
 {
     auto& vec = Application::getInstance().getGLManager().getShapes();
@@ -33,6 +38,7 @@ void dropVec(vector<unique_ptr<Shape>>& vec)
     std::cout << std::endl;
 }
 
+#endif
 
 FormGroupCommand::FormGroupCommand(vector<size_t> _indices) : m_indices(_indices)
 {

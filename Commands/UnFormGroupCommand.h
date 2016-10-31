@@ -5,8 +5,29 @@
 #ifndef OPEN_SKETCH_UNFORMGROUPCOMMAND_H
 #define OPEN_SKETCH_UNFORMGROUPCOMMAND_H
 
+#include <algorithm>
+#include <memory>
+#include <vector>
+#include <cstddef>
+#include "Command.h"
+#include "../Shapes/Shape.h"
 
-class UnFormGroupCommand {
+class Drawer;
+class Application;
+
+using std::unique_ptr;
+
+class UnFormGroupCommand : public Command<Application> {
+private:
+    vector<size_t> m_shapesIndices;
+    size_t m_groupIndex;
+    unique_ptr<Shape> m_group;
+public:
+    UnFormGroupCommand(size_t _index);
+
+    virtual void execute(Application *_context) override;
+
+    virtual void undo(Application *_context) override;
 
 };
 

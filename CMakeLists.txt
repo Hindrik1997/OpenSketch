@@ -25,6 +25,8 @@ cmake_minimum_required(VERSION 3.2.2)
 project(open_sketch)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+
+
 include(FindGTK2)
 if (GTK2_FOUND)
     include_directories(${GTK2_INCLUDE_DIRS})
@@ -36,6 +38,12 @@ link_libraries(libGLEW.a glfw3.a GL GLU X11 Xxf86vm dl Xinerama Xcursor pthread 
 
 set(SOURCE_FILES main.cpp main.cpp GLFW/GLFWfunctions.cpp GLFW/GLFWfunctions.h Application.cpp Application.h GTK/gtkCallbacks.cpp GTK/gtkCallbacks.h includeLibs.h GTK/GTKManager.cpp GTK/GTKManager.h GTK/GTKWindow.cpp GTK/GTKWindow.h OpenGL/OpenGLRenderManager.cpp OpenGL/OpenGLRenderManager.h OpenGL/DrawableObject.cpp OpenGL/DrawableObject.h States/State.h SupportClasses.h States/EditShapeState.cpp States/EditShapeState.h States/MoveShapeState.cpp States/MoveShapeState.h States/NullState.cpp States/NullState.h Commands/Command.h Commands/CommandContext.h Shapes/Shape.cpp Shapes/Shape.h Commands/AddShapeCommand.cpp Commands/AddShapeCommand.h Commands/ChangeShapeCommand.cpp Commands/ChangeShapeCommand.h Commands/RemoveShapeCommand.cpp Commands/RemoveShapeCommand.h OpenGL/Drawer.h OpenGL/Drawer.cpp OpenGL/RectangleDrawer.h OpenGL/RectangleDrawer.cpp OpenGL/EllipseDrawer.h OpenGL/EllipseDrawer.cpp Shapes/Group.cpp Shapes/Group.h States/GroupShapesState.cpp States/GroupShapesState.h Commands/FormGroupCommand.cpp Commands/FormGroupCommand.h Commands/UnFormGroupCommand.cpp Commands/UnFormGroupCommand.h)
 add_executable(open_sketch ${SOURCE_FILES})
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_definitions(open_sketch PUBLIC DEBUG=1)
+elseif(CMAKE_BUILD_TYPE MATCHES Release)
+    target_compile_definitions(open_sketch PUBLIC DEBUG=0)
+endif()
 
 add_custom_command(TARGET open_sketch PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

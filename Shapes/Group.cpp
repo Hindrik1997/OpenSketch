@@ -28,8 +28,6 @@ void Group::setPosition(int _pixelsX, int _pixelsY) {
     {
         s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
     }
-
-
 }
 
 void Group::setSize(int _width, int _height) {
@@ -45,12 +43,12 @@ void Group::setSize(int _width, int _height) {
         int newHeight = static_cast<int>(s->getSize().y * factorY);
         int newWidth = static_cast<int>(s->getSize().x * factorX);
 
-        s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
-
-        int delta_x = static_cast<int>((s->getPosition().x - getPosition().x) * (factorX - 1));
-        int delta_y = static_cast<int>((s->getPosition().y - getPosition().y) * (factorY - 1));
+        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
+        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
 
         s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+
+        s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
     }
 }
 

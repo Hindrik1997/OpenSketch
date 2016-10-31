@@ -608,3 +608,11 @@ void Application::saveToFile()
 vector<size_t>& Application::getSelectedShapes() {
     return m_selected_shapes;
 }
+
+bool Application::isM_isDegrouped() const {
+    return m_isDegrouped;
+}
+
+void Application::setGroupDeformed(bool _val) {
+    m_isDegrouped = _val;
+}

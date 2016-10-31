@@ -90,7 +90,7 @@ void groupButton(GtkWidget *widget, gpointer data) {
 }
 
 void ungroupButton(GtkWidget *widget, gpointer data) {
-
+    Application::getInstance().setGroupDeformed(true);
 }
 
 void selectgroupButton(GtkWidget *widget, gpointer data) {

@@ -74,6 +74,7 @@ public:
     inline Args getStartupArgs();
     void setShapeEdited(bool _val);
     void setShapeDeleted(bool _val);
+    void setGroupDeformed(bool _val);
     glm::vec2 getPaintWindowCursorPos() const;
     OpenGLRenderManager& getGLManager();
 private:
@@ -89,6 +90,7 @@ public:
     GLFWwindow *getM_paintWindow() const;
     bool isM_isEdited() const;
     bool isM_isDeleted() const;
+    bool isM_isDegrouped() const;
     vector<size_t>& getSelectedShapes();
     Shape* &getM_selectedShape();
     GtkWidget *getM_posxBox() const;
@@ -115,6 +117,7 @@ public:
 private:
     bool m_isEdited = false;
     bool m_isDeleted = false;
+    bool m_isDegrouped = false;
     Shape* m_selectedShape = nullptr;
     //FreeType
     FT_Library* m_ft = nullptr;
