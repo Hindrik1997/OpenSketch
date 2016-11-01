@@ -27,8 +27,8 @@ void UnFormGroupCommand::execute(Application *_context)
     for(auto&& shape : gvec)
     {
         shape->setSelected(false);
-        vec.emplace_back(std::move(gvec.front()));
-        gvec.erase(gvec.begin());
+        vec.emplace_back(std::move(gvec.back()));
+        gvec.erase(gvec.end() - 1);
         m_shapesIndices.push_back(vec.size() - 1);
     }
 

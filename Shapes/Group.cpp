@@ -32,6 +32,9 @@ void Group::setPosition(int _pixelsX, int _pixelsY) {
 
 void Group::setSize(int _width, int _height) {
 
+    int old_pos_x = static_cast<int>(getPosition().x);
+    int old_pos_y = static_cast<int>(getPosition().y);
+
     int old_width = static_cast<int>(getSize().x);
     int old_height = static_cast<int>(getSize().y);
 
@@ -50,6 +53,7 @@ void Group::setSize(int _width, int _height) {
 
         s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
     }
+    setPosition(old_pos_x, old_pos_y);
 }
 
 glm::vec2 Group::getPosition() const {
