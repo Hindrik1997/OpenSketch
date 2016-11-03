@@ -37,7 +37,7 @@
 
 
 //prototypes
-class OpenGLRenderManager;
+class ShapeRenderManager;
 
 class Application : public CommandContext<Application> {
 public:
@@ -76,12 +76,12 @@ public:
     void setShapeDeleted(bool _val);
     void setGroupDeformed(bool _val);
     glm::vec2 getPaintWindowCursorPos() const;
-    OpenGLRenderManager& getGLManager();
+    ShapeRenderManager& getGLManager();
 private:
     GTKManager* m_gtkManager;
     GLFWwindow* m_paintWindow;
     GTKWindow* m_toolWindow;
-    OpenGLRenderManager* m_renderManager;
+    ShapeRenderManager* m_renderManager;
     Args m_startupArgs;
 
     //State stuf
@@ -156,7 +156,7 @@ private:
     GtkWidget* m_load_button;
     GtkWidget* m_save_button;
 private:
-    friend class OpenGLRenderManager;
+    friend class ShapeRenderManager;
 };
 
 inline void Application::setStartupArgs(Args _args) {

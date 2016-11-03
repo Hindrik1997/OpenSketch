@@ -6,11 +6,16 @@
 #define OPEN_SKETCH_SHAPE_H
 
 #include <typeinfo>
+#include <string>
+#include <vector>
 #include "../OpenGL/DrawableObject.h"
 
 class Drawer;
+class ShapeRenderManager;
 
-class OpenGLRenderManager;
+using std::string;
+using std::vector;
+using std::to_string;
 
 class Shape {
 protected:
@@ -21,9 +26,9 @@ protected:
     bool m_isSelected = false;
 
     Drawer* m_drawer = nullptr;
-    OpenGLRenderManager* m_oglRenderer = nullptr;
+    ShapeRenderManager* m_oglRenderer = nullptr;
 public:
-    Shape(OpenGLRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height, Drawer* _drawer);
+    Shape(ShapeRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height, Drawer* _drawer);
     virtual ~Shape();
 
     //Geen copies
@@ -39,6 +44,7 @@ public:
 
     virtual void setPosition(int _pixelsX, int _pixelsY);
     virtual void setSize(int _width, int _height);
+    virtual vector<string> writeToFile();
 
     virtual inline void setSelected(bool _isSelected);
     virtual inline bool getSelected() const;

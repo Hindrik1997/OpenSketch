@@ -5,7 +5,7 @@
 #include "UnFormGroupCommand.h"
 #include "../Application.h"
 #include "../Shapes/Group.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 
 UnFormGroupCommand::UnFormGroupCommand(size_t _index) : m_groupIndex(_index)
 {

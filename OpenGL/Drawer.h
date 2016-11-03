@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_DRAWER_H
 
 #include <string>
-#include "OpenGLRenderManager.h"
+#include "ShapeRenderManager.h"
 
 class Drawer {
 private:

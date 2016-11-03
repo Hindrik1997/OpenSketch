@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include "Application.h"
-#include "OpenGL/OpenGLRenderManager.h"
+#include "OpenGL/ShapeRenderManager.h"
 #include "GTK/gtkCallbacks.h"
 #include "Shapes/Shape.h"
 #include "Commands/AddShapeCommand.h"
@@ -119,7 +119,7 @@ void Application::initialize() {
     initToolWindow();
 
     //RenderManager initializen
-    m_renderManager = new OpenGLRenderManager(*this);
+    m_renderManager = new ShapeRenderManager(*this);
     resetState();
 }
 
@@ -341,7 +341,7 @@ void Application::setShapeEdited(bool _val)
     m_isEdited = _val;
 }
 
-OpenGLRenderManager& Application::getGLManager() {
+ShapeRenderManager& Application::getGLManager() {
     return *m_renderManager;
 }
 
@@ -560,7 +560,6 @@ void Application::loadFromFile()
 
 void Application::saveToFile()
 {
-    /*
     std::string lines("group ");
 
     int count = static_cast<int>(getGLManager().getShapes().size() + getGLManager().getShapes().size());
@@ -568,41 +567,20 @@ void Application::saveToFile()
     lines.append(std::to_string(count));
     lines.append("\n");
 
-    for(size_t i = 0; i < getGLManager().getShapes().size(); ++i)
+    for(auto&& s : m_renderManager->getShapes())
     {
-        std::string line("  rectangle ");
-        const Shape& rect = getGLManager().getShapes()[i];
-
-        line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getPosition().y) - static_cast<int>(rect.getSize().y / 2)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getSize().x)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getSize().y)));
-        line.append("\n");
-        lines.append(line);
-    }
-    for(size_t i = 0; i < getGLManager().getShapes().size(); ++i)
-    {
-        std::string line("  ellipse ");
-        const Shape& rect = getGLManager().getShapes()[i];
-
-        line.append(std::to_string(static_cast<int>(rect.getPosition().x) - static_cast<int>(rect.getSize().x / 2)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getPosition().y) - static_cast<int>(rect.getSize().y / 2)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getSize().x)));
-        line.append(" ");
-        line.append(std::to_string(static_cast<int>(rect.getSize().y)));
-        line.append("\n");
-        lines.append(line);
+        vector<string> t =s->writeToFile();
+        for(auto&& l : t)
+        {
+            l.insert(l.begin(), 1, '\t');
+            l.append(1,'\n');
+            lines.append(l);
+        }
     }
 
     std::ofstream out("datafile2.txt");
     out << lines;
     out.close();
-*/
 }
 
 vector<size_t>& Application::getSelectedShapes() {

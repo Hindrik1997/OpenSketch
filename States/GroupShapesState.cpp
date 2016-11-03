@@ -3,7 +3,7 @@
 //
 
 #include "../Application.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 #include "GroupShapesState.h"
 #include <algorithm>
 

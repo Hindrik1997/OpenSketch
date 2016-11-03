@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_ELLIPSEDRAWER_H
 
 #include "Drawer.h"
-#include "OpenGLRenderManager.h"
+#include "ShapeRenderManager.h"
 
 /*
  * SINGLETON PATTERN

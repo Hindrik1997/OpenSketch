@@ -5,7 +5,7 @@
 #include "Group.h"
 #include <algorithm>
 
-Group::Group(OpenGLRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
+Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
 {
     for(auto&& s : _vec)
     {
@@ -114,4 +114,26 @@ void Group::setSelected(bool _isSelected) {
 
 bool Group::getSelected() const {
     return Shape::getSelected();
+}
+
+vector<string> Group::writeToFile() {
+
+    vector<string> result;
+
+    string core = "group ";
+    core.append(to_string(static_cast<int>(m_shapes.size())));
+    result.push_back(core);
+
+    for(auto&& s : m_shapes)
+    {
+        vector<string> t = s->writeToFile();
+        for(auto&& l : t)
+        {
+            l.insert(l.begin(),1,'\t');
+        }
+
+        result.reserve(result.size() + t.size());
+        result.insert(result.end(), t.begin(), t.end());
+    }
+    return result;
 }

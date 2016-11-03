@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "AddShapeCommand.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 
 using std::vector;
 

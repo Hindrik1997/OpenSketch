@@ -4,7 +4,7 @@
 
 #include "MoveShapeState.h"
 #include "../Application.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 #include "../Commands/ChangeShapeCommand.h"
 
 

@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include "RemoveShapeCommand.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 
 RemoveShapeCommand::RemoveShapeCommand(size_t _index)
         : m_index(_index)

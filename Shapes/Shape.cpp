@@ -4,8 +4,7 @@
 
 #include "Shape.h"
 #include <algorithm>
-#include "../OpenGL/OpenGLRenderManager.h"
-#include "../Application.h"
+#include "../OpenGL/ShapeRenderManager.h"
 #include "../OpenGL/Drawer.h"
 
 //mappen van range x-y naar w-z
@@ -14,7 +13,7 @@ static float map(float _value, float _from1, float _to1, float _from2, float _to
     return _from2 + (_value - _from1) * (_to2 - _from2) / (_to1 - _from1);
 }
 
-Shape::Shape(OpenGLRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height, Drawer* _drawer)
+Shape::Shape(ShapeRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height, Drawer* _drawer)
         : m_oglRenderer(_oglRenderer), m_drawer(_drawer)
 {
     //Basic Shape in t midden, deze transformeer ik doormiddel van matrices naar de juiste positie en grootte
@@ -51,7 +50,6 @@ void Shape::setSize(int _width, int _height)
     int window_width, window_height;
     Application::getInstance().getPaintWindowSize(window_width, window_height);
 
-
     int defaultSizeX = static_cast<int>(0.5f * window_width);
     int defaultSizeY = static_cast<int>(0.5f * window_height);
 
@@ -74,4 +72,19 @@ void Shape::setSize(int _width, int _height)
 void Shape::draw() const {
     if(m_drawer != nullptr)
         m_drawer->draw(*this);
+}
+
+vector<string> Shape::writeToFile() {
+    vector<string> result;
+    std::string core = m_drawer == nullptr ? throw "Invalid drawer!" : m_drawer->toString();
+    core.append(" ");
+    core.append(to_string(static_cast<int>(getPosition().x - static_cast<int>(getSize().x / 2))));
+    core.append(" ");
+    core.append(to_string(static_cast<int>(getPosition().y - static_cast<int>(getSize().y / 2))));
+    core.append(" ");
+    core.append(to_string(static_cast<int>(getSize().x / 2)));
+    core.append(" ");
+    core.append(to_string(static_cast<int>(getSize().y / 2)));
+    result.push_back(core);
+    return result;
 }

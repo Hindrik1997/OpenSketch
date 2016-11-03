@@ -5,7 +5,7 @@
 #include "../States/NullState.h"
 #include "../States/MoveShapeState.h"
 #include "../States/EditShapeState.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 #include "gtkCallbacks.h"
 #include "../Commands/AddShapeCommand.h"
 #include "../States/GroupShapesState.h"

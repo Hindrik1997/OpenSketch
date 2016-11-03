@@ -3,9 +3,9 @@
 //
 
 #include <cmath>
-#include "OpenGLRenderManager.h"
+#include "ShapeRenderManager.h"
 
-void OpenGLRenderManager::render()
+void ShapeRenderManager::render()
 {
 
         //Clear color state setten
@@ -27,22 +27,22 @@ void OpenGLRenderManager::render()
 
 }
 
-OpenGLRenderManager::OpenGLRenderManager(Application& _app) : m_application(_app)
+ShapeRenderManager::ShapeRenderManager(Application& _app) : m_application(_app)
 {
 }
 
-void OpenGLRenderManager::setCustomShaderProgram(const GLuint& _shaderProgam)
+void ShapeRenderManager::setCustomShaderProgram(const GLuint& _shaderProgam)
 {
     glUseProgram(_shaderProgam);
 }
 
-void OpenGLRenderManager::setNullShaderProgram()
+void ShapeRenderManager::setNullShaderProgram()
 {
     GLuint t = 0;
     setCustomShaderProgram(t);
 }
 
-void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID)
+void ShapeRenderManager::createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID)
 {
     const int debugBufSize = 524; //524 is groot genoeg voor error messages. gwn random groot genoeg nummer.
     GLint success;
@@ -114,13 +114,13 @@ void OpenGLRenderManager::createCustomShaderProgam(string _vertexShader, string 
     //klaar!
 }
 
-Shape& OpenGLRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
+Shape& ShapeRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
     m_shapes.emplace_back(make_unique<Shape>(this, _posx, _posy, _width, _height, _drawer));
     return *m_shapes.back();
 }
 
-Shape* OpenGLRenderManager::getSelectedShape() {
+Shape* ShapeRenderManager::getSelectedShape() {
     int posx, posy;
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
@@ -137,15 +137,11 @@ Shape* OpenGLRenderManager::getSelectedShape() {
 
         if(posx >= xleft && posx <= xright && posy <= ybottom && posy >= ytop)
             found = &(*m_shapes[i]);
-
-
-
-
     }
     return found;
 }
 
-glm::vec2 OpenGLRenderManager::getMouseOffsetInShape(Shape& _rect,int _mousex, int _mousey) {
+glm::vec2 ShapeRenderManager::getMouseOffsetInShape(Shape& _rect,int _mousex, int _mousey) {
     int middleX, middleY;
     middleX = static_cast<int>(_rect.getPosition().x);
     middleY = static_cast<int>(_rect.getPosition().y);
@@ -164,7 +160,7 @@ glm::vec2 OpenGLRenderManager::getMouseOffsetInShape(Shape& _rect,int _mousex, i
     return result;
 }
 
-Shape *OpenGLRenderManager::getSelectedShapePriority(Shape* _shape) {
+Shape *ShapeRenderManager::getSelectedShapePriority(Shape* _shape) {
     int posx, posy;
     glm::vec2 pos = m_application.getPaintWindowCursorPos();
     posx = static_cast<int>(pos.x); posy = static_cast<int>(pos.y);
@@ -192,7 +188,7 @@ Shape *OpenGLRenderManager::getSelectedShapePriority(Shape* _shape) {
     return nullptr;
 }
 
-size_t OpenGLRenderManager::getIndex(Shape* _shape)
+size_t ShapeRenderManager::getIndex(Shape* _shape)
 {
     for(size_t i = 0; i != m_shapes.size(); ++i)
     {
@@ -202,7 +198,7 @@ size_t OpenGLRenderManager::getIndex(Shape* _shape)
     throw "Out of range";
 }
 
-size_t OpenGLRenderManager::addGroup(unique_ptr<Shape> _ptr) {
+size_t ShapeRenderManager::addGroup(unique_ptr<Shape> _ptr) {
     m_shapes.emplace_back(std::move(_ptr));
     return m_shapes.size() - 1;
 }

@@ -18,17 +18,17 @@
 
 using namespace std;
 
-class OpenGLRenderManager {
+class ShapeRenderManager {
 private:
     Application& m_application;
     vector<unique_ptr<Shape>> m_shapes;
 public:
-    OpenGLRenderManager(Application& _app);
+    ShapeRenderManager(Application& _app);
 
-    OpenGLRenderManager(const OpenGLRenderManager&) = delete;
-    OpenGLRenderManager(const OpenGLRenderManager&&) = delete;
-    void operator=(const OpenGLRenderManager&) = delete;
-    void operator=(const OpenGLRenderManager&&) = delete;
+    ShapeRenderManager(const ShapeRenderManager&) = delete;
+    ShapeRenderManager(const ShapeRenderManager&&) = delete;
+    void operator=(const ShapeRenderManager&) = delete;
+    void operator=(const ShapeRenderManager&&) = delete;
 public:
     //Returns nullptr if no rectangle/ellipse is selected!
     Shape* getSelectedShape();
@@ -48,7 +48,7 @@ public:
     inline const vector<unique_ptr<Shape>>& getShapes() const;
 };
 
-inline const vector<unique_ptr<Shape>>& OpenGLRenderManager::getShapes() const
+inline const vector<unique_ptr<Shape>>& ShapeRenderManager::getShapes() const
 {
     return m_shapes;
 };

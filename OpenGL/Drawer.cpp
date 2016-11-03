@@ -12,7 +12,7 @@ Drawer::~Drawer()
 
 void Drawer::draw(const Shape& _shape) const
 {
-    OpenGLRenderManager::setCustomShaderProgram(m_shader);
+    ShapeRenderManager::setCustomShaderProgram(m_shader);
 
     GLint transformLocation = glGetUniformLocation(m_shader, "transformMatrix");
     GLint isSelLocation = glGetUniformLocation(m_shader, "isSelected");
@@ -26,9 +26,9 @@ void Drawer::draw(const Shape& _shape) const
 
     glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(_shape.getMatrix()));
     DrawableObject::getInstance().draw();
-    OpenGLRenderManager::setNullShaderProgram();
+    ShapeRenderManager::setNullShaderProgram();
 }
 
 Drawer::Drawer(std::string _vshader, std::string _fshader) {
-    OpenGLRenderManager::createCustomShaderProgam(_vshader, _fshader, m_shader);
+    ShapeRenderManager::createCustomShaderProgam(_vshader, _fshader, m_shader);
 }

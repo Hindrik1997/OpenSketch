@@ -4,7 +4,7 @@
 
 #include "EditShapeState.h"
 #include "../Application.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 #include "../Commands/RemoveShapeCommand.h"
 #include "../Commands/ChangeShapeCommand.h"
 #include "../Commands/UnFormGroupCommand.h"

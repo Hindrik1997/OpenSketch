@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include "FormGroupCommand.h"
-#include "../OpenGL/OpenGLRenderManager.h"
+#include "../OpenGL/ShapeRenderManager.h"
 
 
 
