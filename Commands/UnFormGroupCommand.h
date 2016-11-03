@@ -19,7 +19,7 @@ using std::unique_ptr;
 
 class UnFormGroupCommand : public Command<Application> {
 private:
-    vector<size_t> m_shapesIndices;
+    size_t m_groupSize;
     size_t m_groupIndex;
     unique_ptr<Shape> m_group;
 public:
