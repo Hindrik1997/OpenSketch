@@ -45,10 +45,10 @@ public:
     static void createCustomShaderProgam(string _vertexShader, string _fragmentShader, GLuint& _shaderID);
     static void setCustomShaderProgram(const GLuint& _shaderProgam);
     static void setNullShaderProgram();
-    inline const vector<unique_ptr<Shape>>& getShapes() const;
+    inline vector<unique_ptr<Shape>>& getShapes();
 };
 
-inline const vector<unique_ptr<Shape>>& ShapeRenderManager::getShapes() const
+inline vector<unique_ptr<Shape>>& ShapeRenderManager::getShapes()
 {
     return m_shapes;
 };

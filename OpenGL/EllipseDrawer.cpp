@@ -15,5 +15,5 @@ EllipseDrawer &EllipseDrawer::getInstance() {
 }
 
 std::string EllipseDrawer::toString() const {
-    return std::string(" ellipse");
+    return std::string("ellipse");
 }

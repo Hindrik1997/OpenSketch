@@ -14,5 +14,5 @@ RectangleDrawer &RectangleDrawer::getInstance() {
 }
 
 std::string RectangleDrawer::toString() const {
-    return std::string(" rectangle");
+    return std::string("rectangle");
 }

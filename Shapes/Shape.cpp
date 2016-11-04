@@ -82,9 +82,9 @@ vector<string> Shape::writeToFile() {
     core.append(" ");
     core.append(to_string(static_cast<int>(getPosition().y - static_cast<int>(getSize().y / 2))));
     core.append(" ");
-    core.append(to_string(static_cast<int>(getSize().x / 2)));
+    core.append(to_string(static_cast<int>(getSize().x)));
     core.append(" ");
-    core.append(to_string(static_cast<int>(getSize().y / 2)));
+    core.append(to_string(static_cast<int>(getSize().y)));
     result.push_back(core);
     return result;
 }

@@ -14,7 +14,7 @@ UnFormGroupCommand::UnFormGroupCommand(size_t _index) : m_groupIndex(_index)
 
 void UnFormGroupCommand::execute(Application *_context)
 {
-    vector<unique_ptr<Shape>>& vec = const_cast<vector<unique_ptr<Shape>>&>(_context->getGLManager().getShapes());
+    vector<unique_ptr<Shape>>& vec = _context->getGLManager().getShapes();
     m_group = std::move(vec[m_groupIndex]); //Control of the resource (shape) moved to unique_ptr
     vec.erase(vec.begin() + m_groupIndex);
     m_groupIndex = 0;
@@ -36,7 +36,7 @@ void UnFormGroupCommand::execute(Application *_context)
 
 void UnFormGroupCommand::undo(Application *_context)
 {
-    vector<unique_ptr<Shape>> &vec = const_cast<vector<unique_ptr<Shape>> &>(_context->getGLManager().getShapes());
+    vector<unique_ptr<Shape>> &vec = _context->getGLManager().getShapes();
 
     Group* g = dynamic_cast<Group*>(m_group.get());
     if(g == nullptr) throw "FAILURE";

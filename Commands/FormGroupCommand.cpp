@@ -54,7 +54,7 @@ void FormGroupCommand::execute(Application *_context) {
 
     vector<unique_ptr<Shape>> temp;
 
-    vector<unique_ptr<Shape>> &vec = const_cast<vector<unique_ptr<Shape>> &>(_context->getGLManager().getShapes());
+    vector<unique_ptr<Shape>> &vec = _context->getGLManager().getShapes();
 
     //contructs temporary vector in which it moves the shapes we decided to group together
     for (auto &&index : m_indices)
@@ -77,7 +77,7 @@ void FormGroupCommand::undo(Application *_context)
     //and also reverses the grouped set
     //which results into a reconstructed list as it was before
 
-    vector<unique_ptr<Shape>>& vec = const_cast<vector<unique_ptr<Shape>>&>(_context->getGLManager().getShapes());
+    vector<unique_ptr<Shape>>& vec = _context->getGLManager().getShapes();
 
     std::sort(m_indices.begin(), m_indices.end());
 

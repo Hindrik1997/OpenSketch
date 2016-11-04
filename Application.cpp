@@ -29,7 +29,7 @@ Application::~Application() {
     //Paintwindow hoeft niet gedelete te worden. GLFW doet dit!
     //ToolWindow pointer gaat via de GTKManager class, deze beheert de windows zelf!
     // (.createWindow() retourneert dan ook n reference ipv pointer om dit aan te geven)
-    //Alleen GTKManager en de rendermanager moeten opgeruimd worden, hiervoor heb ik n leuke macro gemaakt.
+    //Alleen GTKManager en de shaperendermanager moeten opgeruimd worden, hiervoor heb ik n leuke macro gemaakt.
     SAFE_PNTR_DEL(m_gtkManager);
     SAFE_PNTR_DEL(m_renderManager);
     SAFE_PNTR_DEL(m_ft);
@@ -64,7 +64,7 @@ void Application::initGTK() {
 }
 
 void Application::initialize() {
-    bool status = true;
+    bool status;
 
     m_ft = new FT_Library;
     //FreeType initten
@@ -330,6 +330,7 @@ void Application::initToolWindow()
 
     //group button
     g_signal_connect(m_group_button, "clicked", G_CALLBACK(groupButton), NULL);
+
     //ungroup button
     g_signal_connect(m_ungroup_button, "clicked", G_CALLBACK(ungroupButton), NULL);
 
@@ -350,6 +351,7 @@ void Application::setShapeDeleted(bool _val) {
 }
 
 void Application::setState(State* _state) {
+    resetState();
     m_state = _state;
 }
 
@@ -503,10 +505,145 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+bool interpret_line(int _index, vector<string>& _lines, Application* _context, int& _skipcounter, Group& _group)
+{
+    std::string line = _lines[_index];
+    if(line.substr(0, 9) == std::string("rectangle"))
+    {
+        //add rect
+        std::string part = line.substr(9, line.size() - 9);
+        part = trim(part);
+
+        std::vector<string> vals = split(part, ' ');
+        unique_ptr<Shape> p = make_unique<Shape>(
+                &_context->getGLManager(),
+                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
+                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
+                std::atoi(vals[2].c_str()),
+                std::atoi(vals[3].c_str()),
+                static_cast<Drawer*>(&RectangleDrawer::getInstance())
+        );
+        _group.getShapes().emplace_back(std::move(p));
+        return true;
+    }
+
+    if(line.substr(0, 7) == std::string("ellipse"))
+    {
+        //add ellips
+        std::string part = line.substr(7, line.size() - 7);
+        part = trim(part);
+
+        std::vector<string> vals = split(part, ' ');
+        unique_ptr<Shape> p = make_unique<Shape>(
+                &_context->getGLManager(),
+                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
+                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
+                std::atoi(vals[2].c_str()),
+                std::atoi(vals[3].c_str()),
+                static_cast<Drawer*>(&EllipseDrawer::getInstance())
+        );
+        _group.getShapes().emplace_back(std::move(p));
+        return true;
+    }
+
+    if(line.substr(0,5) == std::string("group"))
+    {
+        //add group
+        string t = line.substr(5, line.size());
+        t = trim(t);
+        int expectedcount = atoi(t.c_str());
+        int linecount = 0;
+
+        vector<unique_ptr<Shape>> temp;
+        unique_ptr<Shape> g = std::make_unique<Group>(&_context->getGLManager(), temp);
+        Group* gr = dynamic_cast<Group*>(g.get());
+
+        while(expectedcount != 0)
+        {
+            if(_index + linecount + 1 < _lines.size())
+            {
+                int c = 0;
+                bool val = interpret_line(_index + linecount + 1, _lines, _context,c, *gr);
+                if(val)
+                    expectedcount--;
+                linecount += c;
+            }
+            linecount++;
+        }
+        _skipcounter += linecount;
+        _group.getShapes().emplace_back(std::move(g));
+        return true;
+    }
+    return false;
+}
+
+void interpret_line(int _index, vector<string>& _lines, Application* _context, int& _skipcounter)
+{
+    string line = _lines[_index];
+    if(line.substr(0, 9) == std::string("rectangle"))
+    {
+        //add rect
+        std::string part = line.substr(9, line.size() - 9);
+        part = trim(part);
+
+        std::vector<string> vals = split(part, ' ');
+        _context->execute(new AddShapeCommand(
+                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
+                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
+                std::atoi(vals[2].c_str()),
+                std::atoi(vals[3].c_str()),
+                &RectangleDrawer::getInstance()
+        ));
+    }
+
+    if(line.substr(0, 7) == std::string("ellipse"))
+    {
+        //add ellips
+        std::string part = line.substr(7, line.size() - 7);
+        part = trim(part);
+
+        std::vector<string> vals = split(part, ' ');
+        _context->execute(new AddShapeCommand(
+                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2
+                ,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2
+                ,std::atoi(vals[2].c_str()),
+                std::atoi(vals[3].c_str()),
+                &EllipseDrawer::getInstance()
+        ));
+    }
+
+    if(line.substr(0,5) == std::string("group"))
+    {
+        //add group
+        string t = line.substr(5, line.size());
+        t = trim(t);
+        int expectedcount = atoi(t.c_str());
+
+        vector<unique_ptr<Shape>> temp;
+        unique_ptr<Shape> g = std::make_unique<Group>(&_context->getGLManager(), temp);
+        Group* gr = dynamic_cast<Group*>(g.get());
+
+        int linecount = 0;
+        while(expectedcount != 0)
+        {
+            if(_index + linecount + 1 < _lines.size())
+            {
+                int c = 0;
+                bool val = interpret_line(_index + linecount + 1, _lines, _context,c, *gr);
+                if(val)
+                    expectedcount--;
+                linecount += c;
+            }
+            linecount++;
+        }
+        _skipcounter += linecount;
+        _context->getGLManager().getShapes().emplace_back(std::move(g));
+    }
+}
+
 void Application::loadFromFile()
 {
-    /*
-    const_cast<vector<Shape>&>(getGLManager().getShapes()).clear();
+    getGLManager().getShapes().clear();
 
     std::vector<std::string> lines;
 
@@ -515,33 +652,16 @@ void Application::loadFromFile()
     {
         lines.push_back(line);
     }
+    lines.erase(lines.begin()); //ignore first group
 
     for(auto&& line : lines)
     {
         line = trim(line);
     }
 
-    for(auto&& line : lines)
+    for(int i = 0; i < lines.size(); ++i)
     {
-        if(line.substr(0, 9) == std::string("rectangle"))
-        {
-            //add rect
-            std::string part = line.substr(9, line.size() - 9);
-            part = trim(part);
-
-            std::vector<string> vals = split(part, ' ');
-            execute(new AddShapeCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str()), &RectangleDrawer::getInstance()));
-        }
-
-        if(line.substr(0, 7) == std::string("ellipse"))
-        {
-            //add ellips
-            std::string part = line.substr(7, line.size() - 7);
-            part = trim(part);
-
-            std::vector<string> vals = split(part, ' ');
-            execute(new AddShapeCommand(std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,std::atoi(vals[2].c_str()),std::atoi(vals[3].c_str()), &EllipseDrawer::getInstance()));
-        }
+        interpret_line(i, lines, this, i);
     }
     input.close();
 
@@ -555,14 +675,13 @@ void Application::loadFromFile()
     {
         m_redoHistory.pop();
     }
-*/
 }
 
 void Application::saveToFile()
 {
     std::string lines("group ");
 
-    int count = static_cast<int>(getGLManager().getShapes().size() + getGLManager().getShapes().size());
+    int count = static_cast<int>(getGLManager().getShapes().size());
 
     lines.append(std::to_string(count));
     lines.append("\n");
