@@ -4,6 +4,7 @@
 
 #include "Shape.h"
 #include <algorithm>
+#include "Visitor.h"
 #include "../OpenGL/ShapeRenderManager.h"
 #include "../OpenGL/Drawer.h"
 
@@ -87,4 +88,8 @@ vector<string> Shape::writeToFile() {
     core.append(to_string(static_cast<int>(getSize().y)));
     result.push_back(core);
     return result;
+}
+
+void Shape::accept(Visitor<Shape> &_v) {
+    _v.visit(*this);
 }

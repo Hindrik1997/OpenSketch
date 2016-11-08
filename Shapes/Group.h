@@ -13,7 +13,7 @@
 using std::vector;
 using std::unique_ptr;
 
-class Group : public Shape {
+class Group : public Shape, public Visitable<Group> {
 private:
     vector<unique_ptr<Shape>> m_shapes;
 public:
@@ -22,7 +22,7 @@ public:
 
     virtual vector<string> writeToFile() override;
 
-    void draw() const override;
+    virtual void accept(Visitor<Group> &_v) override;
 
     virtual void setPosition(int _pixelsX, int _pixelsY) override;
 
@@ -31,8 +31,6 @@ public:
     virtual glm::vec2 getPosition() const override;
 
     virtual glm::vec2 getSize() const override;
-
-    virtual void setSelected(bool _isSelected) override;
 
     virtual bool getSelected() const override;
 

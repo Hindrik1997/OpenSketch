@@ -5,10 +5,12 @@
 #ifndef OPEN_SKETCH_SHAPE_H
 #define OPEN_SKETCH_SHAPE_H
 
+
 #include <typeinfo>
 #include <string>
 #include <vector>
 #include "../OpenGL/DrawableObject.h"
+#include "Visitable.h"
 
 class Drawer;
 class ShapeRenderManager;
@@ -17,7 +19,7 @@ using std::string;
 using std::vector;
 using std::to_string;
 
-class Shape {
+class Shape : public Visitable<Shape> {
 protected:
     glm::mat4 m_transformMatrix = glm::mat4(1.0f);
 
@@ -41,6 +43,8 @@ public:
     Shape& operator=(Shape&&) = default;
 
     virtual void draw() const;
+
+    virtual void accept(Visitor<Shape> &_v) override;
 
     virtual void setPosition(int _pixelsX, int _pixelsY);
     virtual void setSize(int _width, int _height);
