@@ -36,6 +36,8 @@ public:
 
     virtual bool getSelected() const override;
 
+    virtual void accept(Visitor &_v) override;
+
     vector<unique_ptr<Shape>>& getShapes();
 private:
     void calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) const;

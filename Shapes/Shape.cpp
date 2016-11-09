@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "../OpenGL/ShapeRenderManager.h"
 #include "../OpenGL/Drawer.h"
+#include "Visitor.h"
 
 //mappen van range x-y naar w-z
 static float map(float _value, float _from1, float _to1, float _from2, float _to2)
@@ -87,4 +88,8 @@ vector<string> Shape::writeToFile() {
     core.append(to_string(static_cast<int>(getSize().y)));
     result.push_back(core);
     return result;
+}
+
+void Shape::accept(Visitor &_v) {
+    _v.visit(*this);
 }

@@ -13,6 +13,7 @@
 #include "Commands/AddShapeCommand.h"
 #include "OpenGL/RectangleDrawer.h"
 #include "OpenGL/EllipseDrawer.h"
+#include "Visitors/WriteToFileVisitor.h"
 
 using std::string;
 using std::cout;
@@ -688,7 +689,9 @@ void Application::saveToFile()
 
     for(auto&& s : m_renderManager->getShapes())
     {
-        vector<string> t =s->writeToFile();
+        WriteToFileVisitor v;
+        s->accept(v);
+        vector<string> t = v.getData();
         for(auto&& l : t)
         {
             l.insert(l.begin(), 1, '\t');

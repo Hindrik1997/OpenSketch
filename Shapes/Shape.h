@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "../OpenGL/DrawableObject.h"
+#include "Visitable.h"
 
 class Drawer;
 class ShapeRenderManager;
@@ -17,7 +18,7 @@ using std::string;
 using std::vector;
 using std::to_string;
 
-class Shape {
+class Shape : public Visitable {
 protected:
     glm::mat4 m_transformMatrix = glm::mat4(1.0f);
 
@@ -49,6 +50,9 @@ public:
     virtual inline void setSelected(bool _isSelected);
     virtual inline bool getSelected() const;
     virtual inline glm::mat4 getMatrix() const;
+
+    virtual void accept(Visitor &_v) override;
+
     virtual inline glm::vec2 getPosition() const;
     virtual inline glm::vec2 getSize() const;
     inline Drawer* getDrawer() const;

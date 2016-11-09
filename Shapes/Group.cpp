@@ -3,6 +3,7 @@
 //
 
 #include "Group.h"
+#include "Visitor.h"
 #include <algorithm>
 
 Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
@@ -136,4 +137,14 @@ vector<string> Group::writeToFile() {
         result.insert(result.end(), t.begin(), t.end());
     }
     return result;
+}
+
+void Group::accept(Visitor &_v) {
+    _v.visit(*this);
+
+    /*
+     *  Ik heb er voor gekozen om de sub shapes af te handelen in de implementatie van de visitor.
+     *  Anders zou de File I/O onzinnig complex en lastig worden om te implementeren.
+     *
+     * */
 }
