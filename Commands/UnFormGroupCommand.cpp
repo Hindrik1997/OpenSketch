@@ -6,7 +6,6 @@
 #include "../Application.h"
 #include "../Shapes/Group.h"
 #include "../OpenGL/ShapeRenderManager.h"
-#include "../Visitors/SetSelectedVisitor.h"
 
 UnFormGroupCommand::UnFormGroupCommand(size_t _index) : m_groupIndex(_index)
 {
@@ -24,12 +23,11 @@ void UnFormGroupCommand::execute(Application *_context)
     if(g == nullptr) throw "FAILURE";
     vector<unique_ptr<Shape>>& gvec = g->getShapes();
 
-    SetSelectedVisitor v(false);
 
     m_groupSize = gvec.size();
     for(size_t i = 0; i < m_groupSize; ++i)
     {
-        gvec[gvec.size() - 1]->accept(v);
+        gvec[gvec.size() - 1]->setSelected(false);
         vec.emplace_back(std::move(gvec[gvec.size() - 1]));
         gvec.erase(gvec.end() - 1);
     }

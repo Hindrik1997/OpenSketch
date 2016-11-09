@@ -5,7 +5,6 @@
 #include "../Application.h"
 #include "../OpenGL/ShapeRenderManager.h"
 #include "GroupShapesState.h"
-#include "../Visitors/SetSelectedVisitor.h"
 #include <algorithm>
 
 //returns true if clicked
@@ -43,14 +42,11 @@ void GroupShapesState::doAction(Application *_context) {
             return;
         }
 
-        SetSelectedVisitor vFalse(false);
-        SetSelectedVisitor vTrue(true);
-
         //if shape already selected, deselect
         vector<size_t>& vec = _context->getSelectedShapes();
         if(std::find(vec.begin(), vec.end(), _context->getGLManager().getIndex(selected)) != vec.end())
         {
-            selected->accept(vFalse);
+            selected->setSelected(false);
 
             vec.erase(std::remove(vec.begin(), vec.end(), _context->getGLManager().getIndex(selected)), vec.end());
             return;
@@ -58,6 +54,6 @@ void GroupShapesState::doAction(Application *_context) {
 
         //else we select it and push the index in the vector
         vec.push_back(_context->getGLManager().getIndex(selected));
-        selected->accept(vTrue);
+        selected->setSelected(true);
     }
 }

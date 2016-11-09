@@ -2,7 +2,6 @@
 // Created by Hindrik Stegenga on 21-10-16.
 //
 
-#include "Visitor.h"
 #include "Group.h"
 #include <algorithm>
 
@@ -13,6 +12,11 @@ Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) 
         m_shapes.emplace_back(std::move(s));
     }
     _vec.clear();
+}
+
+void Group::draw() const {
+    for(auto&& s : m_shapes)
+        s->draw();
 }
 
 void Group::setPosition(int _pixelsX, int _pixelsY) {
@@ -100,6 +104,14 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
     _maxy = max_y;
 }
 
+void Group::setSelected(bool _isSelected) {
+    Shape::setSelected(_isSelected);
+    for(auto&& s : m_shapes)
+    {
+        s->setSelected(_isSelected);
+    }
+}
+
 bool Group::getSelected() const {
     return Shape::getSelected();
 }
@@ -124,13 +136,4 @@ vector<string> Group::writeToFile() {
         result.insert(result.end(), t.begin(), t.end());
     }
     return result;
-}
-
-void Group::accept(Visitor<Group> &_v) {
-    _v.visit(*this);
-    Visitor<Shape>* vShape = dynamic_cast<Visitor<Shape>*>(&_v);
-    for(auto&& s : m_shapes)
-    {
-        s->accept(*vShape);
-    }
 }

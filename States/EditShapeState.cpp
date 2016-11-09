@@ -8,14 +8,10 @@
 #include "../Commands/RemoveShapeCommand.h"
 #include "../Commands/ChangeShapeCommand.h"
 #include "../Commands/UnFormGroupCommand.h"
-#include "../Visitors/SetSelectedVisitor.h"
 
 void EditShapeState::doAction(Application *_context)
 {
     Shape* currentSelected = _context->getGLManager().getSelectedShape();
-
-    SetSelectedVisitor vFalse(false);
-    SetSelectedVisitor vTrue(true);
 
     if(glfwGetMouseButton(_context->getM_paintWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS
        && currentSelected != nullptr
@@ -25,12 +21,12 @@ void EditShapeState::doAction(Application *_context)
 
         //old deselecten
         if(_context->getM_selectedShape() != nullptr) {
-            _context->getM_selectedShape()->accept(vFalse);
+            _context->getM_selectedShape()->setSelected(false);
         }
 
         _context->getM_selectedShape() = currentSelected;
 
-        _context->getM_selectedShape()->accept(vTrue);
+        _context->getM_selectedShape()->setSelected(true);
         gtk_entry_set_text(GTK_ENTRY(_context->getM_posxBox()), std::to_string(static_cast<int>(_context->getM_selectedShape()->getPosition().x)).c_str());
         gtk_entry_set_text(GTK_ENTRY(_context->getM_posyBox()), std::to_string(static_cast<int>(_context->getM_selectedShape()->getPosition().y)).c_str());
         gtk_entry_set_text(GTK_ENTRY(_context->getM_sizexBox()), std::to_string(static_cast<int>(_context->getM_selectedShape()->getSize().x)).c_str());
@@ -40,7 +36,7 @@ void EditShapeState::doAction(Application *_context)
 
     if(_context->getM_selectedShape() != nullptr)
     {
-        _context->getM_selectedShape()->accept(vTrue);
+        _context->getM_selectedShape()->setSelected(true);
 
         if(_context->isM_isEdited()) {
             //get new info from tool and set
@@ -62,7 +58,7 @@ void EditShapeState::doAction(Application *_context)
                 //numbers represent draw surface size
                 if(sx <= 0 || sy <= 0 || px <= 0 || py <= 0 || sx >= 1280 || sy >= 800 || px >= 1280 || py >= 800)
                 {   //Niet accepten
-                    _context->getM_selectedShape()->accept(vFalse);
+                    _context->getM_selectedShape()->setSelected(false);
 
                     _context->getM_selectedShape() = nullptr;
                     return;
@@ -70,7 +66,7 @@ void EditShapeState::doAction(Application *_context)
             }
             catch (...) {
                 //Niet accepten
-                _context->getM_selectedShape()->accept(vFalse);
+                _context->getM_selectedShape()->setSelected(false);
 
                 _context->getM_selectedShape() = nullptr;
                 return;
@@ -92,7 +88,7 @@ void EditShapeState::doAction(Application *_context)
             _context->execute(new ChangeShapeCommand(indexList, px - ox, py - oy, sx - osx, sy - osy));
 
             //shape stuff weer goed zetten
-            _context->getM_selectedShape()->accept(vFalse);
+            _context->getM_selectedShape()->setSelected(false);
 
             _context->getM_selectedShape() = nullptr;
             //set edit states to false
@@ -110,7 +106,7 @@ void EditShapeState::doAction(Application *_context)
         if(_context->isM_isDeleted())
         {
             size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
-            _context->getM_selectedShape()->accept(vFalse);
+            _context->getM_selectedShape()->setSelected(false);
 
             Shape& rect = *_context->getM_selectedShape();
             _context->execute(new RemoveShapeCommand(indexList));
@@ -131,7 +127,7 @@ void EditShapeState::doAction(Application *_context)
         if(_context->isM_isDegrouped())
         {
             size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
-            _context->getM_selectedShape()->accept(vFalse);
+            _context->getM_selectedShape()->setSelected(false);
 
             Shape* s = _context->getM_selectedShape();
 

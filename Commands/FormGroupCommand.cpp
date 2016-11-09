@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "FormGroupCommand.h"
 #include "../OpenGL/ShapeRenderManager.h"
-#include "../Visitors/SetSelectedVisitor.h"
 
 
 
@@ -57,12 +56,10 @@ void FormGroupCommand::execute(Application *_context) {
 
     vector<unique_ptr<Shape>> &vec = _context->getGLManager().getShapes();
 
-    SetSelectedVisitor v(false);
-
     //contructs temporary vector in which it moves the shapes we decided to group together
     for (auto &&index : m_indices)
     {
-        vec[index]->accept(v);
+        vec[index]->setSelected(false);
         temp.emplace_back(std::move(vec[index]));
         vec.erase(vec.begin() + index);
     }

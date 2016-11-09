@@ -4,7 +4,6 @@
 
 #include <cmath>
 #include "ShapeRenderManager.h"
-#include "../Visitors/DrawVisitor.h"
 
 void ShapeRenderManager::render()
 {
@@ -16,11 +15,9 @@ void ShapeRenderManager::render()
         // deze gebruik ik niet in deze applicatie)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        DrawVisitor v;
-
         for(auto&& s : m_shapes)
         {
-            s->accept(v);
+            s->draw();
         }
 
         setNullShaderProgram();

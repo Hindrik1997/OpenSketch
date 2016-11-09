@@ -6,15 +6,11 @@
 #include "../Application.h"
 #include "../OpenGL/ShapeRenderManager.h"
 #include "../Commands/ChangeShapeCommand.h"
-#include "../Visitors/SetSelectedVisitor.h"
 
 
 void MoveShapeState::doAction(Application *_context)
 {
     _context->resetState();
-
-    SetSelectedVisitor vTrue(true);
-    SetSelectedVisitor vFalse(false);
 
     int w,h;
     _context->getPaintWindowSize(w,h);
@@ -60,7 +56,7 @@ void MoveShapeState::doAction(Application *_context)
                 s_original_x = static_cast<int>(rect.getPosition().x);
                 s_original_y = static_cast<int>(rect.getPosition().y);
 
-                selected->accept(vTrue);
+                selected->setSelected(true);
             }
             else
             {
@@ -84,7 +80,7 @@ void MoveShapeState::doAction(Application *_context)
                     size_t indexList = _context->getGLManager().getIndex(s_selectedShapeLastFrame);
 
                     Shape* rect = s_selectedShapeLastFrame;
-                    rect->accept(vFalse);
+                    rect->setSelected(false);
 
                     int currentx, currenty;
                     currentx = static_cast<int>(rect->getPosition().x);
@@ -104,7 +100,7 @@ void MoveShapeState::doAction(Application *_context)
     } else {
         if(s_selectedShapeLastFrame != nullptr)
         {
-            s_selectedShapeLastFrame->accept(vFalse);
+            s_selectedShapeLastFrame->setSelected(false);
         }
         s_selectedxOffset = 0; s_selectedyOffset = 0; s_original_x = 0; s_original_y = 0;
         s_selectedShapeLastFrame = nullptr;

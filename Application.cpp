@@ -13,7 +13,6 @@
 #include "Commands/AddShapeCommand.h"
 #include "OpenGL/RectangleDrawer.h"
 #include "OpenGL/EllipseDrawer.h"
-#include "Visitors/SetSelectedVisitor.h"
 
 using std::string;
 using std::cout;
@@ -362,10 +361,9 @@ State *Application::getState() {
 
 void Application::resetState() {
 
-    SetSelectedVisitor v(false);
     for(auto&& s : m_selected_shapes)
     {
-        m_renderManager->getShapes()[s]->accept(v);
+        m_renderManager->getShapes()[s]->setSelected(false);
     }
 
     m_selected_shapes.clear();
@@ -379,7 +377,7 @@ void Application::resetState() {
 
     if(m_selectedShape != nullptr)
     {
-        m_selectedShape->accept(v);
+        m_selectedShape->setSelected(false);
     }
     m_selectedShape = nullptr;
 }
