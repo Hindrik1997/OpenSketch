@@ -28,16 +28,14 @@ void WriteToFileVisitor::visit(Group &_group)
 
     for(auto&& s : _group.getShapes())
     {
-        WriteToFileVisitor v;
-        s->accept(v);
-        vector<string> t = v.getData();
-        for(auto&& l : t)
-        {
-            l.insert(l.begin(),1,'\t');
-        }
+        size_t length = m_data.size();
 
-        m_data.reserve(m_data.size() + t.size());
-        m_data.insert(m_data.end(), t.begin(), t.end());
+        s->accept(*this);
+
+        for(size_t i = m_data.size() - 1; i >= length; --i )
+        {
+            m_data[i].insert(m_data[i].begin(), 1, '\t');
+        }
     }
 }
 

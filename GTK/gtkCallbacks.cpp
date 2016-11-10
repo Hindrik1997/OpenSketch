@@ -84,6 +84,7 @@ void saveButton(GtkWidget *widget, gpointer data) {
 
 void groupButton(GtkWidget *widget, gpointer data) {
     auto& vec = Application::getInstance().getSelectedShapes();
+    if(vec.size() == 0) return;
     Application::getInstance().execute(new FormGroupCommand(vec));
     Application::getInstance().resetState();
     Application::getInstance().setState(&nullState);
