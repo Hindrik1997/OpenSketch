@@ -20,7 +20,12 @@ public:
     Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec);
     virtual ~Group() override = default;
 
-    virtual vector<string> writeToFile() override;
+    //virtual vector<string> writeToFile() override;
+
+    virtual void resize(int _pixelsX, int _pixelsY) override;
+
+    virtual void move(int _pixelsX, int _pixelsY) override;
+
 
     void draw() const override;
 

@@ -49,7 +49,13 @@ void MoveShapeState::doAction(Application *_context)
             {
                 offset = _context->getGLManager().getMouseOffsetInShape(*selected, static_cast<int>(v.x), static_cast<int>(v.y));
                 Shape& rect = *selected;
-                rect.setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
+
+                int xdiff = static_cast<int>(rect.getPosition().x - (v.x + offset.x));
+                int ydiff = static_cast<int>(rect.getPosition().y - (v.y + offset.y));
+                rect.move(xdiff, ydiff);
+
+                //rect.setPosition(static_cast<int>(v.x + offset.x),static_cast<int>(v.y + offset.y));
+
                 s_selectedShapeLastFrame = selected;
                 s_selectedxOffset = static_cast<int>(offset.x);
                 s_selectedyOffset = static_cast<int>(offset.y);
@@ -69,7 +75,9 @@ void MoveShapeState::doAction(Application *_context)
             //same shape
             if(glfwGetMouseButton(_context->getM_paintWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
             {
-                selected->setPosition(static_cast<int>(v.x + s_selectedxOffset),static_cast<int>(v.y + s_selectedyOffset));
+                int xdiff = static_cast<int>(v.x + s_selectedxOffset) - static_cast<int>(selected->getPosition().x);
+                int ydiff = static_cast<int>(v.y + s_selectedyOffset) - static_cast<int>(selected->getPosition().y);
+                selected->move(xdiff, ydiff);
             }
             else
             {

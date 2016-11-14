@@ -14,17 +14,22 @@ ChangeShapeCommand::ChangeShapeCommand(size_t _index,int _posx_change, int _posy
 void ChangeShapeCommand::execute(Application *_context)
 {
     Shape& rect = *_context->getGLManager().getShapes()[m_index];
-    glm::vec2 pos = rect.getPosition();
-    glm::vec2 size = rect.getSize();
-    rect.setPosition(static_cast<int>(pos.x) + m_posx_change, static_cast<int>(pos.y) + m_posy_change);
-    rect.setSize(static_cast<int>(size.x) + m_sizex_change, static_cast<int>(size.y) + m_sizey_change);
+    //glm::vec2 pos = rect.getPosition();
+    //glm::vec2 size = rect.getSize();
+
+    //rect.setPosition(static_cast<int>(pos.x) + m_posx_change, static_cast<int>(pos.y) + m_posy_change);
+    rect.move(m_posx_change, m_posy_change);
+    //rect.setSize(static_cast<int>(size.x) + m_sizex_change, static_cast<int>(size.y) + m_sizey_change);
+    rect.resize(m_sizex_change, m_sizey_change);
 }
 
 void ChangeShapeCommand::undo(Application *_context)
 {
     Shape& rect = *_context->getGLManager().getShapes()[m_index];
-    glm::vec2 pos = rect.getPosition();
-    glm::vec2 size = rect.getSize();
-    rect.setPosition(static_cast<int>(pos.x) - m_posx_change, static_cast<int>(pos.y) - m_posy_change);
-    rect.setSize(static_cast<int>(size.x) - m_sizex_change, static_cast<int>(size.y) - m_sizey_change);
+    //glm::vec2 pos = rect.getPosition();
+    //glm::vec2 size = rect.getSize();
+    //rect.setPosition(static_cast<int>(pos.x) - m_posx_change, static_cast<int>(pos.y) - m_posy_change);
+    rect.move(-m_posx_change, -m_posy_change);
+    //rect.setSize(static_cast<int>(size.x) - m_sizex_change, static_cast<int>(size.y) - m_sizey_change);
+    rect.resize(-m_sizex_change, -m_sizey_change);
 }

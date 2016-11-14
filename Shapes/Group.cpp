@@ -27,7 +27,8 @@ void Group::setPosition(int _pixelsX, int _pixelsY) {
 
     for (auto &&s : m_shapes)
     {
-        s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
+        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
+        s->move(delta_x_g, delta_y_g);
     }
 }
 
@@ -50,9 +51,16 @@ void Group::setSize(int _width, int _height) {
         int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
         int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
 
-        s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+        s->move(delta_x, delta_y);
 
-        s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
+        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
+
+        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
+        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
+
+        if(changeX != 0 && changeY != 0)
+            s->resize(changeX, changeY);
     }
     setPosition(old_pos_x, old_pos_y);
 }
@@ -117,6 +125,7 @@ bool Group::getSelected() const {
     return Shape::getSelected();
 }
 
+/*
 vector<string> Group::writeToFile() {
 
     vector<string> result;
@@ -137,14 +146,84 @@ vector<string> Group::writeToFile() {
         result.insert(result.end(), t.begin(), t.end());
     }
     return result;
-}
+}*/
 
 void Group::accept(Visitor &_v) {
     _v.visit(*this);
+    for(auto&& s : m_shapes)
+    {
+        s->accept(_v);
+    }
+}
 
-    /*
-     *  Ik heb er voor gekozen om de sub shapes af te handelen in de implementatie van de visitor.
-     *  Anders zou de File I/O onzinnig complex en lastig worden om te implementeren.
-     *
-     * */
+void Group::resize(int _pixelsX, int _pixelsY) {
+
+    int width = static_cast<int>(getSize().x) + _pixelsX;
+    int height = static_cast<int>(getSize().y + _pixelsY);
+
+    int old_pos_x = static_cast<int>(getPosition().x);
+    int old_pos_y = static_cast<int>(getPosition().y);
+
+    int old_width = static_cast<int>(getSize().x);
+    int old_height = static_cast<int>(getSize().y);
+
+    float factorX = static_cast<float>(width) / old_width;
+    float factorY = static_cast<float>(height) / old_height;
+
+    for (auto &&s : m_shapes)
+    {
+        int newHeight = static_cast<int>(s->getSize().y * factorY);
+        int newWidth = static_cast<int>(s->getSize().x * factorX);
+
+        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
+        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
+
+        s->move(delta_x, delta_y);
+        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+
+        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
+
+        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
+        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
+
+        if(changeX != 0 && changeY != 0)
+            s->resize(changeX, changeY);
+    }
+    setPosition(old_pos_x, old_pos_y);
+}
+
+void Group::move(int _pixelsX, int _pixelsY) {
+
+    int width = static_cast<int>(getSize().x) + _pixelsX;
+    int height = static_cast<int>(getSize().y + _pixelsY);
+
+    int old_pos_x = static_cast<int>(getPosition().x);
+    int old_pos_y = static_cast<int>(getPosition().y);
+
+    int old_width = static_cast<int>(getSize().x);
+    int old_height = static_cast<int>(getSize().y);
+
+    float factorX = static_cast<float>(width) / old_width;
+    float factorY = static_cast<float>(height) / old_height;
+
+    for (auto &&s : m_shapes)
+    {
+        int newHeight = static_cast<int>(s->getSize().y * factorY);
+        int newWidth = static_cast<int>(s->getSize().x * factorX);
+
+        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
+        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
+
+        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+        s->move(delta_x, delta_y);
+
+        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
+
+        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
+        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
+
+        if(changeX != 0 && changeY != 0)
+            s->resize(changeX, changeY);
+    }
+    setPosition(old_pos_x, old_pos_y);
 }
