@@ -158,17 +158,14 @@ void Group::accept(Visitor &_v) {
 
 void Group::resize(int _pixelsX, int _pixelsY) {
 
-    int width = static_cast<int>(getSize().x) + _pixelsX;
-    int height = static_cast<int>(getSize().y + _pixelsY);
-
     int old_pos_x = static_cast<int>(getPosition().x);
     int old_pos_y = static_cast<int>(getPosition().y);
 
     int old_width = static_cast<int>(getSize().x);
     int old_height = static_cast<int>(getSize().y);
 
-    float factorX = static_cast<float>(width) / old_width;
-    float factorY = static_cast<float>(height) / old_height;
+    float factorX = static_cast<float>(old_width + _pixelsX) / old_width;
+    float factorY = static_cast<float>(old_height + _pixelsY) / old_height;
 
     for (auto &&s : m_shapes)
     {
@@ -178,8 +175,8 @@ void Group::resize(int _pixelsX, int _pixelsY) {
         int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
         int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
 
-        s->move(delta_x, delta_y);
         //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
+        s->move(delta_x, delta_y);
 
         //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
 
@@ -194,36 +191,9 @@ void Group::resize(int _pixelsX, int _pixelsY) {
 
 void Group::move(int _pixelsX, int _pixelsY) {
 
-    int width = static_cast<int>(getSize().x) + _pixelsX;
-    int height = static_cast<int>(getSize().y + _pixelsY);
-
-    int old_pos_x = static_cast<int>(getPosition().x);
-    int old_pos_y = static_cast<int>(getPosition().y);
-
-    int old_width = static_cast<int>(getSize().x);
-    int old_height = static_cast<int>(getSize().y);
-
-    float factorX = static_cast<float>(width) / old_width;
-    float factorY = static_cast<float>(height) / old_height;
-
     for (auto &&s : m_shapes)
     {
-        int newHeight = static_cast<int>(s->getSize().y * factorY);
-        int newWidth = static_cast<int>(s->getSize().x * factorX);
-
-        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
-        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
-
-        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
-        s->move(delta_x, delta_y);
-
-        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
-
-        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
-        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
-
-        if(changeX != 0 && changeY != 0)
-            s->resize(changeX, changeY);
+        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
+        s->move(_pixelsX, _pixelsY);
     }
-    setPosition(old_pos_x, old_pos_y);
 }

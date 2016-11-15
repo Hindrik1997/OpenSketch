@@ -8,7 +8,7 @@
 
 void WriteToFileVisitor::visit(Shape &_shape)
 {
-    std::string core = _shape.getDrawer() == nullptr ? throw "Invalid drawer!" : _shape.getDrawer()->toString();
+    string core = _shape.getDrawer() == nullptr ? throw "Invalid drawer!" : _shape.getDrawer()->toString();
     core.append(" ");
     core.append(to_string(static_cast<int>(_shape.getPosition().x - static_cast<int>(_shape.getSize().x / 2))));
     core.append(" ");
@@ -26,6 +26,7 @@ void WriteToFileVisitor::visit(Group &_group)
     core.append(to_string(static_cast<int>(_group.getShapes().size())));
     m_data.push_back(core);
 
+    /*
     for(auto&& s : _group.getShapes())
     {
         size_t length = m_data.size();
@@ -36,7 +37,7 @@ void WriteToFileVisitor::visit(Group &_group)
         {
             m_data[i].insert(m_data[i].begin(), 1, '\t');
         }
-    }
+    }*/
 }
 
 vector<string> WriteToFileVisitor::getData() {
