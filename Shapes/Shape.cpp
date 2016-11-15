@@ -17,8 +17,9 @@ Shape::Shape(ShapeRenderManager* _oglRenderer,int _posx, int _posy, int _width, 
         : m_oglRenderer(_oglRenderer), m_drawer(_drawer)
 {
     //Basic Shape in t midden, deze transformeer ik doormiddel van matrices naar de juiste positie en grootte
-    setSize(_width, _height);
-    setPosition(_posx, _posy);
+
+    resize(_width, _height);
+    move(_posx, _posy);
 }
 
 Shape::~Shape() {
