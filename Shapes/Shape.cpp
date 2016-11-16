@@ -92,7 +92,8 @@ vector<string> Shape::writeToFile() {
 }*/
 
 void Shape::accept(Visitor &_v) {
-    _v.visit(*this);
+    _v.start_visit(*this);
+    _v.stop_visit(*this);
 }
 
 void Shape::resize(int _pixelsX, int _pixelsY) {

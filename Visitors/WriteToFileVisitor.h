@@ -15,13 +15,17 @@ using namespace std;
 class WriteToFileVisitor : public Visitor {
 private:
     vector<string> m_data;
+    int m_tabs = 0;
 public:
-    virtual void visit(Shape &_shape) override;
+    virtual void start_visit(Shape &_shape) override;
 
-    virtual void visit(Group &_group) override;
+    virtual void start_visit(Group &_group) override;
 
     vector<string> getData();
-};
 
+    virtual void stop_visit(Shape &_shape) override;
+
+    virtual void stop_visit(Group &_group) override;
+};
 
 #endif //OPEN_SKETCH_WRITETOFILEVISITOR_H

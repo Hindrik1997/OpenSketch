@@ -149,11 +149,12 @@ vector<string> Group::writeToFile() {
 }*/
 
 void Group::accept(Visitor &_v) {
-    _v.visit(*this);
+    _v.start_visit(*this);
     for(auto&& s : m_shapes)
     {
         s->accept(_v);
     }
+    _v.stop_visit(*this);
 }
 
 void Group::resize(int _pixelsX, int _pixelsY) {

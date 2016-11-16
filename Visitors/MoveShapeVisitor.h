@@ -12,14 +12,19 @@
 
 class MoveShapeVisitor : public Visitor{
 private:
+
     int m_x = 0;
     int m_y = 0;
 public:
     MoveShapeVisitor(int _x, int _y);
 
-    virtual void visit(Shape& _shape) override;
+    virtual void start_visit(Shape &_shape) override;
 
-    virtual void visit(Group& _group) override;
+    virtual void start_visit(Group &_group) override;
+
+    virtual void stop_visit(Shape &_shape) override;
+
+    virtual void stop_visit(Group &_group) override;
 };
 
 

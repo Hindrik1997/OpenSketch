@@ -6,13 +6,23 @@
 #include "../Shapes/Shape.h"
 #include "../Shapes/Group.h"
 
-void MoveShapeVisitor::visit(Shape &_shape) {
+MoveShapeVisitor::MoveShapeVisitor(int _x, int _y) : m_x(_x), m_y(_y){
+}
+
+void MoveShapeVisitor::start_visit(Shape &_shape) {
     _shape.move(m_x, m_y);
 }
 
-void MoveShapeVisitor::visit(Group &_group) {
+void MoveShapeVisitor::start_visit(Group &_group) {
     _group.move(m_x, m_y);
 }
 
-MoveShapeVisitor::MoveShapeVisitor(int _x, int _y) : m_x(_x), m_y(_y){
+
+
+void MoveShapeVisitor::stop_visit(Shape &_shape) {
+
+}
+
+void MoveShapeVisitor::stop_visit(Group &_group) {
+
 }

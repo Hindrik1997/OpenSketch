@@ -18,8 +18,12 @@ class Group;
 class Visitor
 {
 public:
-    virtual void visit(Shape& _shape) = 0;
-    virtual void visit(Group& _group) = 0;
+    virtual void start_visit(Shape &_shape) = 0;
+    virtual void start_visit(Group &_group) = 0;
+
+    virtual void stop_visit(Shape& _shape) = 0;
+    virtual void stop_visit(Group& _group) = 0;
+
     virtual ~Visitor() = 0;
 };
 
