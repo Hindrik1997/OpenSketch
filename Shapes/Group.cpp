@@ -4,6 +4,7 @@
 
 #include "Group.h"
 #include "Visitor.h"
+#include "../Visitors/MoveShapeVisitor.h"
 #include <algorithm>
 
 Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
@@ -13,56 +14,6 @@ Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) 
         m_shapes.emplace_back(std::move(s));
     }
     _vec.clear();
-}
-
-void Group::draw() const {
-    for(auto&& s : m_shapes)
-        s->draw();
-}
-
-void Group::setPosition(int _pixelsX, int _pixelsY) {
-
-    int delta_x_g = _pixelsX - static_cast<int>(getPosition().x);
-    int delta_y_g = _pixelsY - static_cast<int>(getPosition().y);
-
-    for (auto &&s : m_shapes)
-    {
-        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
-        s->move(delta_x_g, delta_y_g);
-    }
-}
-
-void Group::setSize(int _width, int _height) {
-
-    int old_pos_x = static_cast<int>(getPosition().x);
-    int old_pos_y = static_cast<int>(getPosition().y);
-
-    int old_width = static_cast<int>(getSize().x);
-    int old_height = static_cast<int>(getSize().y);
-
-    float factorX = static_cast<float>(_width) / old_width;
-    float factorY = static_cast<float>(_height) / old_height;
-
-    for (auto &&s : m_shapes)
-    {
-        int newHeight = static_cast<int>(s->getSize().y * factorY);
-        int newWidth = static_cast<int>(s->getSize().x * factorX);
-
-        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
-        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
-
-        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
-        s->move(delta_x, delta_y);
-
-        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
-
-        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
-        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
-
-        if(changeX != 0 && changeY != 0)
-            s->resize(changeX, changeY);
-    }
-    setPosition(old_pos_x, old_pos_y);
 }
 
 glm::vec2 Group::getPosition() const {
@@ -113,41 +64,6 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
     _maxy = max_y;
 }
 
-void Group::setSelected(bool _isSelected) {
-    Shape::setSelected(_isSelected);
-    for(auto&& s : m_shapes)
-    {
-        s->setSelected(_isSelected);
-    }
-}
-
-bool Group::getSelected() const {
-    return Shape::getSelected();
-}
-
-/*
-vector<string> Group::writeToFile() {
-
-    vector<string> result;
-
-    string core = "group ";
-    core.append(to_string(static_cast<int>(m_shapes.size())));
-    result.push_back(core);
-
-    for(auto&& s : m_shapes)
-    {
-        vector<string> t = s->writeToFile();
-        for(auto&& l : t)
-        {
-            l.insert(l.begin(),1,'\t');
-        }
-
-        result.reserve(result.size() + t.size());
-        result.insert(result.end(), t.begin(), t.end());
-    }
-    return result;
-}*/
-
 void Group::accept(Visitor &_v) {
     _v.start_visit(*this);
     for(auto&& s : m_shapes)
@@ -176,10 +92,8 @@ void Group::resize(int _pixelsX, int _pixelsY) {
         int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
         int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
 
-        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x), static_cast<int>(s->getPosition().y + delta_y));
-        s->move(delta_x, delta_y);
-
-        //s->setSize(newWidth > 0 ? newWidth : static_cast<int>(s->getSize().x), newHeight > 0 ? newHeight : static_cast<int>(s->getSize().y));
+        MoveShapeVisitor v(delta_x, delta_y);
+        s->accept(v);
 
         int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
         int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
@@ -187,14 +101,10 @@ void Group::resize(int _pixelsX, int _pixelsY) {
         if(changeX != 0 && changeY != 0)
             s->resize(changeX, changeY);
     }
-    setPosition(old_pos_x, old_pos_y);
-}
 
-void Group::move(int _pixelsX, int _pixelsY) {
+    int xdiff = static_cast<int>(old_pos_x - getPosition().x);
+    int ydiff = static_cast<int>(old_pos_y - getPosition().y);
 
-    for (auto &&s : m_shapes)
-    {
-        //s->setPosition(static_cast<int>(s->getPosition().x + delta_x_g), static_cast<int>(s->getPosition().y + delta_y_g));
-        s->move(_pixelsX, _pixelsY);
-    }
+    MoveShapeVisitor v(xdiff,ydiff);
+    accept(v);
 }

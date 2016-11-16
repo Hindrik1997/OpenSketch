@@ -46,11 +46,6 @@ public:
     virtual void resize(int _pixelsX, int _pixelsY);
     virtual void move(int _pixelsX, int _pixelsY);
 
-
-    virtual void setPosition(int _pixelsX, int _pixelsY);
-    virtual void setSize(int _width, int _height);
-    //virtual vector<string> writeToFile();
-
     virtual inline void setSelected(bool _isSelected);
     virtual inline bool getSelected() const;
     virtual inline glm::mat4 getMatrix() const;

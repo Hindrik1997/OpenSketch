@@ -14,15 +14,13 @@ void MoveShapeVisitor::start_visit(Shape &_shape) {
 }
 
 void MoveShapeVisitor::start_visit(Group &_group) {
-    _group.move(m_x, m_y);
+    //can be left empty, the group's accept already manages this by forwarding it all until it ends up on a shape
 }
 
-
-
 void MoveShapeVisitor::stop_visit(Shape &_shape) {
-
+    //Not necessary
 }
 
 void MoveShapeVisitor::stop_visit(Group &_group) {
-
+    //Not necessary
 }
