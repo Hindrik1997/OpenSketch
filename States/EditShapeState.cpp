@@ -53,29 +53,36 @@ void EditShapeState::doAction(Application *_context)
             int px, py, sx, sy;
 
             try {
-                //Throwed als de conversie faalt
+                //Throws if conversion fails, if for example user enters non number
                 px = std::stoi(posx);
                 py = std::stoi(posy);
                 sx = std::stoi(sizex);
                 sy = std::stoi(sizey);
 
                 //numbers represent draw surface size
-                if(sx <= 0 || sy <= 0 || px <= 0 || py <= 0 || sx >= 1280 || sy >= 800 || px >= 1280 || py >= 800)
+                if(sx <= 0 || sy <= 0 || px <= 0 || py <= 0 || sx >= PAINT_WINDOW_SIZE_X || sy >= PAINT_WINDOW_SIZE_Y || px >= PAINT_WINDOW_SIZE_X || py >= PAINT_WINDOW_SIZE_Y)
                 {   //Niet accepten
                     _context->getM_selectedShape()->accept(vf);
 
                     _context->getM_selectedShape() = nullptr;
                     return;
                 }
-            }
-            catch (...) {
+            } //std::stoi() throwed een invalid_arg of een out_of_range exception.
+            catch (std::invalid_argument e) {
                 //Niet accepten
                 _context->getM_selectedShape()->accept(vf);
 
                 _context->getM_selectedShape() = nullptr;
                 return;
             }
+            catch (std::out_of_range e)
+            {
+                //Niet accepten
+                _context->getM_selectedShape()->accept(vf);
 
+                _context->getM_selectedShape() = nullptr;
+                return;
+            }
 
             size_t indexList = _context->getGLManager().getIndex(_context->getM_selectedShape());
 
@@ -90,21 +97,22 @@ void EditShapeState::doAction(Application *_context)
 
 
             _context->execute(new ChangeShapeCommand(indexList, px - ox, py - oy, sx - osx, sy - osy));
-
-            //shape stuff weer goed zetten
             _context->getM_selectedShape()->accept(vf);
 
+
+            //reset everything...
+
             _context->getM_selectedShape() = nullptr;
-            //set edit states to false
-            _context->setShapeEdited(false);
-            _context->setShapeDeleted(false);
-            _context->setGroupDeformed(false);
 
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posxBox()), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_posyBox()), "selected");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_sizexBox()), "Nothing");
             gtk_entry_set_text(GTK_ENTRY(_context->getM_sizeyBox()), "selected");
 
+            //set edit states to false
+            _context->setShapeEdited(false);
+            _context->setShapeDeleted(false);
+            _context->setGroupDeformed(false);
         }
 
         if(_context->isM_isDeleted())
@@ -135,7 +143,7 @@ void EditShapeState::doAction(Application *_context)
 
             Shape* s = _context->getM_selectedShape();
 
-            //if a group:
+            //if it is a group:
             if(dynamic_cast<Group*>(s))
             {
                 _context->execute(new UnFormGroupCommand(indexList));

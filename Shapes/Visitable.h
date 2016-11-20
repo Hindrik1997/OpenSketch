@@ -9,7 +9,7 @@
  * VISITABLE BASE CLASS,
  *
  * Definieert de accept() functie voor het visitor pattern.
- *
+ * Base class, dus virtual destructor!
  * */
 
 class Visitor;
@@ -20,6 +20,8 @@ public:
     virtual void accept(Visitor& _v) = 0;
     virtual ~Visitable() = 0;
 };
+
+//Altijd een implementatie, ookal is de destructor puur virtueel
 inline Visitable::~Visitable(){}
 
 

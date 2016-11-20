@@ -29,27 +29,14 @@ void Shape::draw() const {
     if(m_drawer != nullptr)
         m_drawer->draw(*this);
 }
-/*
-vector<string> Shape::writeToFile() {
-    vector<string> result;
-    std::string core = m_drawer == nullptr ? throw "Invalid drawer!" : m_drawer->toString();
-    core.append(" ");
-    core.append(to_string(static_cast<int>(getPosition().x - static_cast<int>(getSize().x / 2))));
-    core.append(" ");
-    core.append(to_string(static_cast<int>(getPosition().y - static_cast<int>(getSize().y / 2))));
-    core.append(" ");
-    core.append(to_string(static_cast<int>(getSize().x)));
-    core.append(" ");
-    core.append(to_string(static_cast<int>(getSize().y)));
-    result.push_back(core);
-    return result;
-}*/
 
+//Visit() implementatie voor de shape klasse
 void Shape::accept(Visitor &_v) {
     _v.start_visit(*this);
     _v.stop_visit(*this);
 }
 
+//Resized een shape met _pixelsX en _pixelsY in respectievelijk x en y assen
 void Shape::resize(int _pixelsX, int _pixelsY) {
     int width = static_cast<int>(getSize().x) + _pixelsX, height = static_cast<int>(getSize().y) + _pixelsY;
 
@@ -75,6 +62,7 @@ void Shape::resize(int _pixelsX, int _pixelsY) {
     m_size = glm::vec2(width, height);
 }
 
+//Moved een shape met _pixelsX en _pixelsY in respectievelijk x en y assen
 void Shape::move(int _pixelsX, int _pixelsY) {
 
     int width = static_cast<int>(getPosition().x) + _pixelsX, height = static_cast<int>(getPosition().y) + _pixelsY;

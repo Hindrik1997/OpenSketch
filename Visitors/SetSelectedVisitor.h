@@ -8,6 +8,10 @@
 
 #include "../Shapes/Visitor.h"
 
+/*
+ * Implementeert selectie setten van shapes en groups.
+ * */
+
 class SetSelectedVisitor : public Visitor {
 private:
     bool m_value = false;

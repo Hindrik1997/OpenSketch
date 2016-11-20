@@ -58,6 +58,10 @@ public:
 
 };
 
+
+
+//inlined member functies
+
 inline void Shape::setSelected(bool _isSelected)
 {
     m_isSelected = _isSelected;

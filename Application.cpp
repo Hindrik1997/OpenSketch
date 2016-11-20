@@ -20,13 +20,17 @@ using std::string;
 using std::cout;
 using std::endl;
 
+//Singleton getInstance() implementation.
 Application &Application::getInstance() {
     static Application instance;
     return instance;
 }
+
 Application::Application()
 {
 }
+
+//Cleans up
 Application::~Application() {
     //Paintwindow hoeft niet gedelete te worden. GLFW doet dit!
     //ToolWindow pointer gaat via de GTKManager class, deze beheert de windows zelf!
@@ -41,6 +45,7 @@ Application::~Application() {
     glfwTerminate();
 }
 
+//Sets up GLFW
 bool Application::initGLFW() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -51,6 +56,7 @@ bool Application::initGLFW() {
     return true;
 }
 
+//Sets up GLEW
 bool Application::initGLEW() {
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -61,10 +67,12 @@ bool Application::initGLEW() {
     return true;
 }
 
+//Sets up GTK
 void Application::initGTK() {
     m_gtkManager = new GTKManager(m_startupArgs.m_argc, m_startupArgs.m_argv);
 }
 
+//Main initialization function
 void Application::initialize() {
     bool status;
 
@@ -90,7 +98,7 @@ void Application::initialize() {
         throw("Initialization failed!");
 
     //Paint window maken
-    m_paintWindow = glfwCreateWindow(1280, 800, "Open Sketch", nullptr, nullptr);
+    m_paintWindow = glfwCreateWindow(PAINT_WINDOW_SIZE_X, PAINT_WINDOW_SIZE_Y, "Open Sketch", nullptr, nullptr);
     if (m_paintWindow == nullptr)
     {
         std::cout << "Window creation failed!" << std::endl;
@@ -114,7 +122,7 @@ void Application::initialize() {
     glViewport(0, 0, width, height);
 
     //Tools window maken
-    m_toolWindow = &m_gtkManager->createWindow(300, 600, "Tools");
+    m_toolWindow = &m_gtkManager->createWindow(TOOL_WINDOW_SIZE_X, TOOL_WINDOW_SIZE_Y, "Tools");
     m_toolWindow->present();
 
     //Doet alle toolwindow stuff
@@ -125,6 +133,7 @@ void Application::initialize() {
     resetState();
 }
 
+//Application loop
 void Application::run()
 {
     while(!glfwWindowShouldClose(m_paintWindow))
@@ -142,30 +151,36 @@ void Application::run()
     }
 }
 
+//Returns current paint window size
 void Application::getPaintWindowSize(int &_width, int &_height) {
     glfwGetFramebufferSize(m_paintWindow, &_width, &_height);
 }
 
+//returns the current mouse position
 glm::vec2 Application::getPaintWindowCursorPos() const
 {
     double xpos, ypos;
     glfwGetCursorPos(m_paintWindow, &xpos, &ypos);
     return glm::vec2(static_cast<float>(xpos), static_cast<float>(ypos));
 }
+
+//processes mouse and keyboard events
 void Application::processMouseAndShapes()
 {
     if(m_state != nullptr)
     m_state->doAction(this);
 }
-void Application::initToolWindow()
-{
+
+//Initialized de tool window
+void Application::initToolWindow() {
+
     //border with instellen zodat button niet tegen zijkant komt
     gtk_container_set_border_width(GTK_CONTAINER(m_toolWindow->getWidgetPointer()), 10);
 
-    m_box = gtk_vbox_new(0,0);
+    m_box = gtk_vbox_new(0, 0);
 
-    m_topBox = gtk_vbox_new(0,0);
-    m_bottomBox = gtk_vbox_new(0,0);
+    m_topBox = gtk_vbox_new(0, 0);
+    m_bottomBox = gtk_vbox_new(0, 0);
 
     //TOPBOX
 
@@ -195,7 +210,7 @@ void Application::initToolWindow()
 
     //BOTTOMBOX
 
-    m_file_box = gtk_vbox_new(0,0);
+    m_file_box = gtk_vbox_new(0, 0);
 
     m_acceptBttn = gtk_button_new_with_label("Accept");
     m_delete_shape = gtk_button_new_with_label("Delete shape");
@@ -206,10 +221,10 @@ void Application::initToolWindow()
     m_save_button = gtk_button_new_with_label("Save");
     m_load_button = gtk_button_new_with_label("Load");
 
-    m_infoBox = gtk_hbox_new(0,0);
+    m_infoBox = gtk_hbox_new(0, 0);
 
-    m_leftColumn = gtk_vbox_new(0,0);
-    m_rightColumn = gtk_vbox_new(0,0);
+    m_leftColumn = gtk_vbox_new(0, 0);
+    m_rightColumn = gtk_vbox_new(0, 0);
 
     m_posxBox = gtk_entry_new();
     m_posyBox = gtk_entry_new();
@@ -238,16 +253,13 @@ void Application::initToolWindow()
     gtk_container_add(GTK_CONTAINER(m_infoBox), m_leftColumn);
     gtk_container_add(GTK_CONTAINER(m_infoBox), m_rightColumn);
 
-    //END
-
-
     gtk_container_add(GTK_CONTAINER(m_file_box), m_save_button);
     gtk_container_add(GTK_CONTAINER(m_file_box), m_load_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
-    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_group_button);
-    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ungroup_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_delete_shape);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_group_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ungroup_button);
 
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_file_box);
     gtk_container_add(GTK_CONTAINER(m_box), m_topBox);
@@ -301,10 +313,10 @@ void Application::initToolWindow()
     g_signal_connect(m_select_and_edit, "clicked", G_CALLBACK(selectedit), NULL);
 
     //close button suppressen, want t paint window bepaalt t sluiten van t progamma.
-    g_signal_connect(m_toolWindow->getWidgetPointer(),"delete_event", G_CALLBACK(suppress), NULL);
+    g_signal_connect(m_toolWindow->getWidgetPointer(), "delete_event", G_CALLBACK(suppress), NULL);
 
     //accept button
-    g_signal_connect(m_acceptBttn,"clicked", G_CALLBACK(setEdited), NULL);
+    g_signal_connect(m_acceptBttn, "clicked", G_CALLBACK(setEdited), NULL);
 
     //add rectangle
     g_signal_connect(m_new_rectangle, "clicked", G_CALLBACK(addRect), NULL);
@@ -339,28 +351,7 @@ void Application::initToolWindow()
 
 }
 
-void Application::setShapeEdited(bool _val)
-{
-    m_isEdited = _val;
-}
-
-ShapeRenderManager& Application::getGLManager() {
-    return *m_renderManager;
-}
-
-void Application::setShapeDeleted(bool _val) {
-    m_isDeleted = _val;
-}
-
-void Application::setState(State* _state) {
-    resetState();
-    m_state = _state;
-}
-
-State *Application::getState() {
-    return m_state;
-}
-
+//Resets current editing state
 void Application::resetState() {
 
     SetSelectedVisitor v(false);
@@ -385,105 +376,7 @@ void Application::resetState() {
     m_selectedShape = nullptr;
 }
 
-GLFWwindow *Application::getM_paintWindow() const {
-    return m_paintWindow;
-}
-
-bool Application::isM_isEdited() const {
-    return m_isEdited;
-}
-
-bool Application::isM_isDeleted() const {
-    return m_isDeleted;
-}
-
-Shape* &Application::getM_selectedShape() {
-    return m_selectedShape;
-}
-
-GtkWidget *Application::getM_posxBox() const {
-    return m_posxBox;
-}
-
-GtkWidget *Application::getM_posyBox() const {
-    return m_posyBox;
-}
-
-GtkWidget *Application::getM_sizexBox() const {
-    return m_sizexBox;
-}
-
-GtkWidget *Application::getM_sizeyBox() const {
-    return m_sizeyBox;
-}
-
-GtkWidget *Application::getM_labelposx() const {
-    return m_labelposx;
-}
-
-GtkWidget *Application::getM_labelposy() const {
-    return m_labelposy;
-}
-
-GtkWidget *Application::getM_labelsizex() const {
-    return m_labelsizex;
-}
-
-GtkWidget *Application::getM_labelsizey() const {
-    return m_labelsizey;
-}
-
-GtkWidget *Application::getM_delete_shape() const {
-    return m_delete_shape;
-}
-
-GtkWidget *Application::getM_box() const {
-    return m_box;
-}
-
-GtkWidget *Application::getM_topBox() const {
-    return m_topBox;
-}
-
-GtkWidget *Application::getM_bottomBox() const {
-    return m_bottomBox;
-}
-
-GtkWidget *Application::getM_null_mode_button() const {
-    return m_null_mode_button;
-}
-
-GtkWidget *Application::getM_select_and_m_move_button() const {
-    return m_select_and_move_button;
-}
-
-GtkWidget *Application::getM_select_and_edit() const {
-    return m_select_and_edit;
-}
-
-GtkWidget *Application::getM_new_rectangle() const {
-    return m_new_rectangle;
-}
-
-GtkWidget *Application::getM_new_ellips() const {
-    return m_new_ellips;
-}
-
-GtkWidget *Application::getM_acceptBttn() const {
-    return m_acceptBttn;
-}
-
-GtkWidget *Application::getM_infoBox() const {
-    return m_infoBox;
-}
-
-GtkWidget *Application::getM_leftColumn() const {
-    return m_leftColumn;
-}
-
-GtkWidget *Application::getM_rightColumn() const {
-    return m_rightColumn;
-}
+//string manipulation functions
 
 string trim(string& str)
 {
@@ -507,6 +400,8 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
+
+//File read and save functions
 
 bool interpret_line(int _index, vector<string>& _lines, Application* _context, int& _skipcounter, Group& _group)
 {
@@ -650,7 +545,7 @@ void Application::loadFromFile()
 
     std::vector<std::string> lines;
 
-    std::ifstream input("datafile.txt");
+    std::ifstream input("load.txt");
     for(std::string line; getline(input, line);)
     {
         lines.push_back(line);
@@ -702,9 +597,33 @@ void Application::saveToFile()
         }
     }
 
-    std::ofstream out("datafile2.txt");
+    std::ofstream out("saved.txt");
     out << lines;
     out.close();
+}
+
+//accessor/getter functions
+
+void Application::setShapeEdited(bool _val)
+{
+    m_isEdited = _val;
+}
+
+ShapeRenderManager& Application::getGLManager() {
+    return *m_renderManager;
+}
+
+State *Application::getState() {
+    return m_state;
+}
+
+void Application::setShapeDeleted(bool _val) {
+    m_isDeleted = _val;
+}
+
+void Application::setState(State* _state) {
+    resetState();
+    m_state = _state;
 }
 
 vector<size_t>& Application::getSelectedShapes() {
@@ -717,4 +636,105 @@ bool Application::isM_isDegrouped() const {
 
 void Application::setGroupDeformed(bool _val) {
     m_isDegrouped = _val;
+}
+
+
+GLFWwindow *Application::getM_paintWindow() const {
+    return m_paintWindow;
+}
+
+bool Application::isM_isEdited() const {
+    return m_isEdited;
+}
+
+bool Application::isM_isDeleted() const {
+    return m_isDeleted;
+}
+
+Shape* &Application::getM_selectedShape() {
+    return m_selectedShape;
+}
+
+GtkWidget *Application::getM_posxBox() const {
+    return m_posxBox;
+}
+
+GtkWidget *Application::getM_posyBox() const {
+    return m_posyBox;
+}
+
+GtkWidget *Application::getM_sizexBox() const {
+    return m_sizexBox;
+}
+
+GtkWidget *Application::getM_sizeyBox() const {
+    return m_sizeyBox;
+}
+
+GtkWidget *Application::getM_labelposx() const {
+    return m_labelposx;
+}
+
+GtkWidget *Application::getM_labelposy() const {
+    return m_labelposy;
+}
+
+GtkWidget *Application::getM_labelsizex() const {
+    return m_labelsizex;
+}
+
+GtkWidget *Application::getM_labelsizey() const {
+    return m_labelsizey;
+}
+
+GtkWidget *Application::getM_delete_shape() const {
+    return m_delete_shape;
+}
+
+GtkWidget *Application::getM_box() const {
+    return m_box;
+}
+
+GtkWidget *Application::getM_topBox() const {
+    return m_topBox;
+}
+
+GtkWidget *Application::getM_bottomBox() const {
+    return m_bottomBox;
+}
+
+GtkWidget *Application::getM_null_mode_button() const {
+    return m_null_mode_button;
+}
+
+GtkWidget *Application::getM_select_and_m_move_button() const {
+    return m_select_and_move_button;
+}
+
+GtkWidget *Application::getM_select_and_edit() const {
+    return m_select_and_edit;
+}
+
+GtkWidget *Application::getM_new_rectangle() const {
+    return m_new_rectangle;
+}
+
+GtkWidget *Application::getM_new_ellips() const {
+    return m_new_ellips;
+}
+
+GtkWidget *Application::getM_acceptBttn() const {
+    return m_acceptBttn;
+}
+
+GtkWidget *Application::getM_infoBox() const {
+    return m_infoBox;
+}
+
+GtkWidget *Application::getM_leftColumn() const {
+    return m_leftColumn;
+}
+
+GtkWidget *Application::getM_rightColumn() const {
+    return m_rightColumn;
 }

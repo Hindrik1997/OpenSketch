@@ -8,7 +8,8 @@
 /*
  * VISITOR BASE CLASS
  *  Base class voor visitor implementaties.
- *
+ *  start_visit() en stop_visit() moeten in elke implementatie ge-overide worden. Ookal laat je deze leeg, override ze!
+ *  (Je kan niet anders in c++, omdat de klasse anders abstract is, maar ik zeg het er maar ff bij)
  */
 
 class Shape;
@@ -27,6 +28,7 @@ public:
     virtual ~Visitor() = 0;
 };
 
+//Ook hier weer een implementatie, omdat deze verplicht is, zelfs als deze puur virtueel is.
 inline Visitor::~Visitor(){}
 
 

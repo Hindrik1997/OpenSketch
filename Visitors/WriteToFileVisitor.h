@@ -12,6 +12,11 @@
 
 using namespace std;
 
+/*
+ * Visitor die file writing implementeert.
+ * */
+
+
 class WriteToFileVisitor : public Visitor {
 private:
     vector<string> m_data;

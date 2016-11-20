@@ -9,6 +9,7 @@
 
 Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
 {
+    //move de group members in de group vector.
     for(auto&& s : _vec)
     {
         m_shapes.emplace_back(std::move(s));
@@ -16,6 +17,7 @@ Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) 
     _vec.clear();
 }
 
+//Retourneert de positie van de group aan de hand van calculateMetrics()
 glm::vec2 Group::getPosition() const {
     glm::vec2 result;
     int xmin,xmax,ymin,ymax;
@@ -26,6 +28,7 @@ glm::vec2 Group::getPosition() const {
     return result;
 }
 
+//Retourneert de grootte van de group aan de hand van calculateMetrics()
 glm::vec2 Group::getSize() const {
     glm::vec2 result;
     int xmin,xmax,ymin,ymax;
@@ -39,6 +42,7 @@ vector<unique_ptr<Shape>>& Group::getShapes() {
     return m_shapes;
 }
 
+//Berekent de boundaries van de group en geeft deze als ref params terug.
 void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) const {
 
     int min_x = std::numeric_limits<int>::max(),
@@ -64,6 +68,7 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
     _maxy = max_y;
 }
 
+//Accept voor de visitor van de group.
 void Group::accept(Visitor &_v) {
     _v.start_visit(*this);
     for(auto&& s : m_shapes)
@@ -71,41 +76,4 @@ void Group::accept(Visitor &_v) {
         s->accept(_v);
     }
     _v.stop_visit(*this);
-}
-
-
-void Group::resize(int _pixelsX, int _pixelsY) {
-
-    int old_pos_x = static_cast<int>(getPosition().x);
-    int old_pos_y = static_cast<int>(getPosition().y);
-
-    int old_width = static_cast<int>(getSize().x);
-    int old_height = static_cast<int>(getSize().y);
-
-    float factorX = static_cast<float>(old_width + _pixelsX) / old_width;
-    float factorY = static_cast<float>(old_height + _pixelsY) / old_height;
-
-    for (auto &&s : m_shapes)
-    {
-        int newHeight = static_cast<int>(s->getSize().y * factorY);
-        int newWidth = static_cast<int>(s->getSize().x * factorX);
-
-        int delta_x = static_cast<int>((s->getPosition().x - old_width) * (factorX - 1));
-        int delta_y = static_cast<int>((s->getPosition().y - old_height) * (factorY - 1));
-
-        MoveShapeVisitor v(delta_x, delta_y);
-        s->accept(v);
-
-        int changeX = newWidth > 0 ? newWidth - static_cast<int>(s->getSize().x) : 0;
-        int changeY = newHeight > 0 ? newHeight - static_cast<int>(s->getSize().y) : 0;
-
-        if(changeX != 0 && changeY != 0)
-            s->resize(changeX, changeY);
-    }
-
-    int xdiff = static_cast<int>(old_pos_x - getPosition().x);
-    int ydiff = static_cast<int>(old_pos_y - getPosition().y);
-
-    MoveShapeVisitor v(xdiff,ydiff);
-    accept(v);
 }

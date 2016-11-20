@@ -8,6 +8,13 @@
 
 #include "../Shapes/Visitor.h"
 
+/*
+ *
+ * Visitor die de drawing implementeert.
+ *
+ *
+ * */
+
 class DrawVisitor : public Visitor {
 public:
     virtual void start_visit(Shape &_shape) override;

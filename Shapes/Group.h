@@ -22,8 +22,6 @@ public:
 
     virtual void accept(Visitor &_v) override;
 
-    virtual void resize(int _pixelsX, int _pixelsY) override;
-
     virtual glm::vec2 getPosition() const override;
     virtual glm::vec2 getSize() const override;
 

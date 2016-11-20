@@ -5,6 +5,12 @@
 #ifndef OPEN_SKETCH_APPLICATION_H
 #define OPEN_SKETCH_APPLICATION_H
 
+#define PAINT_WINDOW_SIZE_X 1280
+#define PAINT_WINDOW_SIZE_Y 800
+#define TOOL_WINDOW_SIZE_X 300
+#define TOOL_WINDOW_SIZE_Y 600
+
+
 /*
  * SINGLETON PATTERN
  * getInstance() retourneert de instance

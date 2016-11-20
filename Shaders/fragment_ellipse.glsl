@@ -28,4 +28,6 @@ void main()
         color = vec4(0.48f, 0.66f, 0.93f, 1.0f);
         return;
     }
+
+    color *= 1.1 - length;
 }
