@@ -8,15 +8,13 @@
 #include "../Shapes/Visitor.h"
 #include <vector>
 #include <string>
-#include <stack>
+#include <deque>
 
-using std::stack;
+using std::deque;
 using std::vector;
 using std::string;
 
 struct ResizeData {
-    int m_pixelsX = 0;
-    int m_pixelsY = 0;
     int m_old_pos_x = 0;
     int m_old_pos_y = 0;
     int m_old_width = 0;
@@ -25,11 +23,18 @@ struct ResizeData {
     float m_factorY = 0.0f;
 };
 
+
+/*
+ * Implementatie ResizeShapeVisitor
+ *
+ * Resized alsof er 1 parent group is. Groups in groups worden ge-ignored.
+ *
+ * */
 class ResizeShapeVisitor : public Visitor {
 private:
     int m_pixelsX = 0;
     int m_pixelsY = 0;
-    stack<ResizeData> m_stack;
+    deque<ResizeData> m_deque;
 public:
     ResizeShapeVisitor(int _pixelsX, int _pixelsY);
 
