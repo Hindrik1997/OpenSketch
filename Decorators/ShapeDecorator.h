@@ -13,7 +13,6 @@ private:
 
 public:
 
-};
-*/
+}; */
 
 #endif //OPEN_SKETCH_SHAPEDECORATOR_H
