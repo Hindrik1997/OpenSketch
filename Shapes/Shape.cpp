@@ -13,8 +13,8 @@ static float map(float _value, float _from1, float _to1, float _from2, float _to
     return _from2 + (_value - _from1) * (_to2 - _from2) / (_to1 - _from1);
 }
 
-Shape::Shape(ShapeRenderManager* _oglRenderer,int _posx, int _posy, int _width, int _height, Drawer* _drawer)
-        : m_oglRenderer(_oglRenderer), m_drawer(_drawer)
+Shape::Shape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
+        :  m_drawer(_drawer)
 {
     //Basic Shape in t midden, deze transformeer ik doormiddel van matrices naar de juiste positie en grootte
 

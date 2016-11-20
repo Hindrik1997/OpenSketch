@@ -118,7 +118,7 @@ void ShapeRenderManager::createCustomShaderProgam(string _vertexShader, string _
 
 Shape& ShapeRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
-    m_shapes.emplace_back(make_unique<Shape>(this, _posx, _posy, _width, _height, _drawer));
+    m_shapes.emplace_back(make_unique<Shape>(_posx, _posy, _width, _height, _drawer));
     return *m_shapes.back();
 }
 

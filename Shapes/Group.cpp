@@ -7,7 +7,7 @@
 #include "../Visitors/MoveShapeVisitor.h"
 #include <algorithm>
 
-Group::Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec) : Shape(_oglRenderer, 0,0,0,0, nullptr)
+Group::Group(vector<unique_ptr<Shape>>& _vec) : Shape(0,0,0,0, nullptr)
 {
     //move de group members in de group vector.
     for(auto&& s : _vec)

@@ -414,7 +414,6 @@ bool interpret_line(int _index, vector<string>& _lines, Application* _context, i
 
         std::vector<string> vals = split(part, ' ');
         unique_ptr<Shape> p = make_unique<Shape>(
-                &_context->getGLManager(),
                 std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
                 std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
                 std::atoi(vals[2].c_str()),
@@ -433,7 +432,6 @@ bool interpret_line(int _index, vector<string>& _lines, Application* _context, i
 
         std::vector<string> vals = split(part, ' ');
         unique_ptr<Shape> p = make_unique<Shape>(
-                &_context->getGLManager(),
                 std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
                 std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
                 std::atoi(vals[2].c_str()),
@@ -453,7 +451,7 @@ bool interpret_line(int _index, vector<string>& _lines, Application* _context, i
         int linecount = 0;
 
         vector<unique_ptr<Shape>> temp;
-        unique_ptr<Shape> g = std::make_unique<Group>(&_context->getGLManager(), temp);
+        unique_ptr<Shape> g = std::make_unique<Group>(temp);
         Group* gr = dynamic_cast<Group*>(g.get());
 
         while(expectedcount != 0)
@@ -518,7 +516,7 @@ void interpret_line(int _index, vector<string>& _lines, Application* _context, i
         int expectedcount = atoi(t.c_str());
 
         vector<unique_ptr<Shape>> temp;
-        unique_ptr<Shape> g = std::make_unique<Group>(&_context->getGLManager(), temp);
+        unique_ptr<Shape> g = std::make_unique<Group>(temp);
         Group* gr = dynamic_cast<Group*>(g.get());
 
         int linecount = 0;

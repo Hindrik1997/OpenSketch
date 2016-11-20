@@ -69,7 +69,7 @@ void FormGroupCommand::execute(Application *_context) {
 
     _context->getSelectedShapes().clear();
 
-    unique_ptr<Shape> group = std::make_unique<Group>(&_context->getGLManager(), temp);
+    unique_ptr<Shape> group = std::make_unique<Group>(temp);
     m_groupIndex = _context->getGLManager().addGroup(std::move(group)); //takes control of the unique ptr
 }
 

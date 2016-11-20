@@ -27,9 +27,8 @@ protected:
     bool m_isSelected = false;
 
     Drawer* m_drawer = nullptr;
-    ShapeRenderManager* m_oglRenderer = nullptr;
 public:
-    Shape(ShapeRenderManager* _oglRenderer, int _posx, int _posy, int _width, int _height, Drawer* _drawer);
+    Shape(int _posx, int _posy, int _width, int _height, Drawer* _drawer);
     virtual ~Shape();
 
     //Geen copies

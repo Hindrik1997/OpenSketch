@@ -17,7 +17,7 @@ class Group : public Shape {
 private:
     vector<unique_ptr<Shape>> m_shapes;
 public:
-    Group(ShapeRenderManager* _oglRenderer, vector<unique_ptr<Shape>>& _vec);
+    Group(vector<unique_ptr<Shape>>& _vec);
     virtual ~Group() override = default;
 
     virtual void accept(Visitor &_v) override;
