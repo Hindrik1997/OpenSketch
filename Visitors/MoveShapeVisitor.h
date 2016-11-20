@@ -10,6 +10,10 @@
 #include <vector>
 #include <string>
 
+
+/*
+ * Visitor implementation that moves all shapes by m_x and m_y pixels.  
+ * */
 class MoveShapeVisitor : public Visitor{
 private:
 

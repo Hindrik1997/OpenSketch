@@ -73,6 +73,7 @@ void Group::accept(Visitor &_v) {
     _v.stop_visit(*this);
 }
 
+
 void Group::resize(int _pixelsX, int _pixelsY) {
 
     int old_pos_x = static_cast<int>(getPosition().x);
