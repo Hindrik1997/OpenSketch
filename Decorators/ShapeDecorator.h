@@ -25,7 +25,7 @@ public:
 
     virtual glm::mat4 getMatrix() const override;
 
-    virtual void accept(Visitor &_v) override;
+    virtual void accept(Visitor &_v) override final;
 
     virtual glm::vec2 getPosition() const override;
 

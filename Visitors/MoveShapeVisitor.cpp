@@ -10,7 +10,7 @@ MoveShapeVisitor::MoveShapeVisitor(int _x, int _y) : m_x(_x), m_y(_y){
 }
 
 void MoveShapeVisitor::start_visit(Shape &_shape) {
-    _shape.move(m_x, m_y);
+    call_non_decorated(_shape, &Shape::move, m_x, m_y);
 }
 
 void MoveShapeVisitor::start_visit(Group &_group) {

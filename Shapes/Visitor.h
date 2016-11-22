@@ -35,7 +35,7 @@ class ShapeDecorator;
 
 class Visitor
 {
-protected:
+private:
     deque<Shape*> m_deque;
 public:
     virtual void start_visit(Shape &_shape) = 0;
@@ -44,8 +44,8 @@ public:
     virtual void stop_visit(Shape& _shape) = 0;
     virtual void stop_visit(Group& _group) = 0;
 
-    virtual void start_visit(ShapeDecorator& _decorator);
-    virtual void stop_visit(ShapeDecorator& _decorator);
+    virtual void start_visit(ShapeDecorator& _decorator) final;
+    virtual void stop_visit(ShapeDecorator& _decorator) final;
 
     template<typename O, typename F, typename... Args>
     inline void call_non_decorated(O& _object ,F _func, Args... _args);
@@ -58,6 +58,10 @@ public:
 
     virtual ~Visitor() = 0;
 };
+
+
+
+
 
 //Ook hier weer een implementatie, omdat deze verplicht is, zelfs als deze puur virtueel is.
 inline Visitor::~Visitor(){}
@@ -72,14 +76,17 @@ inline void Visitor::call_non_decorated(O& _object, F _func, Args... _args) {
 //called de gedecoreerde versie van de functie
 template<typename F, typename... Args>
 inline void Visitor::call_decorated(F _func, Args... _args) {
-    ((*m_deque.front()).*_func)(_args...);
+    if(!m_deque.empty())
+        ((*m_deque.front()).*_func)(_args...);
+    else
+        throw "Calling a decorated version, but there is none!";
 }
 
 //bepaalt zelf welke hij moet callen
 template<typename O, typename F, typename... Args>
 void Visitor::call_automatic(O &_object, F _func, Args... args) {
 
-    if(m_deque.size() == 0)
+    if(m_deque.empty())
     {
         call_non_decorated(_object, _func, args...);
     }
