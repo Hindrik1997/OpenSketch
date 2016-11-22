@@ -8,7 +8,6 @@
 #include <typeinfo>
 #include <string>
 #include <vector>
-#include "IShape.h"
 #include "../OpenGL/DrawableObject.h"
 #include "Visitable.h"
 
@@ -19,7 +18,7 @@ using std::string;
 using std::vector;
 using std::to_string;
 
-class Shape : public Visitable, public IShape {
+class Shape : public Visitable {
 protected:
     glm::mat4 m_transformMatrix = glm::mat4(1.0f);
 
@@ -41,23 +40,22 @@ public:
     Shape(Shape&&) = default;
     Shape& operator=(Shape&&) = default;
 
-    virtual void draw() const override;
+    virtual void draw() const;
 
-    virtual void resize(int _pixelsX, int _pixelsY) override;
-    virtual void move(int _pixelsX, int _pixelsY) override;
+    virtual void resize(int _pixelsX, int _pixelsY);
+    virtual void move(int _pixelsX, int _pixelsY);
 
     virtual inline void setSelected(bool _isSelected);
-    virtual inline bool getSelected() const override;
+    virtual inline bool getSelected() const;
     virtual inline glm::mat4 getMatrix() const;
 
     virtual void accept(Visitor &_v) override;
 
-    virtual inline glm::vec2 getPosition() const override;
-    virtual inline glm::vec2 getSize() const override;
-    inline Drawer* getDrawer() const;
+    virtual inline glm::vec2 getPosition() const;
+    virtual inline glm::vec2 getSize() const;
+
+    virtual inline Drawer* getDrawer() const;
 };
-
-
 
 //inlined member functies
 

@@ -7,6 +7,9 @@
 
 
 #include "../Shapes/Visitor.h"
+#include <deque>
+
+using std::deque;
 
 /*
  *

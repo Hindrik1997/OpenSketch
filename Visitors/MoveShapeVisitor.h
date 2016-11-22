@@ -16,7 +16,6 @@
  * */
 class MoveShapeVisitor : public Visitor{
 private:
-
     int m_x = 0;
     int m_y = 0;
 public:
@@ -30,6 +29,8 @@ public:
 
     virtual void stop_visit(Group &_group) override;
 };
+
+
 
 
 #endif //OPEN_SKETCH_MOVESHAPEVISITOR_H

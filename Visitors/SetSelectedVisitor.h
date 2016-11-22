@@ -28,4 +28,5 @@ public:
 };
 
 
+
 #endif //OPEN_SKETCH_SETSELECTEDVISITOR_H

@@ -4,9 +4,13 @@
 
 #include "DrawVisitor.h"
 #include "../Shapes/Shape.h"
+#include "../Decorators/ShapeDecorator.h"
 
-void DrawVisitor::start_visit(Shape &_shape) {
-    _shape.draw();
+void DrawVisitor::start_visit(Shape& _shape) {
+    //selects the adequate possibly overloaded draw()
+
+    call_automatic(_shape, &Shape::draw);
+
 }
 
 void DrawVisitor::start_visit(Group &_group) {
