@@ -5,8 +5,10 @@
 #include <cmath>
 #include "ShapeRenderManager.h"
 #include "../Visitors/DrawVisitor.h"
-#include "../Decorators/ShapeTestDecorator.h"
-#include "../Decorators/TextDecorator.h"
+#include "../Decorators/OrnamentTopDecorator.h"
+#include "../Decorators/OrnamentBottomDecorator.h"
+#include "../Decorators/OrnamentLeftDecorator.h"
+#include "../Decorators/OrnamentRightDecorator.h"
 
 void ShapeRenderManager::render()
 {
@@ -120,7 +122,7 @@ void ShapeRenderManager::createCustomShaderProgam(string _vertexShader, string _
 
 Shape& ShapeRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
-    m_shapes.push_back(std::unique_ptr<Shape>(new TextDecorator(new Shape(_posx, _posy, _width, _height, _drawer))));
+    m_shapes.push_back(std::unique_ptr<Shape>(new OrnamentRightDecorator("Some TextR", new OrnamentLeftDecorator("Some TextL",new OrnamentBottomDecorator("Some TextB", new OrnamentTopDecorator("Some TextT",new Shape(_posx, _posy, _width, _height, _drawer)))))));
     return *m_shapes.back();
 }
 
