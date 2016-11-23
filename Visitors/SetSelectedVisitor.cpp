@@ -9,7 +9,7 @@ SetSelectedVisitor::SetSelectedVisitor(bool _val) : m_value(_val) {
 }
 
 void SetSelectedVisitor::start_visit(Shape &_shape) {
-    _shape.setSelected(m_value);
+    call_automatic(&Shape::setSelected,_shape, m_value);
 }
 
 void SetSelectedVisitor::start_visit(Group &_group) {

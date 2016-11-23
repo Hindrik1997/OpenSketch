@@ -24,23 +24,9 @@
  *
  * */
 
-//Template voodoo
-template <typename F>
-struct return_type;
-
-template <typename R, typename... A>
-struct return_type<R (*)(A...)>
-{
-    typedef R type;
-};
-
-template <typename R, typename... A>
-struct return_type<R (*)(A..., ...)>
-{
-    typedef R type;
-};
-
 #include <deque>
+#include "../includeLibs.h"
+#include "../SupportClasses.h"
 
 using std::deque;
 
@@ -66,25 +52,30 @@ public:
 
     //nog veel meer template voodoo
 
-    template<typename F, typename O, typename... Args>
-    typename return_type<F>::type call_non_decorated(F _func, O& _object, Args... _args);
+    template<typename R, typename F, typename O, typename... Args>
+    R call_non_decorated(F _func, O& _object, Args... _args);
 
     template<typename F, typename O, typename... Args>
     void call_non_decorated(F _func, O& _object, Args... _args);
 
+    template<typename R, typename D, typename F, typename... Args>
+    R call_decorated(F _func, Args... _args);
 
-    template<typename F, typename... Args>
-    typename return_type<F>::type call_decorated(F _func, Args... _args);
+    template<typename R, typename F, typename... Args>
+    R call_decorated(F _func, Args... _args);
 
     template<typename F, typename... Args>
     void call_decorated(F _func, Args... _args);
 
+    template<typename R, typename F, typename O, typename... Args>
+    R call_automatic(F _func,O& _object, Args... _args);
 
-    template<typename F, typename O, typename... Args>
-    typename return_type<F>::type call_automatic(F _func,O& _object, Args... _args);
+    template<typename R, typename D, typename F, typename O, typename... Args>
+    R call_automatic(F _func,O& _object, Args... _args);
 
     template<typename F, typename O, typename...Args>
     void call_automatic(F _func,O& _object, Args... _args);
+
 };
 
 
@@ -93,12 +84,18 @@ inline Visitor::~Visitor(){}
 
 
 //called de decorated versie van de functie
-template<typename F, typename... Args>
-typename return_type<F>::type Visitor::call_decorated(F _func, Args... _args) {
+template<typename R, typename F, typename... Args>
+R Visitor::call_decorated(F _func, Args... _args) {
     return (m_deque.front()->*_func)(_args...);
 }
 
-//void specialisatie van de decorated call
+//called de decorated versie van de functie, maar cast naar type D
+template<typename R, typename D, typename F, typename... Args>
+R Visitor::call_decorated(F _func, Args... _args) {
+    return (dynamic_cast<D*>(m_deque.front())->*_func)(_args...);
+}
+
+//void return type versie van de decorated call
 template<typename F, typename... Args>
 void Visitor::call_decorated(F _func, Args... _args)
 {
@@ -106,11 +103,12 @@ void Visitor::call_decorated(F _func, Args... _args)
 };
 
 //called de non_decorated versie van de functie
-template<typename F, typename O, typename... Args>
-typename return_type<F>::type Visitor::call_non_decorated(F _func, O& _object, Args... _args)
+template<typename R, typename F, typename O, typename... Args>
+R Visitor::call_non_decorated(F _func, O& _object, Args... _args)
 {
     return (_object.*_func)(_args...);
 };
+
 
 //void specialisatie van de non decorated versie
 template<typename F, typename O, typename... Args>
@@ -119,9 +117,9 @@ void Visitor::call_non_decorated(F _func, O &_object, Args... _args) {
 }
 
 
-//bepaalt zelf welke hij moet callen
-template<typename F, typename O, typename... Args>
-typename return_type<F>::type Visitor::call_automatic(F _func, O& _object, Args... _args) {
+//bepaalt zelf welke hij moet callen, vereist return type
+template<typename R, typename F,typename O, typename... Args>
+R Visitor::call_automatic( F _func, O& _object, Args... _args) {
     if(m_deque.empty())
     {
         return (_object.*_func)(_args...);
@@ -132,7 +130,20 @@ typename return_type<F>::type Visitor::call_automatic(F _func, O& _object, Args.
     }
 }
 
-//bepaalt zelf welke hij moet callen met specifieke specialization voor fptr's die void returnen (void is geen template type)
+//Bepaald het ook zelf, maar voert een dynamic cast naar type D uit.
+template<typename R, typename D, typename F,typename O, typename... Args>
+R Visitor::call_automatic(F _func, O &_object, Args... _args) {
+    if(m_deque.empty())
+    {
+        return (_object.*_func)(_args...);
+    }
+    else
+    {
+        return (dynamic_cast<D*>(m_deque.front())->*_func)(_args...);
+    }
+}
+
+//bepaalt zelf welke hij moet callen, en returned void
 template<typename F, typename O, typename...Args>
 void Visitor::call_automatic(F _func, O& _object, Args... _args) {
     if(m_deque.empty())

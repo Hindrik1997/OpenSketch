@@ -23,17 +23,20 @@ void ResizeShapeVisitor::start_visit(Shape &_shape) {
 
     ResizeData rs = m_deque.back();
 
-    int newHeight = static_cast<int>(_shape.getSize().y * rs.m_factorY);
-    int newWidth = static_cast<int>(_shape.getSize().x * rs.m_factorX);
+    glm::vec2 pos = call_automatic<glm::vec2>(&Shape::getPosition, _shape);
+    glm::vec2 size = call_automatic<glm::vec2>(&Shape::getSize, _shape);
 
-    int delta_x = static_cast<int>((_shape.getPosition().x - rs.m_old_width) * (rs.m_factorX - 1));
-    int delta_y = static_cast<int>((_shape.getPosition().y - rs.m_old_height) * (rs.m_factorY - 1));
+    int newHeight = static_cast<int>(size.y * rs.m_factorY);
+    int newWidth = static_cast<int>(size.x * rs.m_factorX);
+
+    int delta_x = static_cast<int>((pos.x - rs.m_old_width) * (rs.m_factorX - 1));
+    int delta_y = static_cast<int>((pos.y - rs.m_old_height) * (rs.m_factorY - 1));
 
     MoveShapeVisitor v(delta_x, delta_y);
     _shape.accept(v);
 
-    int changeX = newWidth - static_cast<int>(_shape.getSize().x);
-    int changeY = newHeight - static_cast<int>(_shape.getSize().y);
+    int changeX = newWidth - static_cast<int>(size.x);
+    int changeY = newHeight - static_cast<int>(size.y);
 
     if(!(changeX == 0 && changeY == 0))
         _shape.resize(changeX, changeY);
@@ -42,15 +45,18 @@ void ResizeShapeVisitor::start_visit(Shape &_shape) {
 void ResizeShapeVisitor::start_visit(Group& _group) {
 
     //Indien de deque leeg is, maak een parent group met de correcte data,
-    // en resize alles ten opzichte van deze group\
+    // en resize alles ten opzichte van deze group
     // Shapes in groups in de parentgroup worden dus als individuele shapes behandeld.
     if(m_deque.size() == 0)
     {
-        int old_pos_x = static_cast<int>(_group.getPosition().x);
-        int old_pos_y = static_cast<int>(_group.getPosition().y);
+        glm::vec2 pos = call_automatic<glm::vec2>(&Shape::getPosition, _group);
+        glm::vec2 size = call_automatic<glm::vec2>(&Shape::getSize, _group);
 
-        int old_width = static_cast<int>(_group.getSize().x);
-        int old_height = static_cast<int>(_group.getSize().y);
+        int old_pos_x = static_cast<int>(pos.x);
+        int old_pos_y = static_cast<int>(pos.y);
+
+        int old_width = static_cast<int>(size.x);
+        int old_height = static_cast<int>(size.y);
 
         float factorX = static_cast<float>(old_width + m_pixelsX) / old_width;
         float factorY = static_cast<float>(old_height + m_pixelsY) / old_height;
@@ -82,9 +88,10 @@ void ResizeShapeVisitor::stop_visit(Group &_group) {
     if(m_deque.size() == 1) {
 
         ResizeData rs = m_deque.front();
+        glm::vec2 pos = call_automatic<glm::vec2>(&Shape::getPosition, _group);
 
-        int xdiff = static_cast<int>(rs.m_old_pos_x - _group.getPosition().x);
-        int ydiff = static_cast<int>(rs.m_old_pos_y - _group.getPosition().y);
+        int xdiff = static_cast<int>(rs.m_old_pos_x - pos.x);
+        int ydiff = static_cast<int>(rs.m_old_pos_y - pos.y);
 
         MoveShapeVisitor v(xdiff,ydiff);
         _group.accept(v);

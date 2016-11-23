@@ -13,7 +13,7 @@ ShapeTestDecorator::ShapeTestDecorator(Shape* _shape) : ShapeDecorator(_shape) {
 
 void ShapeTestDecorator::draw() const {
 
-    cout << "test" << endl;
+    //cout << "test" << endl;
 
     ShapeDecorator::draw();
 }
