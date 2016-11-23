@@ -4,6 +4,7 @@
 
 #include "OrnamentBottomDecorator.h"
 #include "../Application.h"
+#include "../Shapes/Visitor.h"
 
 void OrnamentBottomDecorator::draw() const {
     ShapeDecorator::draw();
@@ -12,4 +13,15 @@ void OrnamentBottomDecorator::draw() const {
 
 OrnamentBottomDecorator::OrnamentBottomDecorator(string _text, Shape *_shape) : ShapeDecorator(_shape), m_text(_text){
 
+}
+
+vector<string> OrnamentBottomDecorator::getDrawInformation() const {
+    vector<string> data;
+    string t = "ornament bottom \"";
+    t.append(m_text);
+    t.append("\"");
+    data.push_back(t);
+    vector<string> result = ShapeDecorator::getDrawInformation();
+    data.insert(std::end(data), std::begin(result), std::end(result));
+    return data;
 }

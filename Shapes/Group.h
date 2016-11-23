@@ -25,6 +25,8 @@ public:
     virtual glm::vec2 getPosition() const override;
     virtual glm::vec2 getSize() const override;
 
+    vector<string> getDrawInformation() const override;
+
     vector<unique_ptr<Shape>>& getShapes();
 private:
     void calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) const;

@@ -50,3 +50,7 @@ glm::vec2 ShapeDecorator::getSize() const {
 Drawer *ShapeDecorator::getDrawer() const {
     return m_shape->getDrawer();
 }
+
+vector<string> ShapeDecorator::getDrawInformation() const {
+    return m_shape->getDrawInformation();
+}

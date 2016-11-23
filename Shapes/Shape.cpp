@@ -85,3 +85,12 @@ void Shape::move(int _pixelsX, int _pixelsY) {
     m_transformMatrix = glm::scale(m_transformMatrix, scale);
     m_position = glm::vec2(width, height);
 }
+
+vector<string> Shape::getDrawInformation() const {
+    vector<string> data;
+    if(m_drawer != nullptr)
+    {
+        data.push_back(m_drawer->toString());
+    }
+    return data;
+}

@@ -4,14 +4,20 @@
 
 #include "WriteToFileVisitor.h"
 #include "../OpenGL/Drawer.h"
-#include "../Shapes/Shape.h"
 
 void WriteToFileVisitor::start_visit(Shape &_shape)
 {
     glm::vec2 pos = call_automatic<glm::vec2>(&Shape::getPosition, _shape);
     glm::vec2 size = call_automatic<glm::vec2>(&Shape::getSize, _shape);
 
-    string core = _shape.getDrawer() == nullptr ? throw "Invalid drawer!" : call_automatic<Drawer*>(&Shape::getDrawer,_shape)->toString();
+    vector<string> data;
+    vector<string> temp = call_automatic<vector<string>>(&Shape::getDrawInformation, _shape);
+    for(auto it = temp.begin(); it != temp.end() - 1; ++it)
+    {
+        data.push_back(*it);
+    }
+    string core;
+    core.append(temp.back());
     core.append(" ");
     core.append(to_string(static_cast<int>(pos.x - static_cast<int>(size.x / 2))));
     core.append(" ");
@@ -20,18 +26,30 @@ void WriteToFileVisitor::start_visit(Shape &_shape)
     core.append(to_string(static_cast<int>(size.x)));
     core.append(" ");
     core.append(to_string(static_cast<int>(size.y)));
-    for(int i = 0; i < m_tabs; ++i)
-        core.insert(core.begin(), 1, '\t');
-    m_data.push_back(core);
+    data.push_back(core);
+
+    for(auto&& s : data)
+    {
+        for(int i = 0; i < m_tabs; ++i)
+        {
+            s.insert(s.begin(), 1, '\t');
+        }
+    }
+    m_data.insert(std::end(m_data), std::begin(data), std::end(data));
 }
 
 void WriteToFileVisitor::start_visit(Group &_group)
 {
-    string core = "group ";
-    core.append(to_string(static_cast<int>(call_automatic< vector<unique_ptr<Shape>>&, Group>(&Group::getShapes, _group).size())));
-    for(int i = 0; i < m_tabs; ++i)
-        core.insert(core.begin(), 1, '\t');
-    m_data.push_back(core);
+    vector<string> data;
+
+    vector<string> temp = call_automatic<vector<string>>(&Shape::getDrawInformation, _group);
+    data.insert(std::begin(data), std::begin(temp), std::end(temp));
+    for(auto&& s : data)
+    {
+        for(int i = 0; i < m_tabs; ++i)
+            s.insert(s.begin(), 1, '\t');
+    }
+    m_data.insert(std::end(m_data), std::begin(data), std::end(data));
     ++m_tabs;
 }
 

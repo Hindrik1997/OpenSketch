@@ -54,6 +54,8 @@ public:
     virtual inline glm::vec2 getPosition() const;
     virtual inline glm::vec2 getSize() const;
 
+    virtual vector<string> getDrawInformation() const;
+
     virtual inline Drawer* getDrawer() const;
 };
 

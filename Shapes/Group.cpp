@@ -77,3 +77,11 @@ void Group::accept(Visitor &_v) {
     }
     _v.stop_visit(*this);
 }
+
+vector<string> Group::getDrawInformation() const {
+    vector<string> data;
+    string core = "group ";
+    core.append(to_string(static_cast<int>(m_shapes.size())));
+    data.push_back(core);
+    return data;
+}

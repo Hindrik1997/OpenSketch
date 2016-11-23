@@ -15,6 +15,8 @@ public:
     OrnamentBottomDecorator(string _text, Shape* _shape);
 
     void draw() const override;
+
+    vector<string> getDrawInformation() const override;
 };
 
 

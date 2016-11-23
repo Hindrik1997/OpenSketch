@@ -25,13 +25,15 @@ public:
 
     virtual glm::mat4 getMatrix() const override;
 
-    virtual void accept(Visitor &_v) override final;
+    virtual void accept(Visitor &_v) override;
 
     virtual glm::vec2 getPosition() const override;
 
     virtual glm::vec2 getSize() const override;
 
     virtual Drawer *getDrawer() const override;
+
+    virtual vector<string> getDrawInformation() const override;
 
     inline virtual ~ShapeDecorator() = 0;
 };

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "../Shapes/Visitor.h"
+#include "../Decorators/OrnamentBottomDecorator.h"
 
 using namespace std;
 

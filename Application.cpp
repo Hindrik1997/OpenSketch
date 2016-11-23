@@ -708,6 +708,7 @@ void Application::saveToFile()
         WriteToFileVisitor v;
         s->accept(v);
         vector<string> t = v.getData();
+
         for(auto&& l : t)
         {
             l.insert(l.begin(), 1, '\t');

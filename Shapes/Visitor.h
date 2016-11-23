@@ -64,8 +64,8 @@ public:
     virtual void stop_visit(Shape& _shape) = 0;
     virtual void stop_visit(Group& _group) = 0;
 
-    virtual void start_visit(ShapeDecorator& _decorator) final;
-    virtual void stop_visit(ShapeDecorator& _decorator) final;
+    virtual void start_visit(ShapeDecorator& _decorator);
+    virtual void stop_visit(ShapeDecorator& _decorator);
 
     virtual ~Visitor() = 0;
 
