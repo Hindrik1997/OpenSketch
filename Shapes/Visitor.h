@@ -18,10 +18,29 @@
  * In feite simuleert het virtuele functies, dus je kan nu ook gedecoreerde versies callen in de visitor implementatie.
  * Het mooiste is nog wel dat het onafhankelijk is van de decorator of visitor implementatie.
  * De base Visitor class en de base ShapeDecorator class managen dit samen volledig onzichtbaar.
+ * In jou visitor implementatie kan je dus zelf kiezen of je de decorator overrides called of enkel die van de base shape.
  *
- * met call_decorated() kan je de functie callen inclusief de decorated overloads, en met call_non_decorated() puur
+ * Hier zijn drie functies voor:
+ *
+ * call_decorated() -> called de functie inclusief de overrides ervan in de decorators. Hier zit geen beveiliging op,
+ *      dus indien er geen decorator is dan segfault ie met een nullptr dereference.
+ *
+ * call_non_decorated() -> called altijd de functie van de shape klasse zelf. Zonder de decorator overrides.
+ *
+ * call_automatic() -> indien er een override in een decorator is wordt deze gecalled,
+ *      anders niet. Aangeraden wordt om deze te gebruiken.
+ *
+ * met call_decorated() kan je de functie callen inclusief de decorated overrides, en met call_non_decorated() puur
  * die van de class zelf. (Als deze een derived is, bijv. Group, is deze dus wel overriden zoals normaal!)
+ * Indien de functie een waarde teruggeeft specificeer je deze als eerste template parameter. i.e:
+ * call_automatic<int>(&Shape::getSomeInt, _shape);
  *
+ * Ook is er support voor upcasts in de vorm van een 2e template parameter, op deze manier kan je ook functies callen
+ * van specifiekere types van shape. Bijv. Group. i.e:
+ * call_automatic<int, Group>(&Group::someFunc, _group);
+ *
+ *
+ *  De rest van de template types worden automatisch door de compiler gesolved.
  * */
 
 #include <deque>

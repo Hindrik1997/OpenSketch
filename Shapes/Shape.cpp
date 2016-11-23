@@ -8,7 +8,7 @@
 #include "Visitor.h"
 
 //mappen van range x-y naar w-z
-static float map(float _value, float _from1, float _to1, float _from2, float _to2)
+static float map_range(float _value, float _from1, float _to1, float _from2, float _to2)
 {
     return _from2 + (_value - _from1) * (_to2 - _from2) / (_to1 - _from1);
 }
@@ -47,8 +47,8 @@ void Shape::resize(int _pixelsX, int _pixelsY) {
     int defaultSizeY = static_cast<int>(0.5f * window_height);
 
     //Mappen van de pixel coord naar Normalized Device Coords range. (0 tot width/height naar -1 tot 1)
-    float scalex = map(width, 0, defaultSizeX, 0.0f, 1.0f);
-    float scaley = map(height, 0, defaultSizeY, 0.0f, 1.0f);
+    float scalex = map_range(width, 0, defaultSizeX, 0.0f, 1.0f);
+    float scaley = map_range(height, 0, defaultSizeY, 0.0f, 1.0f);
 
     //Deze transform op de matrix toepassen, we moeten wel de translatie behouden, immers die bepaalt de positie.
     glm::vec3 translate;
@@ -71,8 +71,8 @@ void Shape::move(int _pixelsX, int _pixelsY) {
     Application::getInstance().getPaintWindowSize(window_width, window_height);
 
     //Mappen van de pixel coord naar Normalized Device Coords range. (0 tot width/height naar -1 tot 1)
-    float posx = map(width, 0, window_width, -1.0f, 1.0f);
-    float posy = map(height, 0, window_height, 1.0f, -1.0f);
+    float posx = map_range(width, 0, window_width, -1.0f, 1.0f);
+    float posy = map_range(height, 0, window_height, 1.0f, -1.0f);
 
     //Deze transform op de matrix toepassen, we moeten wel de scale behouden, immers die bepaalt de grootte.
     glm::vec3 scale;

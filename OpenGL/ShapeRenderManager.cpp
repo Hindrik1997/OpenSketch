@@ -6,6 +6,7 @@
 #include "ShapeRenderManager.h"
 #include "../Visitors/DrawVisitor.h"
 #include "../Decorators/ShapeTestDecorator.h"
+#include "../Decorators/TextDecorator.h"
 
 void ShapeRenderManager::render()
 {
@@ -119,7 +120,7 @@ void ShapeRenderManager::createCustomShaderProgam(string _vertexShader, string _
 
 Shape& ShapeRenderManager::addShape(int _posx, int _posy, int _width, int _height, Drawer* _drawer)
 {
-    m_shapes.push_back(std::unique_ptr<Shape>(new ShapeTestDecorator(new Shape(_posx, _posy, _width, _height, _drawer))));
+    m_shapes.push_back(std::unique_ptr<Shape>(new TextDecorator(new Shape(_posx, _posy, _width, _height, _drawer))));
     return *m_shapes.back();
 }
 

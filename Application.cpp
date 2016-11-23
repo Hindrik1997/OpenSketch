@@ -91,6 +91,9 @@ void Application::initialize() {
         throw("Initialization failed!");
     }
 
+    //text size = 16
+    FT_Set_Pixel_Sizes(*m_fontface, 0, 128);
+
 
     //GLFW initten
     status = initGLFW();
@@ -131,6 +134,75 @@ void Application::initialize() {
     //RenderManager initializen
     m_renderManager = new ShapeRenderManager(*this);
     resetState();
+
+    setupFontRendering();
+}
+
+void Application::setupFontRendering() {
+    //byte alignment uitzetten voor openGL, (Standaard texture size is multiple van 4 bytes, maar mijnes zijn 1 byte)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+
+    for(GLubyte c = 0; c < 128; ++c)
+    {
+        if(FT_Load_Char(*m_fontface, c, FT_LOAD_RENDER ))
+        {
+            std::cout << "Loading char failed!" << std::endl;
+            continue;
+        }
+
+        //tex generaten
+        GLuint tex;
+        glGenTextures(1,&tex);
+        glBindTexture(GL_TEXTURE_2D,tex);
+        glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RED,
+                (*m_fontface)->glyph->bitmap.width,
+                (*m_fontface)->glyph->bitmap.rows,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                (*m_fontface)->glyph->bitmap.buffer
+        );
+
+        //text wrapping correct instellen
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        Character ch = {
+                tex,
+                glm::ivec2((*m_fontface)->glyph->bitmap.width, (*m_fontface)->glyph->bitmap.rows),
+                glm::ivec2((*m_fontface)->glyph->bitmap_left, (*m_fontface)->glyph->bitmap_top),
+                static_cast<GLuint>((*m_fontface)->glyph->advance.x)
+        };
+        m_chars.insert(std::pair<GLchar,Character>(c,ch));
+    }
+    //cleanup
+    FT_Done_Face(*m_fontface);
+    FT_Done_FreeType(*m_ft);
+
+
+
+    //buffers opzetten
+    glGenVertexArrays(1,&m_text_vao);
+    glGenBuffers(1, &m_text_vbo);
+    glBindVertexArray(m_text_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, m_text_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    m_renderManager->createCustomShaderProgam("vertex_text.glsl","fragment_text.glsl",m_text_shader);
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(PAINT_WINDOW_SIZE_X), 0.0f, static_cast<GLfloat>(PAINT_WINDOW_SIZE_Y));
+    ShapeRenderManager::setCustomShaderProgram(m_text_shader);
+    glUniformMatrix4fv(glGetUniformLocation(m_text_shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 //Application loop
@@ -349,6 +421,55 @@ void Application::initToolWindow() {
     g_signal_connect(m_ungroup_button, "clicked", G_CALLBACK(ungroupButton), NULL);
 
 
+}
+
+void Application::renderText(string _text, GLfloat x, GLfloat y, GLfloat _scale, glm::vec3 _color) {
+
+    //blenden enablen
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    ShapeRenderManager::setCustomShaderProgram(m_text_shader);
+    glUniform3f(glGetUniformLocation(m_text_shader, "textColor"), _color.x, _color.y, _color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(m_text_vao);
+
+    //Over alle chars gaan
+    std::string::const_iterator c;
+    for (c = _text.begin(); c != _text.end(); c++)
+    {
+        Character ch = m_chars[*c];
+
+        GLfloat xpos = x + ch.m_bearing.x * _scale;
+        GLfloat ypos = y - (ch.m_size.y - ch.m_bearing.y) * _scale;
+
+        GLfloat w = ch.m_size.x * _scale;
+        GLfloat h = ch.m_size.y * _scale;
+        //VBO updaten
+        GLfloat vertices[6][4] = {
+                { xpos,     ypos + h,   0.0, 0.0 },
+                { xpos,     ypos,       0.0, 1.0 },
+                { xpos + w, ypos,       1.0, 1.0 },
+
+                { xpos,     ypos + h,   0.0, 0.0 },
+                { xpos + w, ypos,       1.0, 1.0 },
+                { xpos + w, ypos + h,   1.0, 0.0 }
+        };
+        //Renderen van de glyph
+        glBindTexture(GL_TEXTURE_2D, ch.m_texID);
+        //update vbo geheugen
+        glBindBuffer(GL_ARRAY_BUFFER, m_text_vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //renderen
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        x += (ch.m_advance >> 6) * _scale; //bitshiften (2^6 is 64) om cursor te verplaatsen
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    //blenden disablen
+    glDisable(GL_BLEND);
 }
 
 //Resets current editing state
@@ -736,3 +857,15 @@ GtkWidget *Application::getM_leftColumn() const {
 GtkWidget *Application::getM_rightColumn() const {
     return m_rightColumn;
 }
+
+FT_Library *Application::getM_ft() const {
+    return m_ft;
+}
+
+FT_Face *Application::getM_fontface() const {
+    return m_fontface;
+}
+
+
+
+

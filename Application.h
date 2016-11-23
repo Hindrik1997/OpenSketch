@@ -40,7 +40,7 @@
 #include "States/State.h"
 #include "Commands/CommandContext.h"
 #include "Shapes/Shape.h"
-
+#include <map>
 
 //prototypes
 class ShapeRenderManager;
@@ -63,6 +63,7 @@ private:
     void initGTK();
     void processMouseAndShapes();
     void initToolWindow();
+    void setupFontRendering();
 public:
     //State pattern stuff
     void setState(State* _state);
@@ -71,6 +72,8 @@ public:
 
     void loadFromFile();
     void saveToFile();
+
+    void renderText(string _text, GLfloat _x, GLfloat _y, GLfloat _scale, glm::vec3 _color);
 
     //Init functions
     void initialize();
@@ -128,6 +131,14 @@ private:
     //FreeType
     FT_Library* m_ft = nullptr;
     FT_Face* m_fontface = nullptr;
+    std::map<GLchar, Character> m_chars;
+    GLuint m_text_vao;
+    GLuint m_text_vbo;
+    GLuint m_text_shader;
+public:
+    FT_Library *getM_ft() const;
+    FT_Face *getM_fontface() const;
+private:
 
     vector<size_t> m_selected_shapes;
 
