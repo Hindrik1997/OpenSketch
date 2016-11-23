@@ -16,3 +16,5 @@ void Visitor::stop_visit(ShapeDecorator &_decorator) {
     //pops the pointer
     m_deque.pop_back();
 }
+
+

@@ -24,6 +24,21 @@
  *
  * */
 
+//Template voodoo
+template <typename F>
+struct return_type;
+
+template <typename R, typename... A>
+struct return_type<R (*)(A...)>
+{
+    typedef R type;
+};
+
+template <typename R, typename... A>
+struct return_type<R (*)(A..., ...)>
+{
+    typedef R type;
+};
 
 #include <deque>
 
@@ -47,52 +62,86 @@ public:
     virtual void start_visit(ShapeDecorator& _decorator) final;
     virtual void stop_visit(ShapeDecorator& _decorator) final;
 
-    template<typename O, typename F, typename... Args>
-    inline void call_non_decorated(O& _object ,F _func, Args... _args);
+    virtual ~Visitor() = 0;
+
+    //nog veel meer template voodoo
+
+    template<typename F, typename O, typename... Args>
+    typename return_type<F>::type call_non_decorated(F _func, O& _object, Args... _args);
+
+    template<typename F, typename O, typename... Args>
+    void call_non_decorated(F _func, O& _object, Args... _args);
+
 
     template<typename F, typename... Args>
-    inline void call_decorated(F _func, Args... _args);
+    typename return_type<F>::type call_decorated(F _func, Args... _args);
 
-    template<typename O, typename F, typename... Args>
-    inline void call_automatic(O& _object, F _func, Args... args);
+    template<typename F, typename... Args>
+    void call_decorated(F _func, Args... _args);
 
-    virtual ~Visitor() = 0;
+
+    template<typename F, typename O, typename... Args>
+    typename return_type<F>::type call_automatic(F _func,O& _object, Args... _args);
+
+    template<typename F, typename O, typename...Args>
+    void call_automatic(F _func,O& _object, Args... _args);
 };
-
-
-
 
 
 //Ook hier weer een implementatie, omdat deze verplicht is, zelfs als deze puur virtueel is.
 inline Visitor::~Visitor(){}
 
 
-//called de niet gedecoreerde versie van de functie
-template<typename O, typename F, typename... Args>
-inline void Visitor::call_non_decorated(O& _object, F _func, Args... _args) {
-    (_object.*_func)(_args...);
+//called de decorated versie van de functie
+template<typename F, typename... Args>
+typename return_type<F>::type Visitor::call_decorated(F _func, Args... _args) {
+    return (m_deque.front()->*_func)(_args...);
 }
 
-//called de gedecoreerde versie van de functie
+//void specialisatie van de decorated call
 template<typename F, typename... Args>
-inline void Visitor::call_decorated(F _func, Args... _args) {
-    if(!m_deque.empty())
-        ((*m_deque.front()).*_func)(_args...);
-    else
-        throw "Calling a decorated version, but there is none!";
+void Visitor::call_decorated(F _func, Args... _args)
+{
+    return (m_deque.front()->*_func)(_args...);
+};
+
+//called de non_decorated versie van de functie
+template<typename F, typename O, typename... Args>
+typename return_type<F>::type Visitor::call_non_decorated(F _func, O& _object, Args... _args)
+{
+    return (_object.*_func)(_args...);
+};
+
+//void specialisatie van de non decorated versie
+template<typename F, typename O, typename... Args>
+void Visitor::call_non_decorated(F _func, O &_object, Args... _args) {
+    return (_object.*_func)(_args...);
 }
+
 
 //bepaalt zelf welke hij moet callen
-template<typename O, typename F, typename... Args>
-void Visitor::call_automatic(O &_object, F _func, Args... args) {
-
+template<typename F, typename O, typename... Args>
+typename return_type<F>::type Visitor::call_automatic(F _func, O& _object, Args... _args) {
     if(m_deque.empty())
     {
-        call_non_decorated(_object, _func, args...);
+        return (_object.*_func)(_args...);
     }
     else
     {
-        call_decorated(_func, args...);
+        return (m_deque.front()->*_func)(_args...);
+    }
+}
+
+//bepaalt zelf welke hij moet callen met specifieke specialization voor fptr's die void returnen (void is geen template type)
+template<typename F, typename O, typename...Args>
+void Visitor::call_automatic(F _func, O& _object, Args... _args) {
+    if(m_deque.empty())
+    {
+        return (_object.*_func)(_args...);
+    }
+    else
+    {
+        return (m_deque.front()->*_func)(_args...);
     }
 }
 

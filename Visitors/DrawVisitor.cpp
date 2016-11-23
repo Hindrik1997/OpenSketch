@@ -9,8 +9,7 @@
 void DrawVisitor::start_visit(Shape& _shape) {
     //selects the adequate possibly overloaded draw()
 
-    call_automatic(_shape, &Shape::draw);
-
+    call_automatic(&Shape::draw, _shape);
 }
 
 void DrawVisitor::start_visit(Group &_group) {

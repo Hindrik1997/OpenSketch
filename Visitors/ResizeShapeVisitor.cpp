@@ -15,7 +15,7 @@ void ResizeShapeVisitor::start_visit(Shape &_shape) {
     //Shape is zelfstandig als er geen parent group is.
     if(m_deque.size() == 0)
     {
-        call_automatic(_shape, &Shape::resize, m_pixelsX, m_pixelsY);
+        call_automatic(&Shape::resize, _shape, m_pixelsX, m_pixelsY);
         return;
     }
 
