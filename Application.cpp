@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -15,7 +16,12 @@
 #include "OpenGL/EllipseDrawer.h"
 #include "Visitors/WriteToFileVisitor.h"
 #include "Visitors/SetSelectedVisitor.h"
+#include "Commands/AddDecoratorCommand.h"
+#include "Decorators/OrnamentTopDecorator.h"
+#include "Decorators/OrnamentLeftDecorator.h"
+#include "Decorators/OrnamentRightDecorator.h"
 
+using std::unique_ptr;
 using std::string;
 using std::cout;
 using std::endl;
@@ -284,6 +290,11 @@ void Application::initToolWindow() {
 
     m_file_box = gtk_vbox_new(0, 0);
 
+    m_add_top_ornament_button = gtk_button_new_with_label("Add top ornament");
+    m_add_bottom_ornament_button = gtk_button_new_with_label("Add bottom ornament");
+    m_add_left_ornament_button = gtk_button_new_with_label("Add left ornament");
+    m_add_right_ornament_button = gtk_button_new_with_label("Add right ornament");
+
     m_acceptBttn = gtk_button_new_with_label("Accept");
     m_delete_shape = gtk_button_new_with_label("Delete shape");
 
@@ -310,6 +321,9 @@ void Application::initToolWindow() {
     m_labelsizex = gtk_label_new("width");
     m_labelsizey = gtk_label_new("height");
 
+    m_ornament_field_label = gtk_label_new("Ornament text:");
+    m_ornament_field = gtk_entry_new();
+
     gtk_container_add(GTK_CONTAINER(m_leftColumn), m_labelposx);
     gtk_container_add(GTK_CONTAINER(m_leftColumn), m_posxBox);
 
@@ -328,10 +342,17 @@ void Application::initToolWindow() {
     gtk_container_add(GTK_CONTAINER(m_file_box), m_save_button);
     gtk_container_add(GTK_CONTAINER(m_file_box), m_load_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_infoBox);
+
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_acceptBttn);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_delete_shape);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_group_button);
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ungroup_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ornament_field_label);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_ornament_field);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_add_top_ornament_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_add_bottom_ornament_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_add_left_ornament_button);
+    gtk_container_add(GTK_CONTAINER(m_bottomBox), m_add_right_ornament_button);
 
     gtk_container_add(GTK_CONTAINER(m_bottomBox), m_file_box);
     gtk_container_add(GTK_CONTAINER(m_box), m_topBox);
@@ -358,6 +379,12 @@ void Application::initToolWindow() {
     gtk_widget_show(m_save_button);
     gtk_widget_show(m_group_button);
     gtk_widget_show(m_ungroup_button);
+    gtk_widget_show(m_ornament_field_label);
+    gtk_widget_show(m_ornament_field);
+    gtk_widget_show(m_add_top_ornament_button);
+    gtk_widget_show(m_add_bottom_ornament_button);
+    gtk_widget_show(m_add_left_ornament_button);
+    gtk_widget_show(m_add_right_ornament_button);
 
     gtk_widget_show(m_file_box);
 
@@ -420,7 +447,11 @@ void Application::initToolWindow() {
     //ungroup button
     g_signal_connect(m_ungroup_button, "clicked", G_CALLBACK(ungroupButton), NULL);
 
-
+    //add caption
+    g_signal_connect(m_add_top_ornament_button, "clicked", G_CALLBACK(add_ornament_top_command), NULL);
+    g_signal_connect(m_add_bottom_ornament_button, "clicked", G_CALLBACK(add_ornament_bottom_command), NULL);
+    g_signal_connect(m_add_left_ornament_button, "clicked", G_CALLBACK(add_ornament_left_command), NULL);
+    g_signal_connect(m_add_right_ornament_button, "clicked", G_CALLBACK(add_ornament_right_command), NULL);
 }
 
 void Application::renderText(string _text, GLfloat x, GLfloat y, GLfloat _scale, glm::vec3 _color) {
@@ -524,138 +555,146 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 //File read and save functions
 
-bool interpret_line(int _index, vector<string>& _lines, Application* _context, int& _skipcounter, Group& _group)
+unique_ptr<Shape> interpret_ellipse(string _line)
+{
+    //add ellips
+    std::string part = _line.substr(7, _line.size() - 7);
+    part = trim(part);
+
+    std::vector<string> vals = split(part, ' ');
+    unique_ptr<Shape> p = make_unique<Shape>(
+            std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
+            std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
+            std::atoi(vals[2].c_str()),
+            std::atoi(vals[3].c_str()),
+            static_cast<Drawer*>(&EllipseDrawer::getInstance())
+    );
+    return p;
+}
+
+unique_ptr<Shape> interpret_rectangle(string _line)
+{
+    //add rect
+    std::string part = _line.substr(9, _line.size() - 9);
+    part = trim(part);
+
+    std::vector<string> vals = split(part, ' ');
+    unique_ptr<Shape> p = make_unique<Shape>(
+            std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
+            std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
+            std::atoi(vals[2].c_str()),
+            std::atoi(vals[3].c_str()),
+            static_cast<Drawer*>(&RectangleDrawer::getInstance())
+    );
+    //returned dmv copy elision en move constructors.
+    return p;
+}
+
+unique_ptr<Shape> interpret_group(string _line, int& _size)
+{
+    //add group
+    string t = _line.substr(5, _line.size());
+    t = trim(t);
+    _size = atoi(t.c_str());
+    vector<unique_ptr<Shape>> temp;
+    unique_ptr<Shape> g = std::make_unique<Group>(temp);
+    return g;
+}
+
+void apply_ornament(unique_ptr<Shape>& _shape, string _ornament)
+{
+    string type = _ornament.substr(0,_ornament.find(" "));
+    _ornament = trim(_ornament);
+    _ornament.erase(0, type.length() + 2);
+    _ornament.erase(_ornament.length() - 1, _ornament.length() - 1);
+
+
+    Shape* originalShape = _shape.release();
+
+    if(type == std::string("top"))
+    {
+        _shape.reset(new OrnamentTopDecorator(_ornament,originalShape));
+    }
+    if(type == std::string("bottom"))
+    {
+        _shape.reset(new OrnamentBottomDecorator(_ornament,originalShape));
+    }
+    if(type == std::string("left"))
+    {
+        _shape.reset(new OrnamentLeftDecorator(_ornament,originalShape));
+    }
+    if(type == std::string("right"))
+    {
+        _shape.reset(new OrnamentRightDecorator(_ornament,originalShape));
+    }
+}
+
+void apply_ornaments(unique_ptr<Shape>& _shape, stack<string>& _ornaments)
+{
+    if(_ornaments.size() != 0)
+    {
+        while(_ornaments.size() != 0)
+        {
+            apply_ornament(_shape, _ornaments.top());
+            _ornaments.pop();
+        }
+    }
+}
+
+bool interpret_line(int _index, vector<string>& _lines, stack<string>& _ornaments, unique_ptr<Shape>& _group, int& i)
 {
     std::string line = _lines[_index];
+
+    if(line.substr(0,8) == std::string("ornament"))
+    {
+        std::string part = line.substr(8, line.size() - 8);
+        part = trim(part);
+        _ornaments.push(part);
+    }
+
     if(line.substr(0, 9) == std::string("rectangle"))
     {
-        //add rect
-        std::string part = line.substr(9, line.size() - 9);
-        part = trim(part);
-
-        std::vector<string> vals = split(part, ' ');
-        unique_ptr<Shape> p = make_unique<Shape>(
-                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
-                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
-                std::atoi(vals[2].c_str()),
-                std::atoi(vals[3].c_str()),
-                static_cast<Drawer*>(&RectangleDrawer::getInstance())
-        );
-        _group.getShapes().emplace_back(std::move(p));
+        unique_ptr<Shape> rect = interpret_rectangle(line);
+        apply_ornaments(rect, _ornaments);
+        dynamic_cast<Group*>(_group.get())->getShapes().emplace_back(std::move(rect));
         return true;
     }
 
     if(line.substr(0, 7) == std::string("ellipse"))
     {
-        //add ellips
-        std::string part = line.substr(7, line.size() - 7);
-        part = trim(part);
-
-        std::vector<string> vals = split(part, ' ');
-        unique_ptr<Shape> p = make_unique<Shape>(
-                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
-                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
-                std::atoi(vals[2].c_str()),
-                std::atoi(vals[3].c_str()),
-                static_cast<Drawer*>(&EllipseDrawer::getInstance())
-        );
-        _group.getShapes().emplace_back(std::move(p));
+        unique_ptr<Shape> ellips = interpret_ellipse(line);
+        apply_ornaments(ellips, _ornaments);
+        dynamic_cast<Group*>(_group.get())->getShapes().emplace_back(std::move(ellips));
         return true;
     }
 
     if(line.substr(0,5) == std::string("group"))
     {
-        //add group
-        string t = line.substr(5, line.size());
-        t = trim(t);
-        int expectedcount = atoi(t.c_str());
-        int linecount = 0;
+        int size = 0;
+        unique_ptr<Shape> group = interpret_group(line, size);
 
-        vector<unique_ptr<Shape>> temp;
-        unique_ptr<Shape> g = std::make_unique<Group>(temp);
-        Group* gr = dynamic_cast<Group*>(g.get());
+        int expectedCount = size;
+        int lineCount = 0;
 
-        while(expectedcount != 0)
+        stack<string> ornaments;
+
+        while(expectedCount != 0)
         {
-            if(_index + linecount + 1 < _lines.size())
+            if(_index + lineCount + 1 < _lines.size())
             {
-                int c = 0;
-                bool val = interpret_line(_index + linecount + 1, _lines, _context,c, *gr);
+                bool val = interpret_line(_index + lineCount + 1, _lines, ornaments, group,i);
                 if(val)
-                    expectedcount--;
-                linecount += c;
+                    expectedCount--;
             }
-            linecount++;
+            lineCount++;
         }
-        _skipcounter += linecount;
-        _group.getShapes().emplace_back(std::move(g));
+        i += lineCount;
+
+        apply_ornaments(group, _ornaments);
+        dynamic_cast<Group*>(_group.get())->getShapes().emplace_back(std::move(group));
         return true;
     }
     return false;
-}
-
-void interpret_line(int _index, vector<string>& _lines, Application* _context, int& _skipcounter)
-{
-    string line = _lines[_index];
-    if(line.substr(0, 9) == std::string("rectangle"))
-    {
-        //add rect
-        std::string part = line.substr(9, line.size() - 9);
-        part = trim(part);
-
-        std::vector<string> vals = split(part, ' ');
-        _context->execute(new AddShapeCommand(
-                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2,
-                std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2,
-                std::atoi(vals[2].c_str()),
-                std::atoi(vals[3].c_str()),
-                &RectangleDrawer::getInstance()
-        ));
-    }
-
-    if(line.substr(0, 7) == std::string("ellipse"))
-    {
-        //add ellips
-        std::string part = line.substr(7, line.size() - 7);
-        part = trim(part);
-
-        std::vector<string> vals = split(part, ' ');
-        _context->execute(new AddShapeCommand(
-                std::atoi(vals[0].c_str()) + std::atoi(vals[2].c_str()) / 2
-                ,std::atoi(vals[1].c_str()) + std::atoi(vals[3].c_str()) / 2
-                ,std::atoi(vals[2].c_str()),
-                std::atoi(vals[3].c_str()),
-                &EllipseDrawer::getInstance()
-        ));
-    }
-
-    if(line.substr(0,5) == std::string("group"))
-    {
-        //add group
-        string t = line.substr(5, line.size());
-        t = trim(t);
-        int expectedcount = atoi(t.c_str());
-
-        vector<unique_ptr<Shape>> temp;
-        unique_ptr<Shape> g = std::make_unique<Group>(temp);
-        Group* gr = dynamic_cast<Group*>(g.get());
-
-        int linecount = 0;
-        while(expectedcount != 0)
-        {
-            if(_index + linecount + 1 < _lines.size())
-            {
-                int c = 0;
-                bool val = interpret_line(_index + linecount + 1, _lines, _context,c, *gr);
-                if(val)
-                    expectedcount--;
-                linecount += c;
-            }
-            linecount++;
-        }
-        _skipcounter += linecount;
-        _context->getGLManager().getShapes().emplace_back(std::move(g));
-    }
 }
 
 void Application::loadFromFile()
@@ -676,11 +715,21 @@ void Application::loadFromFile()
         line = trim(line);
     }
 
+    stack<string> ornaments;
+    vector<unique_ptr<Shape>> temp;
+    unique_ptr<Shape> m_root = std::make_unique<Group>(temp);
+
     for(int i = 0; i < lines.size(); ++i)
     {
-        interpret_line(i, lines, this, i);
+        interpret_line(i, lines, ornaments, m_root, i);
     }
     input.close();
+
+    for(auto&& s : dynamic_cast<Group*>(m_root.get())->getShapes())
+    {
+        m_renderManager->getShapes().emplace_back(std::move(s));
+    }
+
 
     //history clearen
     while ( !m_history.empty() )
@@ -867,6 +916,6 @@ FT_Face *Application::getM_fontface() const {
     return m_fontface;
 }
 
-
-
-
+GtkWidget *Application::getM_ornament_field() const {
+    return m_ornament_field;
+}

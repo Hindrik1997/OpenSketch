@@ -12,17 +12,14 @@
 #include "../OpenGL/RectangleDrawer.h"
 #include "../OpenGL/EllipseDrawer.h"
 #include "../Commands/FormGroupCommand.h"
+#include "../Commands/AddDecoratorCommand.h"
 
 static NullState nullState;
 static MoveShapeState moveState;
 static EditShapeState editState;
 static GroupShapesState groupState;
 
-
-void clicked(GtkWidget *widget, gpointer data) {
-    //er is geklikt
-
-}
+string trim(string& str);
 
 void suppress(GtkWidget *widget, gpointer data)
 {
@@ -96,4 +93,80 @@ void ungroupButton(GtkWidget *widget, gpointer data) {
 
 void selectgroupButton(GtkWidget *widget, gpointer data) {
     Application::getInstance().setState(&groupState);
+}
+
+void add_ornament_top_command(GtkWidget *widget, gpointer data) {
+    Shape* selected = Application::getInstance().getM_selectedShape();
+    if(selected == nullptr)
+    {
+        return;
+    }
+    string text (gtk_entry_get_text(GTK_ENTRY(Application::getInstance().getM_ornament_field())));
+    if(text.size() != 0)
+    {
+        text = trim(text);
+        if(text.size() == 0)
+            return;
+    }
+    Application::getInstance().execute(new AddDecoratorCommand(
+            Application::getInstance().getGLManager().getIndex(selected)
+            ,text,"top"));
+    Application::getInstance().resetState();
+}
+
+void add_ornament_bottom_command(GtkWidget *widget, gpointer data) {
+    Shape* selected = Application::getInstance().getM_selectedShape();
+    if(selected == nullptr)
+    {
+        return;
+    }
+    string text (gtk_entry_get_text(GTK_ENTRY(Application::getInstance().getM_ornament_field())));
+    if(text.size() != 0)
+    {
+        text = trim(text);
+        if(text.size() == 0)
+            return;
+    }
+    Application::getInstance().execute(new AddDecoratorCommand(
+            Application::getInstance().getGLManager().getIndex(selected)
+            ,text,"bottom"));
+    Application::getInstance().resetState();
+}
+
+void add_ornament_left_command(GtkWidget *widget, gpointer data) {
+    Shape* selected = Application::getInstance().getM_selectedShape();
+    if(selected == nullptr)
+    {
+        return;
+    }
+    string text (gtk_entry_get_text(GTK_ENTRY(Application::getInstance().getM_ornament_field())));
+    if(text.size() != 0)
+    {
+        text = trim(text);
+        if(text.size() == 0)
+            return;
+    }
+    Application::getInstance().execute(new AddDecoratorCommand(
+            Application::getInstance().getGLManager().getIndex(selected)
+            ,text,"left"));
+    Application::getInstance().resetState();
+}
+
+void add_ornament_right_command(GtkWidget *widget, gpointer data) {
+    Shape* selected = Application::getInstance().getM_selectedShape();
+    if(selected == nullptr)
+    {
+        return;
+    }
+    string text (gtk_entry_get_text(GTK_ENTRY(Application::getInstance().getM_ornament_field())));
+    if(text.size() != 0)
+    {
+        text = trim(text);
+        if(text.size() == 0)
+            return;
+    }
+    Application::getInstance().execute(new AddDecoratorCommand(
+            Application::getInstance().getGLManager().getIndex(selected)
+            ,text,"right"));
+    Application::getInstance().resetState();
 }

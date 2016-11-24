@@ -7,8 +7,6 @@
 
 #include "../includeLibs.h"
 
-void clicked(GtkWidget* widget, gpointer data);
-
 void suppress(GtkWidget* widget, gpointer data);
 
 void selectmove(GtkWidget* widget, gpointer data);
@@ -38,5 +36,13 @@ void groupButton(GtkWidget* widget, gpointer data);
 void ungroupButton(GtkWidget* widget, gpointer data);
 
 void selectgroupButton(GtkWidget* widget, gpointer data);
+
+void add_ornament_top_command(GtkWidget *widget, gpointer data);
+
+void add_ornament_bottom_command(GtkWidget *widget, gpointer data);
+
+void add_ornament_left_command(GtkWidget *widget, gpointer data);
+
+void add_ornament_right_command(GtkWidget *widget, gpointer data);
 
 #endif //OPEN_SKETCH_GTKCALLBACKS_H

@@ -52,10 +52,10 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
 
     for(auto&& s : m_shapes)
     {
-        int txmin = static_cast<int>(static_cast<int>(s->getPosition().x) - (static_cast<int>(s->getSize().x) / 2)),
-                tymin = static_cast<int>(static_cast<int>(s->getPosition().y) - (static_cast<int>(s->getSize().y) / 2)),
-                txmax = static_cast<int>(static_cast<int>(s->getPosition().x) + (static_cast<int>(s->getSize().x) / 2)),
-                tymax = static_cast<int>(static_cast<int>(s->getPosition().y) + (static_cast<int>(s->getSize().y) / 2));
+        int txmin = static_cast<int>(s->getPosition().x) - (static_cast<int>(s->getSize().x) / 2),
+                tymin = static_cast<int>(s->getPosition().y) - (static_cast<int>(s->getSize().y) / 2),
+                txmax = static_cast<int>(s->getPosition().x) + (static_cast<int>(s->getSize().x) / 2),
+                tymax = static_cast<int>(s->getPosition().y) + (static_cast<int>(s->getSize().y) / 2);
 
         if(txmin < min_x) min_x = txmin;
         if(txmax > max_x) max_x = txmax;
@@ -71,10 +71,19 @@ void Group::calculateMetrics(int& _minx, int& _maxx, int& _miny, int& _maxy) con
 //Accept voor de visitor van de group.
 void Group::accept(Visitor &_v) {
     _v.start_visit(*this);
+
+    //Swap because otherwise the group decorators are also called for the shape
+    //Which results in bugs. See my implementation for this system in Visitor.h, ShapeDecorator.h and the visitors
+    deque<Shape*> decorator_temp;
+    _v.get_deque().swap(decorator_temp);
+
     for(auto&& s : m_shapes)
     {
         s->accept(_v);
     }
+
+    _v.get_deque().swap(decorator_temp);
+
     _v.stop_visit(*this);
 }
 

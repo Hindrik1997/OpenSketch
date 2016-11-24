@@ -67,6 +67,8 @@ public:
     virtual void start_visit(ShapeDecorator& _decorator);
     virtual void stop_visit(ShapeDecorator& _decorator);
 
+    deque<Shape*>& get_deque();
+
     virtual ~Visitor() = 0;
 
     //nog veel meer template voodoo
@@ -147,6 +149,10 @@ R Visitor::call_automatic( F _func, O& _object, Args... _args) {
     {
         return (m_deque.front()->*_func)(_args...);
     }
+}
+
+inline deque<Shape *> &Visitor::get_deque() {
+    return m_deque;
 }
 
 //Bepaald het ook zelf, maar voert een dynamic cast naar type D uit.

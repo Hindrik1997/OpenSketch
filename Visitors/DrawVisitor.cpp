@@ -4,6 +4,7 @@
 
 #include "DrawVisitor.h"
 #include "../Shapes/Shape.h"
+#include "../Shapes/Group.h"
 #include "../Decorators/ShapeDecorator.h"
 
 void DrawVisitor::start_visit(Shape& _shape) {
@@ -13,6 +14,7 @@ void DrawVisitor::start_visit(Shape& _shape) {
 
 void DrawVisitor::start_visit(Group &_group) {
     //Indirectly implemented by accept()
+    call_automatic(&Shape::draw, dynamic_cast<Shape&>(_group));
 }
 
 void DrawVisitor::stop_visit(Shape &_shape) {

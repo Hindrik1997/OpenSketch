@@ -8,7 +8,7 @@
 #define PAINT_WINDOW_SIZE_X 1280
 #define PAINT_WINDOW_SIZE_Y 800
 #define TOOL_WINDOW_SIZE_X 300
-#define TOOL_WINDOW_SIZE_Y 600
+#define TOOL_WINDOW_SIZE_Y 800
 
 
 /*
@@ -172,8 +172,17 @@ private:
     GtkWidget* m_ungroup_button;
     GtkWidget* m_load_button;
     GtkWidget* m_save_button;
+    GtkWidget* m_ornament_field_label;
+    GtkWidget* m_ornament_field;
+    GtkWidget* m_add_top_ornament_button;
+    GtkWidget* m_add_bottom_ornament_button;
+    GtkWidget* m_add_left_ornament_button;
+    GtkWidget* m_add_right_ornament_button;
 private:
     friend class ShapeRenderManager;
+
+public:
+    GtkWidget *getM_ornament_field() const;
 };
 
 inline void Application::setStartupArgs(Args _args) {

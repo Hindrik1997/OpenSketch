@@ -54,3 +54,11 @@ Drawer *ShapeDecorator::getDrawer() const {
 vector<string> ShapeDecorator::getDrawInformation() const {
     return m_shape->getDrawInformation();
 }
+
+Shape *ShapeDecorator::getPointer() {
+    return m_shape;
+}
+
+void ShapeDecorator::setPointer(Shape* _shape) {
+    m_shape = _shape;
+}

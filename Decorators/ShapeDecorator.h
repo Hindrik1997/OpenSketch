@@ -36,8 +36,14 @@ public:
     virtual vector<string> getDrawInformation() const override;
 
     inline virtual ~ShapeDecorator() = 0;
+
+    Shape* getPointer();
+    void setPointer(Shape* _shape);
 };
 
-ShapeDecorator::~ShapeDecorator(){}
+ShapeDecorator::~ShapeDecorator()
+{
+    SAFE_PNTR_DEL(m_shape);
+}
 
 #endif //OPEN_SKETCH_SHAPEDECORATOR_H
