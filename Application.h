@@ -65,11 +65,6 @@ private:
     void initToolWindow();
     void setupFontRendering();
 public:
-    //State pattern stuff
-    void setState(State* _state);
-    State* getState();
-    void resetState();
-
     void loadFromFile();
     void saveToFile();
 
@@ -78,12 +73,10 @@ public:
     //Init functions
     void initialize();
     void run();
-    void getPaintWindowSize(int& _width, int& _height);
+
     inline void setStartupArgs(Args _args);
     inline Args getStartupArgs();
-    void setShapeEdited(bool _val);
-    void setShapeDeleted(bool _val);
-    void setGroupDeformed(bool _val);
+
     glm::vec2 getPaintWindowCursorPos() const;
     ShapeRenderManager& getGLManager();
 private:
@@ -93,15 +86,45 @@ private:
     ShapeRenderManager* m_renderManager;
     Args m_startupArgs;
 
+    //FreeType
+    FT_Library* m_ft = nullptr;
+    FT_Face* m_fontface = nullptr;
+    std::map<GLchar, Character> m_chars;
+    GLuint m_text_vao;
+    GLuint m_text_vbo;
+    GLuint m_text_shader;
+
     //State stuf
     State* m_state = nullptr;
+    bool m_isEdited = false;
+    bool m_isDeleted = false;
+    bool m_isDegrouped = false;
+    Shape* m_selectedShape = nullptr;
+    vector<size_t> m_selected_shapes;
 public:
-    GLFWwindow *getM_paintWindow() const;
+    void getPaintWindowSize(int& _width, int& _height);
+
     bool isM_isEdited() const;
     bool isM_isDeleted() const;
     bool isM_isDegrouped() const;
+
+    void setShapeEdited(bool _val);
+    void setShapeDeleted(bool _val);
+    void setGroupDeformed(bool _val);
+
     vector<size_t>& getSelectedShapes();
     Shape* &getM_selectedShape();
+
+    //State pattern stuff
+    void setState(State* _state);
+    State* getState();
+    void resetState();
+
+
+public:
+
+    //GTK getters
+    GLFWwindow *getM_paintWindow() const;
     GtkWidget *getM_posxBox() const;
     GtkWidget *getM_posyBox() const;
     GtkWidget *getM_sizexBox() const;
@@ -123,24 +146,13 @@ public:
     GtkWidget *getM_infoBox() const;
     GtkWidget *getM_leftColumn() const;
     GtkWidget *getM_rightColumn() const;
-private:
-    bool m_isEdited = false;
-    bool m_isDeleted = false;
-    bool m_isDegrouped = false;
-    Shape* m_selectedShape = nullptr;
-    //FreeType
-    FT_Library* m_ft = nullptr;
-    FT_Face* m_fontface = nullptr;
-    std::map<GLchar, Character> m_chars;
-    GLuint m_text_vao;
-    GLuint m_text_vbo;
-    GLuint m_text_shader;
-public:
+    GtkWidget *getM_ornament_field() const;
+
+    //Freetype getters
+
     FT_Library *getM_ft() const;
     FT_Face *getM_fontface() const;
 private:
-
-    vector<size_t> m_selected_shapes;
 
     //ToolWindow pointers
     GtkWidget* m_box;
@@ -178,11 +190,6 @@ private:
     GtkWidget* m_add_bottom_ornament_button;
     GtkWidget* m_add_left_ornament_button;
     GtkWidget* m_add_right_ornament_button;
-private:
-    friend class ShapeRenderManager;
-
-public:
-    GtkWidget *getM_ornament_field() const;
 };
 
 inline void Application::setStartupArgs(Args _args) {

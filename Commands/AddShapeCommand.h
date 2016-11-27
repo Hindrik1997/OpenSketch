@@ -12,6 +12,10 @@
 class Drawer;
 class Application;
 
+
+/*
+ * Implements the addition of a shape to the application
+ * */
 class AddShapeCommand : public Command<Application> {
 private:
     int m_posx = 100;

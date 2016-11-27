@@ -17,6 +17,10 @@
  * Zie ook de ShapeDecorator header file.
  * In feite simuleert het virtuele functies, dus je kan nu ook gedecoreerde versies callen in de visitor implementatie.
  * Het mooiste is nog wel dat het onafhankelijk is van de decorator of visitor implementatie.
+ * Hierdoor koppel ik dus de decorator type los van de visitor, iets wat in de implementatie van het dictaat een probleem is.
+ * Bij die implementatie moest je namelijk voor elk type decorator een overload aan de visitor toevoegen.
+ * Daarnaast moest je ook nog eens elke visitor implementatie voorzien van elke decorator type, ookal stonden deze los van elkaar.
+ * Hier heb ik dus een oplossing voor bedacht.
  * De base Visitor class en de base ShapeDecorator class managen dit samen volledig onzichtbaar.
  * In jou visitor implementatie kan je dus zelf kiezen of je de decorator overrides called of enkel die van de base shape.
  *

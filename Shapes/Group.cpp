@@ -3,7 +3,7 @@
 //
 
 #include "Group.h"
-#include "Visitor.h"
+#include "../Visitors/Visitor.h"
 #include "../Visitors/MoveShapeVisitor.h"
 #include <algorithm>
 

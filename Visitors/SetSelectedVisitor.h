@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_SETSELECTEDVISITOR_H
 
 
-#include "../Shapes/Visitor.h"
+#include "Visitor.h"
 
 /*
  * Implementeert selectie setten van shapes en groups.

@@ -4,7 +4,7 @@
 
 #include "OrnamentBottomDecorator.h"
 #include "../Application.h"
-#include "../Shapes/Visitor.h"
+#include "../Visitors/Visitor.h"
 
 void OrnamentBottomDecorator::draw() const {
     ShapeDecorator::draw();

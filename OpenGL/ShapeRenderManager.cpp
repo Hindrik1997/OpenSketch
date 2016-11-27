@@ -29,7 +29,7 @@ void ShapeRenderManager::render()
         setNullShaderProgram();
 
     //Buffer swappen om te laten zien
-    glfwSwapBuffers(m_application.m_paintWindow);
+    glfwSwapBuffers(m_application.getM_paintWindow());
 
 }
 

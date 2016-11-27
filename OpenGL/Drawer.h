@@ -8,6 +8,9 @@
 #include <string>
 #include "ShapeRenderManager.h"
 
+/*
+ * Base class voor het drawen van shapes. Implement alle openGL stuff
+ * */
 class Drawer {
 private:
     GLuint m_shader;

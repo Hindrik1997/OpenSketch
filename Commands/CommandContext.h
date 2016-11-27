@@ -26,6 +26,8 @@ using std::stack;
  * Daarnaast kan je de Application::undo() en redo() functies gebruiken om te re/undo'en. (Application is een derived klasse
  * van CommandContext). Deze commandcontext implementeert alles wat nodig is voor generieke commands van het type D.
  * Door CRTP kan ik hiermee dus specifiek commands schrijven voor mijn Application class.
+ *
+ * Zie command.h voor de base class, de logic bevind zich echter hier
  */
 
 template<typename D>

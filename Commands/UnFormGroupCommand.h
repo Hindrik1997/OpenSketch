@@ -17,6 +17,9 @@ class Application;
 
 using std::unique_ptr;
 
+/*
+ * Command to unform groups
+ * */
 class UnFormGroupCommand : public Command<Application> {
 private:
     size_t m_groupSize;

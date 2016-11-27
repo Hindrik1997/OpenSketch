@@ -74,6 +74,10 @@ void DrawableObject::draw() const
 }
 
 DrawableObject& DrawableObject::getInstance() {
+
+    /*
+     * Default shape van de rectangle/ellipse.
+     * */
     static DrawableObject instance = DrawableObject
             (
             vector<GLfloat>{

@@ -8,7 +8,7 @@
 
 #include <string>
 #include <vector>
-#include "../Shapes/Visitor.h"
+#include "Visitor.h"
 #include "../Decorators/OrnamentBottomDecorator.h"
 
 using namespace std;

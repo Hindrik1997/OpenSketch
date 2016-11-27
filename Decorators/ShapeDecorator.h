@@ -7,6 +7,16 @@
 
 #include "../Shapes/Shape.h"
 
+/*
+ * DECORATOR PATTERN
+ *
+ * Base class voor alle decorators in mijn applicatie.
+ * Hier een kleine afwijking ten opzichte van hoe het is gedaan in het dictaat.
+ * Door een abstracte base class te maken heb ik zoveel mogelijk functionaliteit weggewerkt.
+ * Daarnaast heb ik hierdoor een systeem kunnen implementeren om visitors met decorators te laten samen werken.
+ * Zie hiervoor Visitor.h
+ *
+ * */
 class ShapeDecorator : public Shape {
 public:
     Shape* m_shape;

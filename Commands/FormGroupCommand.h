@@ -17,6 +17,9 @@ class Application;
 using std::vector;
 using std::unique_ptr;
 
+/*
+ * Implements the command to form groups of shapes
+ * */
 class FormGroupCommand : public Command<Application> {
 private:
     vector<size_t> m_indices;

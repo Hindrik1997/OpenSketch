@@ -5,7 +5,7 @@
 #ifndef OPEN_SKETCH_RESIZESHAPEVISITOR_H
 #define OPEN_SKETCH_RESIZESHAPEVISITOR_H
 
-#include "../Shapes/Visitor.h"
+#include "Visitor.h"
 #include <vector>
 #include <string>
 #include <deque>

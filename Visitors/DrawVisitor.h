@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_DRAWVISITOR_H
 
 
-#include "../Shapes/Visitor.h"
+#include "Visitor.h"
 #include <deque>
 
 using std::deque;

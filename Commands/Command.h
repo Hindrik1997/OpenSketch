@@ -5,6 +5,17 @@
 #ifndef OPEN_SKETCH_COMMAND_H
 #define OPEN_SKETCH_COMMAND_H
 
+
+/*
+ * COMMAND PATTERN
+ *
+ * Command base class. Implements a generic interface to implement commands
+ *
+ *
+ *
+ * */
+
+
 template<typename D>
 class CommandContext;
 

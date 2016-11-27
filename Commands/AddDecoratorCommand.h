@@ -15,6 +15,10 @@ using std::string;
 class Drawer;
 class Application;
 
+
+/*
+ * Implements the addition of a decorator to a shape.
+ * */
 class AddDecoratorCommand : public Command<Application> {
 private:
     size_t m_index;

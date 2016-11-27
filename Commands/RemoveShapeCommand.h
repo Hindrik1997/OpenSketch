@@ -16,6 +16,9 @@ using std::unique_ptr;
 class Drawer;
 class Application;
 
+/*
+ * Command to remove shapes
+ * */
 class RemoveShapeCommand : public Command<Application>
 {
 private:

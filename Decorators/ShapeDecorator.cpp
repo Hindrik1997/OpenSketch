@@ -3,7 +3,7 @@
 //
 
 #include "ShapeDecorator.h"
-#include "../Shapes/Visitor.h"
+#include "../Visitors/Visitor.h"
 
 ShapeDecorator::ShapeDecorator(Shape* _shape) : m_shape(_shape), Shape(0,0,0,0,nullptr)
 {

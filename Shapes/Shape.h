@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include "../OpenGL/DrawableObject.h"
-#include "Visitable.h"
+#include "../Visitors/Visitable.h"
 
 class Drawer;
 class ShapeRenderManager;

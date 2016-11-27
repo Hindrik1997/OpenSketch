@@ -5,7 +5,7 @@
 #include "Shape.h"
 #include "../OpenGL/ShapeRenderManager.h"
 #include "../OpenGL/Drawer.h"
-#include "Visitor.h"
+#include "../Visitors/Visitor.h"
 
 //mappen van range x-y naar w-z
 static float map_range(float _value, float _from1, float _to1, float _from2, float _to2)

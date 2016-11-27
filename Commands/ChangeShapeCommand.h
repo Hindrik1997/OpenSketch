@@ -14,6 +14,9 @@ using std::vector;
 
 class Application;
 
+/*
+ * Implements the command to change a shape by the specified amounts
+ * */
 class ChangeShapeCommand : public Command<Application>
 {
 private:

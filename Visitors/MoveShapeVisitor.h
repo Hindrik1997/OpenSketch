@@ -6,7 +6,7 @@
 #define OPEN_SKETCH_MOVESHAPEVISITOR_H
 
 
-#include "../Shapes/Visitor.h"
+#include "Visitor.h"
 #include <vector>
 #include <string>
 

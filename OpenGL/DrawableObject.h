@@ -13,7 +13,12 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-//SINGLETON PATTERN
+/*
+ * SINGLETON PATTERN
+ *  Aangezien zowel ellipses als rectangles doormiddel van een quad getekent kunnen worden heb ik deze klasse als
+ *  singleton geimplementeerd.Deze class managed het werken met de VBO,VAO en EBO van openGL.
+ *
+ * */
 
 class DrawableObject {
 private:
